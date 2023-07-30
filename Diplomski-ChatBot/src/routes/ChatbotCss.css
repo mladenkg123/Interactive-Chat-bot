@@ -1,0 +1,256 @@
+/* Styles for the chat window */
+.chat-container {
+    display: flex;
+    flex-direction: row;
+    height: 400px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  
+  .previous-conversations {
+    flex: 1;
+    padding: 10px;
+    overflow-y: scroll;
+    background-color: #f7f7f7;
+  }
+  
+  .user-input {
+    flex: 1;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+  
+  /* Styles for messages */
+  .message {
+    padding: 8px 12px;
+    margin: 5px;
+    border-radius: 20px;
+    max-width: 70%;
+  }
+  
+  .bot-message {
+    background-color: #007bff;
+    color: #fff;
+    align-self: flex-start;
+  }
+  
+  .user-message {
+    background-color: #f2f2f2;
+    align-self: flex-end;
+  }
+  
+  /* Styles for user input */
+  input[type="text"] {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 20px;
+    outline: none;
+  }
+  
+  button {
+    margin-top: 10px;
+    padding: 8px 12px;
+    border: none;
+    background-color: #007bff;
+    color: #fff;
+    border-radius: 20px;
+    cursor: pointer;
+  }
+  
+  button:focus {
+    outline: none;
+  }
+  
+  /* Scrollbar customization */
+  .previous-conversations::-webkit-scrollbar {
+    width: 8px;
+  }
+  
+  .previous-conversations::-webkit-scrollbar-thumb {
+    background-color: #ccc;
+    border-radius: 8px;
+  }
+  
+  .previous-conversations::-webkit-scrollbar-thumb:hover {
+    background-color: #aaa;
+  }
+/* Styles for the chat window */
+.chat-container {
+    display: flex;
+    flex-direction: row;
+    height: 400px;
+    border: 1px solid #ccc;
+    border-radius: 20px;
+    overflow: hidden;
+    background: linear-gradient(161deg, #7ff, #4434f5);
+  }
+  
+  .previous-conversations {
+    flex: 1;
+    padding: 15px;
+    overflow-y: scroll;
+    background-color: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(10px);
+    border-top-left-radius: 20px;
+    border-bottom-left-radius: 20px;
+  }
+  
+  .user-input {
+    flex: 1;
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    border-top-right-radius: 20px;
+    border-bottom-right-radius: 20px;
+  }
+  
+  /* Styles for messages */
+  .message {
+    padding: 12px 16px;
+    margin: 5px;
+    border-radius: 30px;
+    max-width: 70%;
+    position: relative;
+    padding: 12px 16px;
+    max-width: 70%;
+    word-wrap: break-word;
+  }
+  
+  .bot-message {
+    background-color: #000000;;
+    color: #fff;
+    align-self: flex-start;
+    animation: fadeInFromLeft 0.6s ease;
+    border-radius: 30px;
+  }
+  
+  .user-message {
+    background-color: #000000;
+    color: #fff;
+    align-self: flex-end;
+    animation: fadeInFromRight 0.6s ease;
+    border-radius: 30px;
+    margin-top: 10px;
+  }
+  
+  /* Styles for user input */
+  input[type="text"] {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 30px;
+    outline: none;
+    font-size: 16px;
+    background-color: rgba(255, 255, 255, 0.9);
+  }
+  
+  button {
+    margin-top: 10px;
+    padding: 10px 20px;
+    border: none;
+    background: linear-gradient(50deg,#0055ff,#5e00f6,#4434f5 86%);
+    color: #fff;
+    border-radius: 30px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s ease;
+  }
+  
+  button:focus {
+    outline: none;
+  }
+  
+  button:hover {
+    background-color: #0056b3;
+  }
+  
+  /* Styles for user input */
+input[type="text"] {
+    /* ... (Previous styles) */
+  }
+  
+  button {
+    /* ... (Previous styles) */
+    font-weight: bold;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    background: linear-gradient(50deg,#0055ff,#5e00f6,#4434f5 86%);
+  }
+  
+  button:hover {
+    background-color: #0056b3;
+    transform: scale(1.05);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
+  
+  button:active {
+    transform: scale(0.95);
+    box-shadow: none;
+  }
+  /* Scrollbar customization */
+  .previous-conversations::-webkit-scrollbar {
+    width: 8px;
+  }
+  
+  .previous-conversations::-webkit-scrollbar-thumb {
+    background-color: #ccc;
+    border-radius: 8px;
+  }
+  
+  .previous-conversations::-webkit-scrollbar-thumb:hover {
+    background-color: #aaa;
+  }
+  
+  /* Animations */
+  @keyframes fadeInFromLeft {
+    from {
+      opacity: 0;
+      transform: translateX(-20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+  
+  @keyframes fadeInFromRight {
+    from {
+      opacity: 0;
+      transform: translateX(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+  
+  /* Additional styles for user messages */
+  .user-message::before {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    right: -20px;
+    width: 0;
+    height: 0;
+    border-left: 20px solid transparent;
+    border-right: 20px solid #007bff;
+    border-bottom: 20px solid transparent;
+  }
+  
+  .user-message::after {
+    content: '';
+    position: absolute;
+    bottom: -18px;
+    right: -16px;
+    width: 0;
+    height: 0;
+    border-left: 16px solid transparent;
+    border-right: 16px solid #007bff;
+    border-bottom: 16px solid transparent;
+  }
+  
+    
