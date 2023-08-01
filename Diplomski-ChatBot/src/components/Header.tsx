@@ -1,8 +1,22 @@
 import HomePage from '../routes/HomePage';
+import React from 'react';
+import './Login';
 import './headerCss.css';
 
+type HeaderProps = {
+  handleLoginClick: () => void;
+  handleRegisterClick: () => void;
+}
 
-function Header(){
+
+function Header({handleLoginClick, handleRegisterClick}: HeaderProps  ){
+
+  const handleClickLog = () =>{
+    handleLoginClick()
+  }
+  const handleClickReg = () =>{
+    handleRegisterClick()
+  }
 
   return (
     <nav className="navbar">
@@ -119,10 +133,10 @@ function Header(){
           </li>
         </ul>
         <div className="auth-buttons">
-          <button className="btn btn-login">
+          <button className="btn btn-login" onClick={handleClickLog}>
             <i className="fas fa-sign-in-alt"></i> Login
           </button>
-          <button className="btn btn-signup">
+          <button className="btn btn-signup" onClick={handleClickReg}>
             <i className="fas fa-user-plus"></i> Sign Up
           </button>
         </div>
@@ -132,3 +146,4 @@ function Header(){
 }
 
 export default Header;
+

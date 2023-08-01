@@ -9,8 +9,8 @@ function Hero(){
 
     <div className="Home_container_13EVf" id="homeContainer">
     <section className="Home_part1__Xn7G4">
-      <h1>Chat with AI Online</h1>
-      <p>Simply ask your AI chatbot assistant to generate!</p>
+      <h1>Chat with Cube-BOT online.</h1>
+      <p>Ask Cube-BOT to generate a response!</p>
     </section>
 
     <section className="Home_about__3GJD3">

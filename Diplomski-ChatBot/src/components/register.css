@@ -1,0 +1,118 @@
+.registericon {
+    position: absolute;
+    width: 80px;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bolder;
+    color: black;
+    height: 40px;
+    left: 85%;
+    top: 10px;
+    background:#2bc6ff;
+    border-radius: 24px;
+    cursor: pointer;
+  }
+  
+  .registericon:hover{
+    color: white;
+  }
+  
+  .register-form{
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+  }
+  
+  .form-box{
+    margin-top: 7vh;
+    opacity:80%;
+    background: linear-gradient(50deg,#0055ff,#5e00f6,#4434f5 86%);
+    padding-right: 80px;
+    padding-left: 80px;
+    border-radius: 20px;
+    box-shadow: 10px 10px 10px 1px rgba(0, 0, 0, 0.2);
+  }
+  
+  .register-text{
+    width: 100%;
+    color: white;
+    border-bottom: 2px solid white;
+    line-height: 30px;
+    width: 100%;
+    font-weight: bolder;
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding-top: 5vh;
+  }
+  
+  label {
+    color:white;
+    width: 100%;
+    text-align: center;
+  }
+  
+  .register-box{
+    border: 1px solid lightgrey;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 20px;
+    padding: 2px;
+    padding-left: 10px;
+    letter-spacing: 1px;
+    font-weight: 600;
+    margin: 5px;
+    font-size: 11pt;
+    transition: 1s;
+    outline: none;
+  }
+  
+  .register-btn{
+    width: 75%;
+    justify-content: center;
+    align-items: center;
+    background-color: rgb(48,172,251);
+    color: white;
+    margin-top: 5px;
+    border-radius: 20px;
+    border: none;
+    font-size: 15pt;
+    font-weight: 700;
+    transition: 1s;
+    outline: none;
+    cursor: pointer;
+    margin-bottom: 20px;
+  }
+  
+  .register-btn:hover{
+    transform: scale(1.03);
+    letter-spacing: 4px;
+    background-color: #694d8e;
+    color: #996efc;
+  }
+  
+
+  .show {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.8);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999; 
+    opacity: 1;
+    transition: opacity 0.3s ease;
+  }
+  .show.active {
+    transform: translateY(100px) scale(0) rotateY(180deg);
+    opacity: 0;
+  }
