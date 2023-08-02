@@ -10,9 +10,16 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "pricing": "^1.1.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "react-router-dom": "^6.14.1"
+    "react-icons": "^4.10.1",
+    "react-pricing": "^0.1.5",
+    "react-pricing-table": "^0.3.0",
+    "react-pricing-tables": "^1.0.4",
+    "react-router-dom": "^6.14.1",
+    "react-scroll": "^1.8.9",
+    "styled-components": "^6.0.6"
   },
   "devDependencies": {
     "@types/react": "^18.2.14",

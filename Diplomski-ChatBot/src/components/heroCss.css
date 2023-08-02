@@ -124,8 +124,8 @@ h2 {
     width: max-content;
     height: 50px;
     line-height: 50px;
-    background: -webkit-linear-gradient(40deg,#9ebaf2,#83f7db,#a6fab0 86%);
-    background: linear-gradient(50deg,#9ebaf2,#83f7db,#a6fab0 86%);
+    background: -webkit-linear-gradient(50deg,#4e66fa,#4434f5,#996efc 86%);
+    background: linear-gradient(50deg,#4e66fa,#4434f5,#996efc 86%);
     text-align: center;
     border-radius: 10px;
     margin-top: 30px;
@@ -158,3 +158,16 @@ h2 {
     font-size: 16px;
     text-align: left;
 }
+.button-submit {
+    background-color: #f44336;
+    color: white;
+    height: 35px;
+    border: none;
+    font-size: 11px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    cursor: pointer;
+    visibility: hidden;
+}
+
+

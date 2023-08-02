@@ -9,6 +9,7 @@ function HomePage(){
 
   const [isShowLogin, setIsShowLogin] = useState(true);
   const [isShowRegister, setIsShowRegister] = useState(true);
+  
 
   const handleLoginClick = () => {
     setIsShowLogin((isShowLogin) => !isShowLogin);
@@ -21,7 +22,7 @@ function HomePage(){
                 <Header handleLoginClick={handleLoginClick} handleRegisterClick={handleRegisterClick}/>
                 <Login isShowLogin={isShowLogin} />
                 <Register isShowRegister={isShowRegister}/>
-                <Hero/>
+                <Hero handleRegisterClick={handleRegisterClick} />
                 <Footer/>
             </div>
         )

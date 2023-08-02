@@ -25,7 +25,7 @@ const ChatBot = () => {
   
     return (
     <div>
-        <Header/>
+        <Header />
       <div className="chat-container">
         <div className="previous-conversations">
           {conversation.map((msg, index) => (

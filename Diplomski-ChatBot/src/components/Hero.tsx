@@ -1,8 +1,13 @@
 import './heroCss.css';
+import React from 'react';
+import { PricingTable, PricingSlot, PricingDetail } from 'react-pricing-table';
 
+type HeroProps = {
+  handleRegisterClick: () => void;
+};
 
+function Hero({ handleRegisterClick }: HeroProps) {
 
-function Hero(){
 
 
   return (
@@ -50,6 +55,35 @@ function Hero(){
             <span> <i className="iconfont icon-security"></i>Prioritizing information security, and data protection assured on Cube-BOT.</span>
         </div>
     </section>
+    <section id="pricingContainer">
+        {/* PRICING SECTION */}
+        <div className="pricing-section">
+          <h2>Pricing Plans</h2>
+          <PricingTable highlightColor="#ffd700">
+            <PricingSlot title="Free Plan" price="$0">
+              <PricingDetail>Basic features included</PricingDetail>
+              <PricingDetail>100 queries/month</PricingDetail>
+              <button className="pricing-button" onClick={handleRegisterClick}>
+                Sign Up
+              </button>
+            </PricingSlot>
+            <PricingSlot title="Pro Plan" price="$9.99">
+              <PricingDetail>All features included</PricingDetail>
+              <PricingDetail>Unlimited queries/month</PricingDetail>
+              <button className="pricing-button" onClick={handleRegisterClick}>
+                Sign Up
+              </button>
+            </PricingSlot>
+            <PricingSlot title="Business Plan" price="$19.99">
+              <PricingDetail>Priority support</PricingDetail>
+              <PricingDetail>Unlimited queries/month</PricingDetail>
+              <button className="pricing-button" onClick={handleRegisterClick}>
+                Sign Up
+              </button>
+            </PricingSlot>
+          </PricingTable>
+        </div>
+      </section>
   </div>
 );
 }

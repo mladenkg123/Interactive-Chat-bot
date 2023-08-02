@@ -1,7 +1,10 @@
 import HomePage from '../routes/HomePage';
-import React from 'react';
+import React   from 'react';
+import { Link } from 'react-scroll';
+
 import './Login';
 import './headerCss.css';
+
 
 type HeaderProps = {
   handleLoginClick: () => void;
@@ -126,7 +129,9 @@ function Header({handleLoginClick, handleRegisterClick}: HeaderProps  ){
             <a href="/">Home</a>
           </li>
           <li className="nav-item">
-            <a href="#about">About</a>
+          <Link to="pricingContainer" smooth={true} duration={500} offset={-70} spy={true}>
+              Pricing
+          </Link>
           </li>
           <li className="nav-item">
             <a href="#contact">Contact</a>
