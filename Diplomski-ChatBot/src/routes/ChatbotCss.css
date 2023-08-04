@@ -21,6 +21,7 @@
     display: flex;
     flex-direction: column;
     justify-content: center;
+    margin-top: 20px; 
   }
   
   /* Styles for messages */
@@ -90,6 +91,8 @@
   }
   
   .previous-conversations {
+    height: 200px;
+    width: 500px;
     flex: 1;
     padding: 15px;
     overflow-y: scroll;
@@ -97,6 +100,8 @@
     backdrop-filter: blur(10px);
     border-top-left-radius: 20px;
     border-bottom-left-radius: 20px;
+    max-height: 200px; 
+    overflow-y: auto; 
   }
   
   .user-input {
@@ -251,6 +256,82 @@ input[type="text"] {
     border-left: 16px solid transparent;
     border-right: 16px solid #007bff;
     border-bottom: 16px solid transparent;
+  }
+  .chat-container {
+    display: flex;
+  }
+  
+  .chat-sidebar {
+    width: 250px;
+    background-color: #f0f0f0;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    
+  }
+  
+  .start-new-chat-button {
+    background-color: #3498db;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    margin-top: 20px;
+  }
+  
+  .start-new-chat-button:hover {
+    background-color: #2980b9;
+  }
+  
+  .chat-content {
+    flex: 1;
+    padding: 60px;
+  }
+  .conversation-restore-points {
+    margin-top: 20px;
+    border-radius: 10px;
+    backdrop-filter: blur(10px);
+    padding: 15px;
+    overflow-y: scroll; 
+    width:200px;
+  }
+  
+  .restore-points-header {
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 10px;
+    color:#000000;
+  }
+  
+  .restore-point {
+    padding: 8px;
+    border-radius: 5px;
+    margin: 5px 0;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    color: Black;
+  }
+  
+  .restore-point.selected {
+    background-color: #c5c5c5;;
+    color: white;
+  }
+  
+  
+  .message {
+    padding: 12px 16px;
+    margin: 5px;
+    border-radius: 30px;
+    max-width: 70%;
+    position: relative;
+    padding: 12px 16px;
+    max-width: 70%;
+    word-wrap: break-word;
+    background-color: #f2f2f2;
+    color: #000;
   }
   
     
