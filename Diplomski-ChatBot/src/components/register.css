@@ -64,10 +64,10 @@
     align-items: center;
     border-radius: 20px;
     padding: 2px;
-    padding-left: 10px;
+    padding-left: 35px;
     letter-spacing: 1px;
     font-weight: 600;
-    margin: 5px;
+    margin: auto;
     font-size: 11pt;
     transition: 1s;
     outline: none;
@@ -116,3 +116,23 @@
     transform: translateY(100px) scale(0) rotateY(180deg);
     opacity: 0;
   }
+  .close-button {
+    position: absolute;
+    margin-left: 255px;
+    width: 30px;
+    height: 30px;
+    background: #2bc6ff;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    color: white;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.3s;
+}
+
+.close-button:hover {
+    background-color: #0077cc;
+    transform: scale(1.1);
+}

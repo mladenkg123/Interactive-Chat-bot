@@ -3,13 +3,15 @@ import './login.css'
 
 type LoginProps = {
     isShowLogin : boolean;
+    onCloseLogin : () => void;
 }
 
-const Login = ({ isShowLogin } : LoginProps) => {
+const Login = ({ isShowLogin, onCloseLogin} : LoginProps) => {
   return (
     <div className={`${isShowLogin ? "active" : ""} show`}>
       <div className="login-form">
         <div className="form-box solid">
+        <button className="close-button" onClick={onCloseLogin}>X</button>
           <form>
             <h1 className="login-text">Sign In</h1>
             <label>Username</label>
@@ -22,6 +24,7 @@ const Login = ({ isShowLogin } : LoginProps) => {
             <br></br>
             <input type="submit" value="LOGIN" className="login-btn" />
           </form>
+          
         </div>
       </div>
     </div>

@@ -3,13 +3,15 @@ import './register.css'
 
 type RegisterProps = {
     isShowRegister : boolean;
+    onCloseRegister : () => void;
 }
 
-const Register = ({ isShowRegister } : RegisterProps) => {
+const Register = ({ isShowRegister, onCloseRegister} : RegisterProps) => {
   return (
     <div className={`${isShowRegister ? "active" : ""} show`}>
       <div className="register-form">
         <div className="form-box solid">
+        <button className="close-button" onClick={onCloseRegister}>X</button> {/* Close button */}
           <form>
             <h1 className="register-text">Register</h1>
             <label>Username</label>

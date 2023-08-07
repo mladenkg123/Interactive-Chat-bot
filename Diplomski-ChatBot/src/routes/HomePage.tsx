@@ -17,11 +17,12 @@ function HomePage(){
   const handleRegisterClick = () => {
     setIsShowRegister((isShowRegister) => !isShowRegister);
   };
+
         return(
             <div>
                 <Header handleLoginClick={handleLoginClick} handleRegisterClick={handleRegisterClick}/>
-                <Login isShowLogin={isShowLogin} />
-                <Register isShowRegister={isShowRegister}/>
+                <Login isShowLogin={isShowLogin} onCloseLogin={handleLoginClick} />
+                <Register isShowRegister={isShowRegister} onCloseRegister={handleRegisterClick}/>
                 <Hero handleRegisterClick={handleRegisterClick} />
                 <Footer/>
             </div>
