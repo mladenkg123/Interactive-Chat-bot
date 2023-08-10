@@ -20,8 +20,8 @@ body, html {
     padding-top: 150px;
 }
 .Home_part1__Xn7G4 h1 {
-    background: -webkit-linear-gradient(.999turn,#63d6f7 29.42%,#83f7db 50.67%,#4e66fa 73.23%);
-    background: linear-gradient(90.36deg,#63d6f7 29.42%,#83f7db 50.67%,#4e66fa 73.23%);
+    background: -webkit-linear-gradient(90.36deg,#f3d6ff.42%,#6c21ff 50.67%,#4e66fa 73.23%);
+    background: linear-gradient(90.36deg,#f3d6ff.42%,#6c21ff 50.67%,#4e66fa 73.23%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
 }
@@ -90,6 +90,7 @@ h2 {
     height: -moz-max-content;
     height: max-content;
     margin: 20px;
+    margin-top: -115px;
 }
 .Home_about__3GJD3>div:nth-child(2) {
     -webkit-flex-direction: row-reverse;
@@ -154,9 +155,10 @@ h2 {
     background: #fff;
     margin-bottom: 25px;
     padding: 20px;
-    border: 2px solid #8cb46c;
+    border: 2px solid #646cff   ;
     font-size: 16px;
     text-align: left;
+    border-radius: 25px;
 }
 .button-submit {
     background-color: #f44336;
@@ -171,3 +173,83 @@ h2 {
 }
 
 
+.basic-border {
+    border: 2px solid #8cb46c;
+    background: #040c1c;
+}
+
+
+.About_feature {
+    max-width: 1200px;
+    display: flex;
+    flex-direction: column; 
+    align-items: center;
+    color: #fff;
+    text-align: center; 
+    padding-bottom: 250px;
+  }
+  
+ 
+  .About_feature_container {
+    max-width: 100%;
+    margin: 0 auto;
+    padding: 0 20px; 
+  }
+  
+  
+  .About_feature_image img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 10px; 
+    max-height: 900px;
+  }
+  
+
+  .About_feature_text {
+    padding: 30px 0; 
+  }
+  
+  .About_feature_text h2 {
+    font-size: 36px; 
+    margin-bottom: 20px; 
+  }
+  
+  .About_feature_text p {
+    font-size: 18px; 
+    line-height: 1.8; 
+  }
+  
+ 
+  .About_feature_extra {
+    display: flex;
+    justify-content: space-between;
+    max-width: 100%;
+    margin: 50px auto 0;
+  }
+  
+  .About_feature_extra_item {
+    flex: 1;
+    padding: 0 20px;
+  }
+  
+  .About_feature_extra_item h3 {
+    font-size: 24px;
+    margin-bottom: 15px;
+  }
+  
+  .About_feature_extra_item ul {
+    list-style: disc;
+    padding-left: 20px;
+  }
+  
+  .About_feature_extra_item li {
+    font-size: 16px;
+    line-height: 1.6;
+    opacity: 0.8;
+  }
+  
+  .About_feature_extra_item p {
+    font-size: 16px;
+    line-height: 1.6;
+    opacity: 0.8;
+  }

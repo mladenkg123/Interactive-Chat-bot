@@ -131,8 +131,13 @@ function Header({handleLoginClick, handleRegisterClick}: HeaderProps  ){
             <a href="/">Home</a>
           </li>
           <li className="nav-item">
-          <ScrollLink to="pricingContainer" smooth={true} duration={500} offset={-70} spy={true}>
+          <ScrollLink to="pricingContainer" smooth={true} duration={500} offset={570} spy={true}>
               Pricing
+          </ScrollLink>
+          </li>
+          <li className="nav-item">
+          <ScrollLink to="aboutContainer" smooth={true} duration={500} offset={280} spy={true}>
+              About
           </ScrollLink>
           </li>
           <li className="nav-item">
