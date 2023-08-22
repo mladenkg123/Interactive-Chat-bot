@@ -33,14 +33,23 @@ export async function savePrompt(jwt: string, user_id: string, prompt: string, c
   return response;
 }
 
-export async function saveAnswer(jwt: string, user_id: string, answer: string): Promise<any> {
+export async function saveAnswer(jwt: string, user_id: string, answer: string, prompt_id: string): Promise<any> {
   const requestOptions: RequestInit = {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${jwt}` },
-    body: JSON.stringify({ answer, user_id }),
+    body: JSON.stringify({ answer, prompt_id, user_id }),
   };
 
   const response = await fetch(`${API_BASE_URL}/answer`, requestOptions);
   return response.json();
 }
+export async function sendPromptToPython(prompt: string, user_id: string) : Promise<any> {
+    const requestOptions = {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ prompt, user_id }),
+    };
 
+    const response = await fetch('http://localhost:5000', requestOptions);
+    return response;
+}
