@@ -5,9 +5,10 @@ import { useState } from 'react';
 type RegisterProps = {
     isShowRegister : boolean;
     onCloseRegister : () => void;
+    isAuthenticated : () => void;
 }
 
-const Register = ({ isShowRegister, onCloseRegister} : RegisterProps) => {
+const Register = ({ isShowRegister, onCloseRegister, isAuthenticated} : RegisterProps) => {
   const [email, setEmail] = useState('');
   const [pass, setPass] = useState('');
   //const [isRegisterSuccessful, setIsRegisterSuccessful] = useState(false);
@@ -27,6 +28,8 @@ const Register = ({ isShowRegister, onCloseRegister} : RegisterProps) => {
       })
       .then(data => {
           //setIsRegisterSuccessful(true);
+          onCloseRegister();
+          alert("U are Successfully Registered!")
           console.log(data);
       })
       .catch(error => {

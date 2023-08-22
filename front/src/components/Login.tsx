@@ -1,15 +1,17 @@
 import './login.css'
-import { useState } from 'react';
+import { useState,useEffect } from 'react';
 import { getExpireFromJWT } from '../logic/utils';
 
 type LoginProps = {
     isShowLogin : boolean;
     onCloseLogin : () => void;
+    onLoginSuccess : () => void;
 }
 interface LoginResponse {
   jwt: string;
+  userId : string;
 }
-const Login = ({ isShowLogin, onCloseLogin} : LoginProps) => {
+const Login = ({ isShowLogin, onCloseLogin, onLoginSuccess } : LoginProps) => {
   const [email, setEmail] = useState('');
   const [pass, setPass] = useState('');
   //const [isLoginSuccessful, setIsLoginSuccessful] = useState(false);
@@ -28,11 +30,16 @@ const Login = ({ isShowLogin, onCloseLogin} : LoginProps) => {
         return response.json() as Promise<LoginResponse>;
       })
       .then(data=> {
+        onCloseLogin();
+        alert("U are Successfully Signed In!")
+        onLoginSuccess();
         console.log(data)
+
         const expire = getExpireFromJWT(data.jwt);
         if (expire !== null) {
           const expirationDate = new Date(expire * 1000 + 100000);
           document.cookie = `jwt=${JSON.stringify(data.jwt)}; expires=${expirationDate.toUTCString()}; SameSite=None`;
+          localStorage.setItem('jwt', data.jwt);
         }
         //setIsLoginSuccessful(true);
       })
