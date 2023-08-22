@@ -7,7 +7,8 @@ import {
   fetchPreviousPrompts,
   fetchPreviousAnswers,
   savePrompt,
-  saveAnswer
+  saveAnswer,
+  sendPromptToPython
 } from '../logic/api';
 import { getUserIDFromJWT } from '../logic/utils';
 import './ChatbotCss.css';
@@ -24,29 +25,56 @@ const ChatBot = () => {
 
   const [currentConversationIndex, setCurrentConversationIndex] = useState(0);
   const [userInput, setUserInput] = useState('');
+  const [disableInput, setDisableInput] = useState(false);
 
   const handleUserInput = (event: { target: { value: React.SetStateAction<string>; }; }) => {
     setUserInput(event.target.value);
   };
 
+  
   const handleSubmit =  async (event: { preventDefault: () => void; }) => {
+    setDisableInput(true);
     event.preventDefault();
-    if (userInput.trim() !== '') {
-      const jwt: string = cookies.get('jwt');
-      if (!jwt) return;
-      const user_id = getUserIDFromJWT(jwt);
-      if(!user_id) return;
-      //await sendPromptToPython(text, user_id);
-      await savePrompt(jwt, user_id, userInput, "1");
-      const updatedConversation = [...conversationsHistory[currentConversationIndex]];
-      updatedConversation.push({ sender: 'User', message: userInput });
-
-      const newConversationsHistory = [...conversationsHistory];
-      newConversationsHistory[currentConversationIndex] = updatedConversation;
-
-      setConversationsHistory(newConversationsHistory);
-      setUserInput('');
+    if (userInput.trim() === '') {
+      setDisableInput(false);
+      return;
     }
+  
+    const jwt = cookies.get('jwt');
+    if (!jwt) {
+      setDisableInput(false);
+      return;
+    }
+  
+    const user_id = getUserIDFromJWT(jwt);
+    if (!user_id) {
+      setDisableInput(false);
+      return;
+    }
+
+    const response = await sendPromptToPython(userInput, user_id);
+    if (response.status === 200) { //SAVE PROMPT AND ANSWER AT THE SAME TIME????????
+      const data = await response.json();
+      const responseP = await savePrompt(jwt, user_id, userInput, "1");
+      if (responseP.status === 200) {
+        const data1 = await responseP.json();
+        console.log(data1._id)
+        await saveAnswer(jwt, user_id, data.data, data1._id);
+      }
+      //setOutput((prevOutput) => [...prevOutput, serverResponse || '']);
+    } else {
+      setDisableInput(false);
+      console.error('Error: Unexpected response code from the Python script');
+    }
+    const updatedConversation = [...conversationsHistory[currentConversationIndex]];
+    updatedConversation.push({ sender: 'User', message: userInput });
+
+    const newConversationsHistory = [...conversationsHistory];
+    newConversationsHistory[currentConversationIndex] = updatedConversation;
+
+    setConversationsHistory(newConversationsHistory);
+    setUserInput('');
+    setDisableInput(false);
   };
 
   const handleStartNewChat = () => {
@@ -120,6 +148,7 @@ const ChatBot = () => {
                 value={userInput}
                 onChange={handleUserInput}
                 placeholder="Type your message..."
+                disabled={disableInput}
               />
               <button className="send-button" type="submit">
                 Send
