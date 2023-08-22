@@ -2,7 +2,7 @@ import './heroCss.css';
 import { PricingTable, PricingSlot, PricingDetail } from 'react-pricing-table';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faRobot, faCogs, faShieldAlt } from '@fortawesome/free-solid-svg-icons';
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 import AOS from 'aos';
 import 'aos/dist/aos.css'; // Import AOS styles
 
@@ -53,14 +53,14 @@ function Hero({ handleRegisterClick }: HeroProps) {
             <i>Birthday wishes for friend to write in a card</i>
           </div>
         </div>
-        <img src="src\assets\1.png" alt="AI Chatbot: Ask and Talk to AI about Anything" />
+        <img src="src/assets/1.png" alt="AI Chatbot: Ask and Talk to AI about Anything" />
       </div>
       <div>
         <div>
             <h2>Chat with AI-Powerd Character Asistants</h2>
             <span>Cube-BOT offers AI character assistants who can provide informative conversations on various topics, including education, careers, business, lifestyle, and more. Whether you need assistance with language learning, gaining knowledge, creative inspiration, business strategies, or a healthier lifestyle, our chatbot is here for you.</span>
             <a href="/ChatBot">Chat Now &gt;</a></div>
-            <img src="src\assets\2.png" alt="Chat with AI-Powerd Character Asistants"/></div>
+            <img src="src/assets/2.png" alt="Chat with AI-Powerd Character Asistants"/></div>
     </section>
 
     <section className="Home_feature__2hbt-" data-aos="zoom-in">
@@ -69,7 +69,7 @@ function Hero({ handleRegisterClick }: HeroProps) {
         <div className="Home_featureList__3yC4P">
             <span> <FontAwesomeIcon icon={faRobot} style={{color:"#646cff"}} /> GPT powers our AI chatbot, delivering high-quality and expert-level content.</span>
             <span> <FontAwesomeIcon icon={faCogs}  style={{color:"#646cff"}}/> Easily accessible online, our AI chat website is both free and user-friendly.</span>
-            <span>  <FontAwesomeIcon icon={faShieldAlt} style={{color:"#646cff"}}/> Prioritizing information security, and data protection assured on Cube-BOT.</span>
+            <span> <FontAwesomeIcon icon={faShieldAlt} style={{color:"#646cff"}}/> Prioritizing information security, and data protection assured on Cube-BOT.</span>
         </div>
     </section>
     <section id="pricingContainer" style={{margin:"50px auto 0", padding:"550px 20px"}} data-aos="flip-right" data-aos-delay="550">
@@ -106,7 +106,7 @@ function Hero({ handleRegisterClick }: HeroProps) {
       <section className="About_feature" id="aboutContainer" data-aos="fade-up">
         <div className="About_feature_container">
           <div className="About_feature_image">
-            <img src="src\assets\3.png" alt="About Cube-BOT" />
+            <img src="src/assets/3.png" alt="About Cube-BOT" />
           </div>
           <div className="About_feature_text">
             <h2>About Cube-BOT</h2>

@@ -1,6 +1,4 @@
 import './footerCss.css';
-
-
 function Footer(){
 
   return (

@@ -1,7 +1,7 @@
 {
-  "name": "login-register-form",
+  "name": "interactive-chat-bot",
   "version": "0.1.0",
-  "main": "index.js",
+  "main": "server/server.js",
   "private": true,
   "dependencies": {
     "cors": "^2.8.5",

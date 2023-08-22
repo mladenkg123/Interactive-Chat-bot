@@ -1,6 +1,6 @@
-import HomePage from '../routes/HomePage';
-import React   from 'react';
-import { Link } from 'react-router-dom'; 
+//import HomePage from '../routes/HomePage';
+//import React   from 'react';
+//import { Link } from 'react-router-dom';
 import { Link as ScrollLink } from 'react-scroll'; 
 
 import './Login';

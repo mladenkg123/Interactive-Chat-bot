@@ -32,33 +32,25 @@ a {
 }
 .Footer_footer__31Uwg .Footer_copyright__1yOHI {
     text-align: center;
-    margin-left:900px;
+    margin: 0 auto 0 40px;
 }
 .icon-global {
     font-size: 26px;
     margin: 0 5px;
 }
 .iconfont {
-    font-size: 24px;
-    margin: 0 5px;
-}
-.iconfont {
-    font-family: "iconfont" !important;
+    font-family: "iconfont", sans-serif !important; /* Add generic font family */
     font-size: 16px;
+    margin: 0 5px;
     font-style: normal;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
 }
+
 * {
     -moz-box-sizing: border-box;
     box-sizing: border-box;
 }
 .icon-global:before {
     content: "\e630";
-}
-.icon-global:before {
-    content: "\e630";
-}
-.Footer_footer__31Uwg .Footer_terms__220yV {
-    margin: 0 auto 0 40px;
 }
