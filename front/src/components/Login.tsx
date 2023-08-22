@@ -23,7 +23,6 @@ const Login = ({ isShowLogin, onCloseLogin} : LoginProps) => {
             <br></br>
             <input type="submit" value="LOGIN" className="login-btn" />
           </form>
-          
         </div>
       </div>
     </div>

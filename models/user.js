@@ -9,10 +9,6 @@ const UserSchema = mongoose.Schema({
         required: true,
         unique: true
     },
-    name: {
-        type: String,
-        required: true
-    },
     admin: { type: Boolean },
     hash: { type: String},
     salt: {type: String }
@@ -54,7 +50,6 @@ UserModel.register = async function(email, name, password)
 {
     const user = new UserModel({
         email:email,
-        name: name,
         admin: false
     })
 
