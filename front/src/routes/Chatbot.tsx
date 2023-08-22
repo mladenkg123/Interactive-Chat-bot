@@ -46,7 +46,11 @@ const ChatBot = () => {
 
   return (
     <div className="chatbot-container">
-      <Header />
+      <Header handleLoginClick={function (): void {
+        throw new Error('Function not implemented.');
+      } } handleRegisterClick={function (): void {
+        throw new Error('Function not implemented.');
+      } } />
       <div className="chat-container">
         <div className="chat-sidebar">
           <button className="start-new-chat-button" onClick={handleStartNewChat}>
@@ -54,7 +58,7 @@ const ChatBot = () => {
           </button>
           <div className="conversation-restore-points">
             <div className="restore-points-header">Previous Chats</div>
-            {conversationsHistory.map((conversation, index) => (
+            {conversationsHistory.map((_, index) => (
               <div
                 key={index}
                 className={`restore-point ${

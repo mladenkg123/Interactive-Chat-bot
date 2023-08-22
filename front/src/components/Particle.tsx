@@ -10,13 +10,13 @@ const ParticleComponent = () => {
     await loadSlim(engine);
 
     // Add custom shapes
-    engine.addShape("flower", (ctx, particle, radius) => {
+    engine.addShape("flower", (ctx, _, radius) => {
       ctx.arc(0, 0, radius, 0, Math.PI * 2);
       ctx.moveTo(0, 0);
       ctx.lineTo(radius, 0);
       ctx.stroke();
     });
-    engine.addShape("square", (ctx, particle, radius) => {
+    engine.addShape("square", (ctx, _, radius) => {
       ctx.rect(0, 0, radius * 2, radius * 2);
       ctx.stroke();
     });
