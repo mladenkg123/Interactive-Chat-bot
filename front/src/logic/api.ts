@@ -22,11 +22,11 @@ export async function fetchPreviousAnswers(jwt: string, user_id: string): Promis
   return answerData;
 }
 
-export async function savePrompt(jwt: string, user_id: string, prompt: string): Promise<Response> {
+export async function savePrompt(jwt: string, user_id: string, prompt: string, conversation_id: string): Promise<Response> {
   const requestOptions: RequestInit = {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${jwt}` },
-    body: JSON.stringify({ user_id, prompt, conversation_id: 1 }),
+    body: JSON.stringify({ user_id, prompt, conversation_id: conversation_id}),
   };
 
   const response = await fetch(`${API_BASE_URL}/prompt`, requestOptions);

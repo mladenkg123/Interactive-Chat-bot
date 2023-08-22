@@ -2,7 +2,17 @@ import React, { useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUser, faCube } from '@fortawesome/free-solid-svg-icons';
 import Header from '../components/Header';
+import Cookies, { Cookie as CookieType } from 'universal-cookie';
+import {
+  fetchPreviousPrompts,
+  fetchPreviousAnswers,
+  savePrompt,
+  saveAnswer
+} from '../logic/api';
+import { getUserIDFromJWT } from '../logic/utils';
 import './ChatbotCss.css';
+
+const cookies: CookieType = new Cookies();
 
 const ChatBot = () => {
   const [conversationsHistory, setConversationsHistory] = useState([
@@ -19,9 +29,15 @@ const ChatBot = () => {
     setUserInput(event.target.value);
   };
 
-  const handleSubmit = (event: { preventDefault: () => void; }) => {
+  const handleSubmit =  async (event: { preventDefault: () => void; }) => {
     event.preventDefault();
     if (userInput.trim() !== '') {
+      const jwt: string = cookies.get('jwt');
+      if (!jwt) return;
+      const user_id = getUserIDFromJWT(jwt);
+      if(!user_id) return;
+      //await sendPromptToPython(text, user_id);
+      await savePrompt(jwt, user_id, userInput, "1");
       const updatedConversation = [...conversationsHistory[currentConversationIndex]];
       updatedConversation.push({ sender: 'User', message: userInput });
 

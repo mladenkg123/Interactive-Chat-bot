@@ -32,7 +32,7 @@ const Login = ({ isShowLogin, onCloseLogin} : LoginProps) => {
         const expire = getExpireFromJWT(data.jwt);
         if (expire !== null) {
           const expirationDate = new Date(expire * 1000 + 100000);
-          document.cookie = `jwt=${JSON.stringify(data)}; expires=${expirationDate.toUTCString()}; SameSite=None`;
+          document.cookie = `jwt=${JSON.stringify(data.jwt)}; expires=${expirationDate.toUTCString()}; SameSite=None`;
         }
         //setIsLoginSuccessful(true);
       })
