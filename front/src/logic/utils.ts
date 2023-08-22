@@ -9,3 +9,13 @@ export const getUserIDFromJWT = (jwt: string): string | null => {
     return null;
   }
 };
+
+export const getExpireFromJWT = (jwt: string): number | null => {
+  try {
+    const decodedJWT: { expire: number } = jwt_decode(jwt);
+    return decodedJWT.expire;
+  } catch (error) {
+    console.error('Error decoding JWT:', error);
+    return null;
+  }
+};
