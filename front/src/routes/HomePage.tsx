@@ -6,6 +6,7 @@ import Login from '../components/Login'
 import Register from "../components/Register";
 import ParticleComponent from "../components/Particle";
 import "./HomePage.css"; 
+import Cookies, { Cookie as CookieType } from 'universal-cookie';
 
 
 
@@ -15,9 +16,9 @@ function HomePage(){
   const [isShowRegister, setIsShowRegister] = useState(true);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
-
+  const cookies: CookieType = new Cookies();
   useEffect(() => {
-    const userId = localStorage.getItem('jwt');
+    const userId = cookies.get('jwt');
     if (userId) {
       setIsAuthenticated(true); 
     }

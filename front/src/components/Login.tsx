@@ -1,6 +1,7 @@
 import './login.css'
 import { useState,useEffect } from 'react';
 import { getExpireFromJWT } from '../logic/utils';
+import Cookies, { Cookie as CookieType } from 'universal-cookie';
 
 type LoginProps = {
     isShowLogin : boolean;
@@ -9,8 +10,10 @@ type LoginProps = {
 }
 interface LoginResponse {
   jwt: string;
-  userId : string;
 }
+
+const cookies: CookieType = new Cookies();
+
 const Login = ({ isShowLogin, onCloseLogin, onLoginSuccess } : LoginProps) => {
   const [email, setEmail] = useState('');
   const [pass, setPass] = useState('');
@@ -39,7 +42,9 @@ const Login = ({ isShowLogin, onCloseLogin, onLoginSuccess } : LoginProps) => {
         if (expire !== null) {
           const expirationDate = new Date(expire * 1000 + 100000);
           document.cookie = `jwt=${JSON.stringify(data.jwt)}; expires=${expirationDate.toUTCString()}; SameSite=None`;
-          localStorage.setItem('jwt', data.jwt);
+         
+          cookies.set('jwt', data.jwt);
+          
         }
         //setIsLoginSuccessful(true);
       })

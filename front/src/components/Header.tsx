@@ -3,9 +3,13 @@
 //import { Link } from 'react-router-dom';
 
 import { Link as ScrollLink } from 'react-scroll'; 
-
+import Cookies, { Cookie as CookieType } from 'universal-cookie';
+import Swal from 'sweetalert2';
 import './Login';
 import './headerCss.css';
+import 'react-toastify/dist/ReactToastify.css';
+
+const cookies: CookieType = new Cookies();
 
 
 type HeaderProps = {
@@ -24,10 +28,24 @@ function Header({handleLoginClick, handleRegisterClick, handleSignOut, isAuthent
   const handleClickReg = () =>{
     handleRegisterClick()
   }
+
+
   const handleSigningOut = () =>{
-    handleSignOut()
-    localStorage.removeItem('jwt');
-    console.log("a")
+      Swal.fire({
+        title: 'Signing Out',
+        text: 'You have been successfully signed out.',
+        icon: 'success',
+        timer: 2000,            //TEST 
+        timerProgressBar: true,
+        didOpen: () => {
+          Swal.showLoading();
+        },
+        willClose: () => {
+          cookies.remove('jwt');
+          handleSignOut();
+        },
+      }).then(() => {
+      });
   }
 
 

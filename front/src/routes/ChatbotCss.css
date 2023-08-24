@@ -1,29 +1,30 @@
 /* Styles for the chat window */
 .chat-container {
-    display: flex;
-    flex-direction: row;
-    height: 400px;
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    overflow: hidden;
-    background: linear-gradient(161deg, #7ff, #4434f5);
-  }
+  display: flex;
+  flex-direction: row;
+  height: 550px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  overflow: hidden;
+  background: linear-gradient(161deg, #7ff, #4434f5);
+}
+
 /* Styles for the chat window */
-  .previous-conversations {
-    height: 200px;
-    width: 500px;
-    flex: 1;
-    padding: 15px;
-    overflow-y: auto; 
-    background-color: rgba(255, 255, 255, 0.8);
-    backdrop-filter: blur(10px);
-    border-top-left-radius: 20px;
-    border-bottom-left-radius: 20px;
-    max-height: 200px;
+.previous-conversations {
+  height: 330px;
+  width: 750px;
+  flex: 1;
+  padding: 15px;
+  overflow-x: hidden; 
+  overflow-y: auto; 
+  background-color: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(10px);
+  border-top-left-radius: 20px;
+  border-bottom-left-radius: 20px;
 }
 
 .previous-conversations > .message-bubbles {
-    overflow-y: auto; 
+  overflow-y: auto;
 }
   
   .user-input {
