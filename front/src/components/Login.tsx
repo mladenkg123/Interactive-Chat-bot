@@ -1,5 +1,5 @@
 import './login.css'
-import { useState,useEffect } from 'react';
+import { useState } from 'react';
 import { getExpireFromJWT } from '../logic/utils';
 import Cookies, { Cookie as CookieType } from 'universal-cookie';
 import Swal from 'sweetalert2';
@@ -38,7 +38,6 @@ const Login = ({ isShowLogin, onCloseLogin, onLoginSuccess } : LoginProps) => {
       .then(data=> {
         onCloseLogin();
         onLoginSuccess();
-        console.log(data)
 
         const expire = getExpireFromJWT(data.jwt);
         if (expire !== null) {

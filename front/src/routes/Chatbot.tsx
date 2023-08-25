@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faUser, faCube } from '@fortawesome/free-solid-svg-icons';
+import { faCube, faUser } from '@fortawesome/free-solid-svg-icons';
 import Header from '../components/Header';
-import Cookies, { Cookie as CookieType } from 'universal-cookie';
+import Cookies from 'universal-cookie';
+import type { Cookie as CookieType } from 'universal-cookie';
 import {
   fetchPreviousPrompts,
   fetchPreviousAnswers,
