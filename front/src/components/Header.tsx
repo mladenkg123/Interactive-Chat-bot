@@ -3,7 +3,8 @@
 //import { Link } from 'react-router-dom';
 
 import { Link as ScrollLink } from 'react-scroll'; 
-import Cookies, { Cookie as CookieType } from 'universal-cookie';
+import Cookies from 'universal-cookie';
+import type { Cookie as CookieType } from 'universal-cookie';
 import Swal from 'sweetalert2';
 import './Login';
 import './headerCss.css';

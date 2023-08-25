@@ -1,7 +1,8 @@
 import './login.css'
-import { useState,useEffect } from 'react';
+import { useState } from 'react';
 import { getExpireFromJWT } from '../logic/utils';
-import Cookies, { Cookie as CookieType } from 'universal-cookie';
+import Cookies from 'universal-cookie';
+import type { Cookie as CookieType } from 'universal-cookie';
 
 type LoginProps = {
     isShowLogin : boolean;
@@ -36,20 +37,18 @@ const Login = ({ isShowLogin, onCloseLogin, onLoginSuccess } : LoginProps) => {
         onCloseLogin();
         alert("U are Successfully Signed In!")
         onLoginSuccess();
-        console.log(data)
 
         const expire = getExpireFromJWT(data.jwt);
         if (expire !== null) {
-          const expirationDate = new Date(expire * 1000 + 100000);
-          document.cookie = `jwt=${JSON.stringify(data.jwt)}; expires=${expirationDate.toUTCString()}; SameSite=None`;
-         
+          //document.cookie = `jwt=${JSON.stringify(data.jwt)}; expires=${expirationDate.toUTCString()}; SameSite=None`;
           cookies.set('jwt', data.jwt);
           
         }
         //setIsLoginSuccessful(true);
       })
       .catch(error => {
-        console.log(error);
+        alert("Wrong username or password!");
+        //console.log(error);
       });
   };
   return (
