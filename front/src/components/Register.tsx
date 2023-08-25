@@ -1,5 +1,6 @@
 import './register.css'
 import { useState } from 'react';
+import Swal from 'sweetalert2';
 
 
 type RegisterProps = {
@@ -29,11 +30,32 @@ const Register = ({ isShowRegister, onCloseRegister, isAuthenticated} : Register
       .then(data => {
           //setIsRegisterSuccessful(true);
           onCloseRegister();
-          alert("U are Successfully Registered!")
           console.log(data);
+          Swal.fire({
+            title: 'Registration Successful',
+            text: 'You have been successfully registered.',
+            icon: 'success',
+            timer: 2000,
+            timerProgressBar: true,
+            didOpen: () => {
+              Swal.showLoading();
+            }
+          }).then(() => {
+          });
       })
       .catch(error => {
-        console.log(error); // Handle the error appropriately (e.g., show an error message)
+        console.log(error); 
+        Swal.fire({
+          title: 'Registration Failed',
+          text: 'There was an error during registration.',
+          icon: 'error',
+          showCancelButton: false,
+          confirmButtonText: 'Try Again',
+          customClass: {
+            confirmButton: 'swal-button swal-button--error'
+          }
+        });
+  
       });
   }
   return (

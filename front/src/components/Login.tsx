@@ -2,6 +2,7 @@ import './login.css'
 import { useState,useEffect } from 'react';
 import { getExpireFromJWT } from '../logic/utils';
 import Cookies, { Cookie as CookieType } from 'universal-cookie';
+import Swal from 'sweetalert2';
 
 type LoginProps = {
     isShowLogin : boolean;
@@ -13,6 +14,8 @@ interface LoginResponse {
 }
 
 const cookies: CookieType = new Cookies();
+
+
 
 const Login = ({ isShowLogin, onCloseLogin, onLoginSuccess } : LoginProps) => {
   const [email, setEmail] = useState('');
@@ -34,7 +37,6 @@ const Login = ({ isShowLogin, onCloseLogin, onLoginSuccess } : LoginProps) => {
       })
       .then(data=> {
         onCloseLogin();
-        alert("U are Successfully Signed In!")
         onLoginSuccess();
         console.log(data)
 
@@ -43,13 +45,38 @@ const Login = ({ isShowLogin, onCloseLogin, onLoginSuccess } : LoginProps) => {
           const expirationDate = new Date(expire * 1000 + 100000);
           document.cookie = `jwt=${JSON.stringify(data.jwt)}; expires=${expirationDate.toUTCString()}; SameSite=None`;
          
-          cookies.set('jwt', data.jwt);
+          Swal.fire({
+            title: 'Signing In',
+            text: 'You have been successfully signed in.',
+            icon: 'success',
+            timer: 2000,
+            timerProgressBar: true,
+            didOpen: () => {
+              Swal.showLoading();
+            },
+            willClose: () => {
+              cookies.set('jwt', data.jwt);
+            },
+          }).then(() => {
+            onLoginSuccess();
+          });
           
         }
         //setIsLoginSuccessful(true);
       })
       .catch(error => {
-        console.log(error);
+        onCloseLogin();
+        console.log(error)
+        Swal.fire({
+          title: 'Password Incorrect',
+          text: 'The password you entered is incorrect.',
+          icon: 'error',
+          showCancelButton: false,
+          confirmButtonText: 'Try Again',
+          customClass: {
+            confirmButton: 'swal-button swal-button--error'
+          }
+        });
       });
   };
   return (
