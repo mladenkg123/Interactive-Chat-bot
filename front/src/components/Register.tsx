@@ -45,6 +45,7 @@ const Register = ({ isShowRegister, onCloseRegister, isAuthenticated} : Register
       })
       .catch(error => {
         console.log(error); 
+        onCloseRegister();
         Swal.fire({
           title: 'Registration Failed',
           text: 'There was an error during registration.',
@@ -53,6 +54,10 @@ const Register = ({ isShowRegister, onCloseRegister, isAuthenticated} : Register
           confirmButtonText: 'Try Again',
           customClass: {
             confirmButton: 'swal-button swal-button--error'
+          }
+        }).then((result) => {
+          if (result.isConfirmed) {
+            onCloseRegister();
           }
         });
   

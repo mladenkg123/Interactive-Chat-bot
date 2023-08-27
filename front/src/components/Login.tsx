@@ -75,6 +75,10 @@ const Login = ({ isShowLogin, onCloseLogin, onLoginSuccess } : LoginProps) => {
           customClass: {
             confirmButton: 'swal-button swal-button--error'
           }
+        }).then((result) => {
+          if (result.isConfirmed) {
+            onCloseLogin();
+          }
         });
       });
   };

@@ -69,10 +69,10 @@
     margin-top: 10px;
     padding: 10px 20px;
     border: none;
-    background: linear-gradient(50deg,#0055ff,#5e00f6,#4434f5 86%);
+    background: linear-gradient(0deg,#0055ff,#0055ff,#4736ff 86%);
     background-color: #007bff;
     color: #fff;
-    border-radius: 30px;
+    border-radius:10px;
     cursor: pointer;
     font-size: 16px;
     font-weight: bold;
@@ -226,4 +226,7 @@
     color: #000;
   }
   
-    
+  .chatbot-container  .btn.btn-login,
+  .chatbot-container .btn.btn-signup { 
+    visibility: hidden;
+  }

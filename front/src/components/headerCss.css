@@ -24,6 +24,11 @@
   font-weight: bold;
   text-transform: uppercase;
   letter-spacing: 2px;
+  transition: transform 0.3s ease-in-out;
+
+}
+.navbar-logo:hover {
+  transform: scale(1.1);
 }
 
 .nav-menu {
@@ -67,18 +72,28 @@
 }
 
 .btn-login {
-  background-color: #535bf2ff;
+  background: linear-gradient(0deg,#0055ff,#0055ff,#4736ff 86%);
+  margin: 5px 10px;
+  border-radius:10px
 }
 
 .btn-signup {
-  background-color: #747bff;
+  background: linear-gradient(0deg,#0055ff,#0055ff,#4736ff 86%);
+  margin: 5px 10px;
+  border-radius:10px
+  
 }
 
+.btn-login:hover,
+.btn-signup:hover {
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); 
+  transform: scale(1.05); 
+  background: #4434f5
+}
 .btn i {
   margin-right: 5px;
 }
 
-/* Media Query for responsive design (adjust as needed) */
 @media (max-width: 768px) {
   .navbar-logo {
     font-size: 20px;
@@ -98,11 +113,11 @@
   margin-right: 10px;
 }
 
-/* Adjust logo's font size and color */
 .navbar-logo span {
   font-size: 18px;
   color: #f9f9f9;
   font-weight: bold;
   position: relative;
-  top: -5px;
+  top: -9px;
+  font-family: system-ui;
 }
