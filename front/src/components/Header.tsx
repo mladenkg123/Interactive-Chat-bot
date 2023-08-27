@@ -4,13 +4,12 @@
 
 import { Link as ScrollLink } from 'react-scroll'; 
 import Cookies from 'universal-cookie';
-import type { Cookie as CookieType } from 'universal-cookie';
 import Swal from 'sweetalert2';
 import './Login';
 import './headerCss.css';
 import 'react-toastify/dist/ReactToastify.css';
 
-const cookies: CookieType = new Cookies();
+const cookies = new Cookies();
 
 
 type HeaderProps = {

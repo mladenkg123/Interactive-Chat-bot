@@ -9,7 +9,7 @@ CORS(app)
 global context
 context = ""
 client = pymongo.MongoClient("localhost", 27017, maxPoolSize=50)
-db = client["GPTDB"]
+db = client["DiplomskiDB"]
 
 @app.route("/", methods=["POST"])
 def handle_post():
@@ -42,14 +42,14 @@ def handle_post():
     prompts = prompt_dict.get(user_id, [])
     answers = answer_dict.get(user_id, [])
     for i, prompt in enumerate(prompts):
-        context += "\r\n USER: " + prompt + "\n" + "\r\nLearnAI:" + answers[i] + "\n"
+        context += "\r\n USER: " + prompt + "\n" + "\r\nChatGPT:" + answers[i] + "\n"
 
     # Process the data or perform any necessary actions
     # You can access specific fields of the JSON data using data['field_name']
     waiter = Waiter(user_id)
     context += "\n" + "USER: " + data["prompt"] + "\n"
     r = waiter.request(context)
-    context += "\r\nLearnAI: " + r + "\n"
+    context += "\r\nChatGPT: " + r + "\n"
     # Return a response
     response = {"message": "POST request received", "data": r}
     print(context)
@@ -72,13 +72,7 @@ class Waiter:
             "messages": [
                 {
                     "role": "system",
-                    "content": "You're an enthusiastic English teacher who likes to present himself in a fun way. Your nickname is LearnAI\
-                    and you were created by LearnAI Team.\
-                    Only greet student once. Do not break character or speak in any other language than English. \
-                    Initiate conversations, give user assignments. Focus on conversating with your students. Your lectures are only 1 on 1.\
-                    and ask questions. Recommend a topic if there isn't one present. Occasionally ask user to complete or correct a sentence or a word grammatically.\
-                    Always correct user's grammatical and other errors. When recommending adjectives, provide their definition. Pay attention to the history that is fed to you as it resembles your answers beginning with LearnAI: and \
-                    user answers beginning with USER:. Do not include your nickname in the answers. When answering, only include your answer, do not include the user part."
+                    "content": ""
                 },
                 {"role": "user", "content": wish},
             ],

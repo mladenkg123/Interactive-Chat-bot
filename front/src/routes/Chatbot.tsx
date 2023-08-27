@@ -3,7 +3,6 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCube, faUser } from '@fortawesome/free-solid-svg-icons';
 import Header from '../components/Header';
 import Cookies from 'universal-cookie';
-import type { Cookie as CookieType } from 'universal-cookie';
 import {
   fetchPreviousPrompts,
   fetchPreviousAnswers,
@@ -16,8 +15,24 @@ import {
 import { getUserIDFromJWT } from '../logic/utils';
 import './ChatbotCss.css';
 
-const cookies: CookieType = new Cookies();
-const jwt = cookies.get('jwt');
+type Prompt = {
+  prompt: string;
+  conversation_id: string;
+  _id: string;
+};
+
+type PythonResponse = {
+  data: string;
+  message: string;
+};
+
+type Answer = {
+  name: string;
+  knownFor: string[];
+};
+
+const cookies = new Cookies();
+const jwt = cookies.get('jwt') as string;
 const user_id = getUserIDFromJWT(jwt);
 const ChatBot = () => {
   const [conversationsHistory, setConversationsHistory] = useState([
@@ -34,7 +49,27 @@ const ChatBot = () => {
   const handleUserInput = (event: { target: { value: React.SetStateAction<string>; }; }) => {
     setUserInput(event.target.value);
   };
-
+  useEffect(() => {
+    const loadConversations = async () => {
+      if (jwt && user_id) {
+        try {
+          const conversationsListPromise = await fetchConversations(jwt);
+          if (conversationsListPromise.status === 200) {
+            const conversationsList = await conversationsListPromise.json() as object[];
+          } else {
+            console.error('Error fetching previous conversations');
+          }
+        } catch (error) {
+          console.error('Error:', error);
+        }
+      }
+    };
+    loadConversations().catch(error => {
+      console.error('Unhandled promise error:', error);
+    });
+  }, []);
+  
+  
   
   const handleSubmit =  async (event: { preventDefault: () => void; }) => {
     setDisableInput(true);
@@ -52,14 +87,14 @@ const ChatBot = () => {
       return;
     }
 
-    const response = await sendPromptToPython(userInput, user_id);
-    if (response.status === 200) { //SAVE PROMPT AND ANSWER AT THE SAME TIME????????
-      const data = await response.json();
-      const responseP = await savePrompt(jwt, user_id, userInput, "64e911933918ffaf74710c78");
-      if (responseP.status === 200) {
-        const data1 = await responseP.json();
-        console.log(data1._id)
-        await saveAnswer(jwt, user_id, data.data, data1._id);
+    const responsePython = await sendPromptToPython(userInput, user_id);
+    if (responsePython.status === 200) { //SAVE PROMPT AND ANSWER AT THE SAME TIME????????
+      const pythonData = await responsePython.json() as PythonResponse;
+
+      const responsePrompt = await savePrompt(jwt, user_id, userInput, "64e911933918ffaf74710c78");
+      if (responsePrompt.status === 200) {
+        const dataPrompt = await responsePrompt.json() as Prompt;
+        await saveAnswer(jwt, user_id, pythonData.data, dataPrompt._id);
       }
       //setOutput((prevOutput) => [...prevOutput, serverResponse || '']);
     } else {
@@ -78,7 +113,7 @@ const ChatBot = () => {
   };
 
   const handleStartNewChat = async () => {
-    await startNewConversation(jwt, user_id);
+    await startNewConversation(jwt, user_id as string);
     setConversationsHistory([...conversationsHistory, []]);
     setCurrentConversationIndex(conversationsHistory.length);
   };

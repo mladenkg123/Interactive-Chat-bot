@@ -14,11 +14,11 @@ export async function fetchPreviousPrompts(jwt: string, user_id: string): Promis
   return promptResponse;
 }
 
-export async function fetchConversations(jwt: string, user_id: string): Promise<Response> {
+export async function fetchConversations(jwt: string): Promise<Response> {
   const requestOptions = generateRequestOptionsGet(jwt);
 
-  const promptResponse = await fetch(`${API_BASE_URL}/prompt/user/${user_id}`, requestOptions);
-  return promptResponse;
+  const conversationsResponse = await fetch(`${API_BASE_URL}/conversation`, requestOptions);
+  return conversationsResponse;
 }
 
 export async function fetchPreviousAnswers(jwt: string, user_id: string): Promise<Response> {

@@ -2,7 +2,6 @@ import './login.css'
 import { useState } from 'react';
 import { getExpireFromJWT } from '../logic/utils';
 import Cookies from 'universal-cookie';
-import type { Cookie as CookieType } from 'universal-cookie';
 import Swal from 'sweetalert2';
 
 type LoginProps = {
@@ -14,7 +13,7 @@ interface LoginResponse {
   jwt: string;
 }
 
-const cookies: CookieType = new Cookies();
+const cookies = new Cookies();
 
 
 

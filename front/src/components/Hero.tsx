@@ -1,7 +1,7 @@
 import './heroCss.css';
-import { PricingTable, PricingSlot, PricingDetail } from 'react-pricing-table';
+import { PricingDetail, PricingSlot, PricingTable } from 'react-pricing-table';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faRobot, faCogs, faShieldAlt } from '@fortawesome/free-solid-svg-icons';
+import { faCogs, faRobot, faShieldAlt } from '@fortawesome/free-solid-svg-icons';
 import { useEffect } from 'react';
 import AOS from 'aos';
 import 'aos/dist/aos.css'; 
