@@ -6,24 +6,29 @@ const find = function()
     return PromptModel.find()
 }
 
-const findById = function(id)
+const findById = function(id, user_id)
 {
-    return PromptModel.findById(id)
+    return PromptModel.findById(id, user_id)
 }
 
-const findByUserId = function(user_id)
+const findByConversationId = function(id, user_id)
 {
-    return PromptModel.findByUserId(user_id)
+    return PromptModel.findByConversationId(id, user_id)
+}
+
+const findOne = function(id, user_id)
+{
+    return PromptModel.findOne(id, user_id)
 }
 
 const save = function(prompt)
 {
     return PromptModel.savePrompt(prompt);
 }
-
 module.exports = {
     find,
     findById,
-    findByUserId,
+    findByConversationId,
+    findOne,
     save
 }

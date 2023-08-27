@@ -1,4 +1,4 @@
-const PromptService = require('../services/prompt')
+const ConversationService = require('../services/conversation')
 const express = require('express')
 const router = express.Router()
 const passport = require('./config/config')
@@ -6,15 +6,29 @@ const jwt = require('jsonwebtoken')
 
 router.get('/',
     passport.authenticate('jwt', {session: false}),
-    passport.authorizeRoles('ADMIN'),
+    passport.authorizeRoles('ADMIN', 'USER'),
     async (req, res) => {
-        const prompts = await PromptService.find()
-        res.send(prompts);
+        const jwtToken = req.headers.authorization;
+        if (jwtToken.startsWith('Bearer ')) {
+            const token = jwtToken.split(' ')[1]; // Extract the token without the "Bearer " prefix
+            // Verify the token and extract user_id
+            try {
+                const decodedToken = jwt.verify(token, 'SECRET'); // Replace 'your-secret-key' with your actual secret key
+                const user_id = decodedToken._id; // Assuming the user_id is stored in the JWT payload
+
+                const conversations = await ConversationService.findByUserId(user_id);
+                res.send(conversations);
+            } catch (error) {
+                console.error('Error decoding JWT:', error);
+                res.status(401).send('Unauthorized');
+            }
+        } else {
+            res.status(401).send('Unauthorized');
+        } 
 })
 
 router.get('/:id',
     passport.authenticate('jwt', {session: false}),
-    passport.authorizeRoles('ADMIN', 'USER'),
     async (req, res) => {
         const jwtToken = req.headers.authorization;
         if (jwtToken.startsWith('Bearer ')) {
@@ -23,8 +37,9 @@ router.get('/:id',
             try {
                 const decodedToken = jwt.verify(token, 'SECRET'); // Replace 'your-secret-key' with your actual secret key
                 const user_id = decodedToken._id; // Assuming the user_id is stored in the JWT payload
-                const prompt = await PromptService.findById(req.params.id, user_id);
-                res.send(prompt);
+
+                const conversations = await ConversationService.findById(req.params.conversation_id, user_id);
+                res.send(conversations);
             } catch (error) {
                 console.error('Error decoding JWT:', error);
                 res.status(401).send('Unauthorized');
@@ -33,54 +48,12 @@ router.get('/:id',
             res.status(401).send('Unauthorized');
         }
 })
-
-router.get('/conversation/:conversation_id',
+router.post('/',
     passport.authenticate('jwt', {session: false}),
     passport.authorizeRoles('ADMIN', 'USER'),
-    async (req, res) => {
-        const jwtToken = req.headers.authorization;
-        if (jwtToken.startsWith('Bearer ')) {
-            const token = jwtToken.split(' ')[1]; // Extract the token without the "Bearer " prefix
-            // Verify the token and extract user_id
-            try {
-                const decodedToken = jwt.verify(token, 'SECRET'); // Replace 'your-secret-key' with your actual secret key
-                const user_id = decodedToken._id; // Assuming the user_id is stored in the JWT payload
-                const prompts = await PromptService.findByConversationId(req.params.conversation_id, user_id);
-                res.send(prompts);
-            } catch (error) {
-                console.error('Error decoding JWT:', error);
-                res.status(401).send('Unauthorized');
-            }
-        } else {
-            res.status(401).send('Unauthorized');
-        }
-})
-
-router.post('/',   
-    passport.authenticate('jwt', {session: false}),
-    passport.authorizeRoles('ADMIN', 'USER'),
-    async (req, res) => {
-        const jwtToken = req.headers.authorization;
-        if (jwtToken.startsWith('Bearer ')) {
-            const token = jwtToken.split(' ')[1]; // Extract the token without the "Bearer " prefix
-            // Verify the token and extract user_id
-            try {
-                const decodedToken = jwt.verify(token, 'SECRET'); // Replace 'your-secret-key' with your actual secret key
-                const user_id = decodedToken._id; // Assuming the user_id is stored in the JWT payload
-                if(user_id === req.body.user_id) {
-                const prompt = await PromptService.save(req.body, user_id);
-                res.send(prompt);
-                }
-                else {
-                    res.status(401).send('Unauthorized');
-                }
-            } catch (error) {
-                console.error('Error decoding JWT:', error);
-                res.status(401).send('Unauthorized');
-            }
-        } else {
-            res.status(401).send('Unauthorized');
-        }
+    (req, res) => { 
+        const conversation = ConversationService.save(req.body)
+        res.send(conversation)
 })
 
 module.exports = router

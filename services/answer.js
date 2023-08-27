@@ -11,14 +11,9 @@ const findById = function(id)
     return AnswerModel.findById(id)
 }
 
-const findByPromptId = function(prompt_id)
+const findByPromptId = function(prompt_id, user_id)
 {
-    return AnswerModel.findByPromptId(prompt_id)
-}
-
-const findByUserId = function(user_id)
-{
-    return AnswerModel.findByUserId(user_id)
+    return AnswerModel.findByPromptId(prompt_id, user_id)
 }
 
 const save = function(answer)
@@ -30,6 +25,5 @@ module.exports = {
     find,
     findById,
     findByPromptId,
-    findByUserId,
     save
 }

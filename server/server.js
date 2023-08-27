@@ -8,11 +8,13 @@ mongoose.connect(config.dbConnection)
 const authRoutes = require('../routes/auth')
 const promptRoutes = require('../routes/prompt')
 const answerRoutes = require('../routes/answer')
+const conversationRoutes = require('../routes/conversation')
 
 app.use(express.json())
 app.use("/auth",authRoutes)
 app.use("/prompt",promptRoutes)
 app.use("/answer",answerRoutes)
+app.use("/conversation",conversationRoutes)
 
 app.get('/', (req, res) => {
     res.send('Hello World from GET!')

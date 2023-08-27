@@ -195,4 +195,3 @@ function Header({handleLoginClick, handleRegisterClick, handleSignOut, isAuthent
 }
 
 export default Header;
-

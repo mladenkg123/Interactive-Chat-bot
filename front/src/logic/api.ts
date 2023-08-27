@@ -1,25 +1,31 @@
 import { API_BASE_URL } from './constants';
 
-export async function fetchPreviousPrompts(jwt: string, user_id: string): Promise<any[]> {
-  const requestOptions = {
+function generateRequestOptionsGet(jwt: string): RequestInit {
+  return {
     method: 'GET',
     headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${jwt}` },
   };
-
-  const promptResponse = await fetch(`${API_BASE_URL}/prompt/user/${user_id}`, requestOptions);
-  const promptData = await promptResponse.json();
-  return promptData;
 }
 
-export async function fetchPreviousAnswers(jwt: string, user_id: string): Promise<any[]> {
-  const requestOptions: RequestInit = {
-    method: 'GET',
-    headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${jwt}` },
-  };
+export async function fetchPreviousPrompts(jwt: string, user_id: string): Promise<Response> {
+  const requestOptions = generateRequestOptionsGet(jwt);
+
+  const promptResponse = await fetch(`${API_BASE_URL}/prompt/user/${user_id}`, requestOptions);
+  return promptResponse;
+}
+
+export async function fetchConversations(jwt: string, user_id: string): Promise<Response> {
+  const requestOptions = generateRequestOptionsGet(jwt);
+
+  const promptResponse = await fetch(`${API_BASE_URL}/prompt/user/${user_id}`, requestOptions);
+  return promptResponse;
+}
+
+export async function fetchPreviousAnswers(jwt: string, user_id: string): Promise<Response> {
+  const requestOptions = generateRequestOptionsGet(jwt);
 
   const answerResponse = await fetch(`${API_BASE_URL}/answer/user/${user_id}`, requestOptions);
-  const answerData = await answerResponse.json();
-  return answerData;
+  return answerResponse;
 }
 
 export async function savePrompt(jwt: string, user_id: string, prompt: string, conversation_id: string): Promise<Response> {
@@ -33,7 +39,7 @@ export async function savePrompt(jwt: string, user_id: string, prompt: string, c
   return response;
 }
 
-export async function saveAnswer(jwt: string, user_id: string, answer: string, prompt_id: string): Promise<any> {
+export async function saveAnswer(jwt: string, user_id: string, answer: string, prompt_id: string): Promise<Response> {
   const requestOptions: RequestInit = {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${jwt}` },
@@ -41,9 +47,21 @@ export async function saveAnswer(jwt: string, user_id: string, answer: string, p
   };
 
   const response = await fetch(`${API_BASE_URL}/answer`, requestOptions);
-  return response.json();
+  return response;
 }
-export async function sendPromptToPython(prompt: string, user_id: string) : Promise<any> {
+
+export async function startNewConversation(jwt: string, user_id: string): Promise<Response> {
+  const requestOptions: RequestInit = {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${jwt}` },
+    body: JSON.stringify({ user_id }),
+  };
+
+  const response = await fetch(`${API_BASE_URL}/conversation`, requestOptions);
+  return response;
+}
+
+export async function sendPromptToPython(prompt: string, user_id: string) : Promise<Response> {
     const requestOptions = {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },

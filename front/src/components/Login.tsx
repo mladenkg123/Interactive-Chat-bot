@@ -1,7 +1,8 @@
 import './login.css'
 import { useState } from 'react';
 import { getExpireFromJWT } from '../logic/utils';
-import Cookies, { Cookie as CookieType } from 'universal-cookie';
+import Cookies from 'universal-cookie';
+import type { Cookie as CookieType } from 'universal-cookie';
 import Swal from 'sweetalert2';
 
 type LoginProps = {
@@ -41,8 +42,7 @@ const Login = ({ isShowLogin, onCloseLogin, onLoginSuccess } : LoginProps) => {
 
         const expire = getExpireFromJWT(data.jwt);
         if (expire !== null) {
-          const expirationDate = new Date(expire * 1000 + 100000);
-          document.cookie = `jwt=${JSON.stringify(data.jwt)}; expires=${expirationDate.toUTCString()}; SameSite=None`;
+          cookies.set('jwt', data.jwt);
          
           Swal.fire({
             title: 'Signing In',

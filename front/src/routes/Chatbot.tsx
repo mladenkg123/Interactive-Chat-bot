@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCube, faUser } from '@fortawesome/free-solid-svg-icons';
 import Header from '../components/Header';
@@ -7,15 +7,18 @@ import type { Cookie as CookieType } from 'universal-cookie';
 import {
   fetchPreviousPrompts,
   fetchPreviousAnswers,
+  fetchConversations,
   savePrompt,
   saveAnswer,
+  startNewConversation,
   sendPromptToPython
 } from '../logic/api';
 import { getUserIDFromJWT } from '../logic/utils';
 import './ChatbotCss.css';
 
 const cookies: CookieType = new Cookies();
-
+const jwt = cookies.get('jwt');
+const user_id = getUserIDFromJWT(jwt);
 const ChatBot = () => {
   const [conversationsHistory, setConversationsHistory] = useState([
     [
@@ -40,14 +43,10 @@ const ChatBot = () => {
       setDisableInput(false);
       return;
     }
-  
-    const jwt = cookies.get('jwt');
     if (!jwt) {
       setDisableInput(false);
       return;
     }
-  
-    const user_id = getUserIDFromJWT(jwt);
     if (!user_id) {
       setDisableInput(false);
       return;
@@ -56,7 +55,7 @@ const ChatBot = () => {
     const response = await sendPromptToPython(userInput, user_id);
     if (response.status === 200) { //SAVE PROMPT AND ANSWER AT THE SAME TIME????????
       const data = await response.json();
-      const responseP = await savePrompt(jwt, user_id, userInput, "1");
+      const responseP = await savePrompt(jwt, user_id, userInput, "64e911933918ffaf74710c78");
       if (responseP.status === 200) {
         const data1 = await responseP.json();
         console.log(data1._id)
@@ -78,7 +77,8 @@ const ChatBot = () => {
     setDisableInput(false);
   };
 
-  const handleStartNewChat = () => {
+  const handleStartNewChat = async () => {
+    await startNewConversation(jwt, user_id);
     setConversationsHistory([...conversationsHistory, []]);
     setCurrentConversationIndex(conversationsHistory.length);
   };
