@@ -1,0 +1,379 @@
+{
+	"info": {
+		"_postman_id": "590c82af-9404-4812-b758-10240b5b9791",
+		"name": "API",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "26764941"
+	},
+	"item": [
+		{
+			"name": "Get all answers as admin",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NDY0ZmY3YTI0MDEzNzE2NzRlOTQ2MWUiLCJleHBpcmUiOjE2ODUwMjYwNTYsImlhdCI6MTY4NDQyMTI1Nn0.YB8H_FoKClPgUnqB1L40p-d1BLuKvSTECWxTxIljOCY",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:8000/answer",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"answer"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get answer from prompt ID",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NGU5MTE4ODM5MThmZmFmNzQ3MTBjNzQiLCJleHBpcmUiOjE2OTM3NTQ5NDAsImlhdCI6MTY5MzE1MDE0MH0.PplBmvTN3wRcH4_NesPmUM3JDxITZgeWdxscQ7SyMK8",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:8000/answer/prompt/64eb55fd308f2950bb005a35",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"answer",
+						"prompt",
+						"64eb55fd308f2950bb005a35"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Post Answer",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NGU5MTE4ODM5MThmZmFmNzQ3MTBjNzQiLCJleHBpcmUiOjE2OTM3NTQ5NDAsImlhdCI6MTY5MzE1MDE0MH0.PplBmvTN3wRcH4_NesPmUM3JDxITZgeWdxscQ7SyMK8",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"answer\":\"tgpfbpfbpfbpfbpfbpf\",\r\n    \"prompt_id\":\"64eb7e0152ca54ce45cf4e79\",\r\n    \"user_id\":\"64e911883918ffaf74710c74\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8000/answer",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"answer"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get users conversations",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NGU5MTE4ODM5MThmZmFmNzQ3MTBjNzQiLCJleHBpcmUiOjE2OTM3NTQ5NDAsImlhdCI6MTY5MzE1MDE0MH0.PplBmvTN3wRcH4_NesPmUM3JDxITZgeWdxscQ7SyMK8",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:8000/conversation",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"conversation"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get specific conversation from the id",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NGU5MTE4ODM5MThmZmFmNzQ3MTBjNzQiLCJleHBpcmUiOjE2OTM3NTQ5NDAsImlhdCI6MTY5MzE1MDE0MH0.PplBmvTN3wRcH4_NesPmUM3JDxITZgeWdxscQ7SyMK8",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:8000/conversation/64e911933918ffaf74710c78",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"conversation",
+						"64e911933918ffaf74710c78"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Start new conversation",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NGU5MTE4ODM5MThmZmFmNzQ3MTBjNzQiLCJleHBpcmUiOjE2OTM3NTk0NjQsImlhdCI6MTY5MzE1NDY2NH0.G9xdQIiKWMZiVRJzRheavvRklBqU7GS1rm4mjH7AJ4M",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"user_id\":\"64e911883918ffaf74710c74\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8000/conversation",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"conversation"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get all prompts as admin",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NGU5MTE4ODM5MThmZmFmNzQ3MTBjNzQiLCJleHBpcmUiOjE2OTM3NTk0NjQsImlhdCI6MTY5MzE1NDY2NH0.G9xdQIiKWMZiVRJzRheavvRklBqU7GS1rm4mjH7AJ4M",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:8000/prompt",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"prompt"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get prompt by ID",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NGU5MTE4ODM5MThmZmFmNzQ3MTBjNzQiLCJleHBpcmUiOjE2OTM3NjM0MDAsImlhdCI6MTY5MzE1ODYwMH0.zmXFH2nnPZpQd_zASxb7f8JqZk7VOo85_txFpkDaVls",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:8000/prompt/64eb8d087a183fea9f26bb1b",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"prompt",
+						"64eb8d087a183fea9f26bb1b"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get prompt by conversation ID",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NGU5MTE4ODM5MThmZmFmNzQ3MTBjNzQiLCJleHBpcmUiOjE2OTM3NjM0MDAsImlhdCI6MTY5MzE1ODYwMH0.zmXFH2nnPZpQd_zASxb7f8JqZk7VOo85_txFpkDaVls",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:8000/prompt/conversation/64e911933918ffaf74710c78",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"prompt",
+						"conversation",
+						"64e911933918ffaf74710c78"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Post prompt",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NGU5MTE4ODM5MThmZmFmNzQ3MTBjNzQiLCJleHBpcmUiOjE2OTM3NTQ5NDAsImlhdCI6MTY5MzE1MDE0MH0.PplBmvTN3wRcH4_NesPmUM3JDxITZgeWdxscQ7SyMK8",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"prompt\":\"PBBPFBPF765765\",\r\n    \"user_id\":\"64e911883918ffaf74710c74\",\r\n    \"conversation_id\":\"64e911883918ffaf74710c74\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8000/prompt",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"prompt"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Register",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"email\":\"4@4.4\",\r\n    \"password\":\"123456\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8000/auth/register",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"auth",
+						"register"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Login",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"email\":\"3@3.3\",\r\n    \"password\":\"123456\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8000/auth/login",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"auth",
+						"login"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
