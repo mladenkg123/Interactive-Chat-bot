@@ -31,6 +31,11 @@ type Answer = {
   knownFor: string[];
 };
 
+type Conversation = {
+  _id: string;
+  user_id: string;
+};
+
 const cookies = new Cookies();
 const jwt = cookies.get('jwt') as string;
 const user_id = getUserIDFromJWT(jwt);
@@ -55,7 +60,7 @@ const ChatBot = () => {
         try {
           const conversationsListPromise = await fetchConversations(jwt);
           if (conversationsListPromise.status === 200) {
-            const conversationsList = await conversationsListPromise.json() as object[];
+            const conversationsList = await conversationsListPromise.json() as Conversation[];
           } else {
             console.error('Error fetching previous conversations');
           }
