@@ -37,6 +37,11 @@ type ConversationResponse = {
   status: number;
 };
 
+type Conversation = {
+  conversation_id: string;
+};
+
+
 const cookies = new Cookies();
 const jwt = cookies.get('jwt') as string;
 const user_id = getUserIDFromJWT(jwt);
