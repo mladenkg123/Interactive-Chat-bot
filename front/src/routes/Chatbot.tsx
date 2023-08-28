@@ -65,6 +65,8 @@ const ChatBot = () => {
   const [userInput, setUserInput] = useState('');
   const [disableInput, setDisableInput] = useState(false);
   const [conversationsList, setConversationsList] = useState<Conversation[]>([]);
+  const [currentConversationId, setCurrentConversationId] = useState<string | null>(null);
+
 
   const handleUserInput = (event: { target: { value: React.SetStateAction<string>; }; }) => {
     setUserInput(event.target.value);
@@ -95,32 +97,29 @@ const ChatBot = () => {
   
   
   
-  const handleSubmit =  async (event: { preventDefault: () => void; }) => {
+  const handleSubmit = async (event: { preventDefault: () => void }) => {
     setDisableInput(true);
     event.preventDefault();
     if (userInput.trim() === '') {
       setDisableInput(false);
       return;
     }
-    if (!jwt) {
-      setDisableInput(false);
-      return;
-    }
-    if (!user_id) {
+    if (!jwt || !user_id) {
       setDisableInput(false);
       return;
     }
 
     const responsePython = await sendPromptToPython(userInput, user_id);
-    if (responsePython.status === 200 || responsePython.status === 500) { //SAVE PROMPT AND ANSWER AT THE SAME TIME????????
-      //const pythonData = await responsePython.json() as PythonResponse;
-      const conversation_id = "64e911933918ffaf74710c78";
+    if (responsePython.status === 200 || responsePython.status === 500) {
+      const conversation_id = conversationsList[currentConversationIndex].conversation_id;
       const responsePrompt = await savePrompt(jwt, user_id, userInput, conversation_id);
       if (responsePrompt.status === 200) {
         const dataPrompt = await responsePrompt.json() as PromptResponse;
-        await saveAnswer(jwt, "pythonData.data", dataPrompt.data.prompt_id, conversation_id);
+        console.log(dataPrompt);
+        const prompt_id = dataPrompt.data.prompt_id; 
+        console.log(prompt_id);
+        await saveAnswer(jwt, "pythonData.data", prompt_id, conversation_id);
       }
-      //setOutput((prevOutput) => [...prevOutput, serverResponse || '']);
     } else {
       setDisableInput(false);
       console.error('Error: Unexpected response code from the Python script');
@@ -137,9 +136,9 @@ const ChatBot = () => {
   };
 
   const handleStartNewChat = async () => {
-    if (!conversationsHistory[currentConversationIndex].length) {
+    if (!conversationsHistory[0].length) {
       // If the conversation is empty, create a new chat and write a prompt
-      const responsePrompt = await savePrompt(jwt, user_id, "Hello! How can I help you?", conversationsList[currentConversationIndex].conversation_id);
+      const responsePrompt = await savePrompt(jwt, user_id as string, "Hello! How can I help you?", conversationsList[0].conversation_id);
       if (responsePrompt.status === 200) {
         const dataPrompt = await responsePrompt.json() as Prompt;
         await startNewConversation(jwt, user_id as string);
@@ -169,28 +168,21 @@ const ChatBot = () => {
 
   const handleRestoreConversation = async (index: number) => {
     setCurrentConversationIndex(index);
-  
     const conversationId = conversationsList[index].conversation_id;
     const promptsResponse = await fetchPreviousPrompts(jwt, conversationId);
-    console.log(promptsResponse);
-    // navigate(`/ChatBot/${conversationId}`); 
 
     if (promptsResponse.status === 200) {
       const responseJson = await promptsResponse.json();
       const promptsData = responseJson.data;
-      console.log(promptsData);
-
       if (Array.isArray(promptsData) && promptsData.length > 0) {
-        const formattedPrompts = promptsData.map((promptObj: any) => ({
-          sender: 'User', 
+        const formattedPrompts = promptsData.map((promptObj: Prompt) => ({
+          sender: 'User',
           message: promptObj.prompt,
         }));
-  
         setConversationsHistory([formattedPrompts]);
       } else {
         console.log('No prompts available for this conversation');
-        const formattedPrompts2 = [{ sender: 'User', message: promptsData.prompt }]; 
-        console.log(promptsData.prompt);
+        const formattedPrompts2 = [{ sender: 'User', message: promptsData.prompt }];
         setConversationsHistory([formattedPrompts2]);
       }
     } else {
@@ -198,8 +190,8 @@ const ChatBot = () => {
     }
   };
 
-  const currentConversation = conversationsHistory[currentConversationIndex];
-
+  const currentConversation = conversationsHistory[0];
+ 
   return (
     <div className="chatbot-container">
       <Header handleLoginClick={function (): void {
@@ -263,7 +255,7 @@ const ChatBot = () => {
                     disabled={disableInput}
                   />
                   <button className="send-button" type="submit" onClick={handleStartNewChat}>
-                    {conversationsHistory[currentConversationIndex].length ? 'Send' : 'New Chat'}
+                    {conversationsHistory[0].length ? 'Send' : 'New Chat'}
                   </button>
                 </form>
           </div>
