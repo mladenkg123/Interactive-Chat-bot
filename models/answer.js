@@ -15,7 +15,7 @@ AnswerModel.saveAnswer = function (answer){
         prompt_id: answer.prompt_id
     });
     newAnswer.save();
-    return newAnswer;
+    return { status: 200, data: newAnswer };
 }
 AnswerModel.findByPromptId = async function (prompt_id, user_id) {
     const ObjectId = mongoose.Types.ObjectId;

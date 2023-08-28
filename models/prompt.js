@@ -14,7 +14,7 @@ PromptModel.savePrompt = function (prompt){
         conversation_id: prompt.conversation_id
     });
     newPrompt.save();
-    return newPrompt;
+    return { status: 200, data: newPrompt };
 }
 
 PromptModel.findByConversationId = async function (conversation_id, user_id) {
@@ -33,7 +33,7 @@ PromptModel.findByConversationId = async function (conversation_id, user_id) {
         }
         
 
-        const prompts = await PromptModel.find({ conversation_id: conversation_id }).exec();
+        const prompts = await PromptModel.find({ conversation_id: conversation_id }, {prompt_id: 1, prompt: 1}).exec();
         if (!prompts) {
             return { status: 404, message: 'No prompts' };
         }
@@ -56,7 +56,7 @@ PromptModel.findById = async function (prompt_id, user_id) {
     const ObjectId = mongoose.Types.ObjectId;
     try {
         // Retrieve the conversation_id using the provided prompt_id
-        const prompt = await PromptModel.findOne(new ObjectId(prompt_id));
+        const prompt = await PromptModel.findOne(new ObjectId(prompt_id), {prompt_id: 1, prompt: 1});
 
         if (!prompt) {
             return { status: 404, message: 'Prompt not found' };
@@ -71,8 +71,12 @@ PromptModel.findById = async function (prompt_id, user_id) {
         if (conversationUserId.user_id.toString() !== user_id.toString()) {
             return { status: 403, message: 'Forbidden' };
         }
-        
-        return { status: 200, data: prompt };
+        const modifiedData = {
+            prompt_id: prompt._id,
+            prompt: prompt.prompt
+        };
+
+        return { status: 200, data: modifiedData };
     } catch (error) {
         // Handle other errors gracefully
         console.log(error);

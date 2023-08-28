@@ -11,19 +11,20 @@ ConversationModel.saveConversation = function (conversation) {
     const newConversation = new ConversationModel({
         user_id: conversation.user_id
     });
-    return newConversation.save(); // Returning the promise
+    newConversation.save();
+    return { status: 200, data: newConversation };
 };
 
 // Find conversations by user ID
 ConversationModel.findByUserId = async function (user_id) {
     const ObjectId = mongoose.Types.ObjectId;
 
-    const conversations = await ConversationModel.find({ user_id: new ObjectId(user_id) }).exec();
+    const conversations = await ConversationModel.find({ user_id: new ObjectId(user_id) }, {conversation_id: 1}).exec();
     const modifiedData = conversations.map(item => {
         const { _id, ...rest } = item.toObject(); // Use toObject() to convert Mongoose document to plain JavaScript object
         return { conversation_id: _id, ...rest };
     });
-    return modifiedData;
+    return { status: 200, data: modifiedData };
 };
 /*
 ConversationModel.findById = function (conversation_id, user_id) {
