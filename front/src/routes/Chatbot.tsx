@@ -16,10 +16,15 @@ import {
 import { getUserIDFromJWT } from '../logic/utils';
 import './ChatbotCss.css';
 
+type PromptResponse = {
+  data: Prompt;
+  status: number;
+};
+
 type Prompt = {
   prompt: string;
   conversation_id: string;
-  _id: string;
+  prompt_id: string;
 };
 
 type PythonResponse = {
@@ -71,7 +76,7 @@ const ChatBot = () => {
           const conversationsListPromise = await fetchConversations(jwt);
           if (conversationsListPromise.status === 200) {
             const conversationsListResponse = await conversationsListPromise.json() as ConversationResponse;
-            const conversationsList = conversationsListResponse.data as Conversation;
+            const conversationsList = conversationsListResponse.data;
             console.log(conversationsList);
             setConversationsList(conversationsList);
           
@@ -107,13 +112,13 @@ const ChatBot = () => {
     }
 
     const responsePython = await sendPromptToPython(userInput, user_id);
-    if (responsePython.status === 200) { //SAVE PROMPT AND ANSWER AT THE SAME TIME????????
-      const pythonData = await responsePython.json() as PythonResponse;
-
-      const responsePrompt = await savePrompt(jwt, user_id, userInput, "64e911933918ffaf74710c78");
+    if (responsePython.status === 200 || responsePython.status === 500) { //SAVE PROMPT AND ANSWER AT THE SAME TIME????????
+      //const pythonData = await responsePython.json() as PythonResponse;
+      const conversation_id = "64e911933918ffaf74710c78";
+      const responsePrompt = await savePrompt(jwt, user_id, userInput, conversation_id);
       if (responsePrompt.status === 200) {
-        const dataPrompt = await responsePrompt.json() as Prompt;
-        await saveAnswer(jwt, user_id, pythonData.data, dataPrompt._id);
+        const dataPrompt = await responsePrompt.json() as PromptResponse;
+        await saveAnswer(jwt, "pythonData.data", dataPrompt.data.prompt_id, conversation_id);
       }
       //setOutput((prevOutput) => [...prevOutput, serverResponse || '']);
     } else {

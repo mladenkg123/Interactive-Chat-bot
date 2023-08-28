@@ -11,6 +11,7 @@ ConversationModel.saveConversation = function (conversation) {
     const newConversation = new ConversationModel({
         user_id: conversation.user_id
     });
+
     newConversation.save();
     return { status: 200, data: newConversation };
 };

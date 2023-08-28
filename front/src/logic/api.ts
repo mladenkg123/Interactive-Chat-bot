@@ -50,11 +50,11 @@ export async function savePrompt(jwt: string, user_id: string, prompt: string, c
   return response;
 }
 
-export async function saveAnswer(jwt: string, user_id: string, answer: string, prompt_id: string): Promise<Response> {
+export async function saveAnswer(jwt: string, answer: string, prompt_id: string, conversation_id: string): Promise<Response> {
   const requestOptions: RequestInit = {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${jwt}` },
-    body: JSON.stringify({ answer, prompt_id, user_id }),
+    body: JSON.stringify({ answer, prompt_id, conversation_id }),
   };
 
   const response = await fetch(`${API_BASE_URL}/answer`, requestOptions);

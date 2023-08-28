@@ -13,8 +13,13 @@ PromptModel.savePrompt = function (prompt){
         prompt: prompt.prompt,
         conversation_id: prompt.conversation_id
     });
+    const modifiedData = {
+        prompt: newPrompt.prompt,
+        conversation_id: newPrompt.conversation_id,
+        prompt_id: newPrompt._id
+    };
     newPrompt.save();
-    return { status: 200, data: newPrompt };
+    return { status: 200, data: modifiedData };
 }
 
 PromptModel.findByConversationId = async function (conversation_id, user_id) {
