@@ -7,11 +7,15 @@ function generateRequestOptionsGet(jwt: string): RequestInit {
   };
 }
 
-export async function fetchPreviousPrompts(jwt: string, user_id: string): Promise<Response> {
-  const requestOptions = generateRequestOptionsGet(jwt);
+export async function startNewConversation(jwt: string, user_id: string): Promise<Response> {
+  const requestOptions: RequestInit = {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${jwt}` },
+    body: JSON.stringify({ user_id }),
+  };
 
-  const promptResponse = await fetch(`${API_BASE_URL}/prompt/${user_id}`, requestOptions);
-  return promptResponse;
+  const response = await fetch(`${API_BASE_URL}/conversation`, requestOptions);
+  return response;
 }
 
 export async function fetchConversations(jwt: string): Promise<Response> {
@@ -21,10 +25,17 @@ export async function fetchConversations(jwt: string): Promise<Response> {
   return conversationsResponse;
 }
 
-export async function fetchPreviousAnswers(jwt: string, user_id: string): Promise<Response> {
+export async function fetchPreviousPrompts(jwt: string, conversation_id: string): Promise<Response> {
   const requestOptions = generateRequestOptionsGet(jwt);
 
-  const answerResponse = await fetch(`${API_BASE_URL}/answer/user/${user_id}`, requestOptions);
+  const promptResponse = await fetch(`${API_BASE_URL}/prompt/conversation/${conversation_id}`, requestOptions);
+  return promptResponse;
+}
+
+export async function fetchPreviousAnswers(jwt: string, conversation_id: string): Promise<Response> {
+  const requestOptions = generateRequestOptionsGet(jwt);
+
+  const answerResponse = await fetch(`${API_BASE_URL}/answer/conversation/${conversation_id}`, requestOptions);
   return answerResponse;
 }
 
@@ -47,17 +58,6 @@ export async function saveAnswer(jwt: string, user_id: string, answer: string, p
   };
 
   const response = await fetch(`${API_BASE_URL}/answer`, requestOptions);
-  return response;
-}
-
-export async function startNewConversation(jwt: string, user_id: string): Promise<Response> {
-  const requestOptions: RequestInit = {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${jwt}` },
-    body: JSON.stringify({ user_id }),
-  };
-
-  const response = await fetch(`${API_BASE_URL}/conversation`, requestOptions);
   return response;
 }
 
