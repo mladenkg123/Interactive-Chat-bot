@@ -10,7 +10,7 @@ function generateRequestOptionsGet(jwt: string): RequestInit {
 export async function fetchPreviousPrompts(jwt: string, user_id: string): Promise<Response> {
   const requestOptions = generateRequestOptionsGet(jwt);
 
-  const promptResponse = await fetch(`${API_BASE_URL}/prompt/user/${user_id}`, requestOptions);
+  const promptResponse = await fetch(`${API_BASE_URL}/prompt/${user_id}`, requestOptions);
   return promptResponse;
 }
 
