@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCube, faUser } from '@fortawesome/free-solid-svg-icons';
+import { useNavigate } from 'react-router-dom';
 import Header from '../components/Header';
 import Cookies from 'universal-cookie';
 import {
@@ -32,7 +33,7 @@ type Answer = {
 };
 
 type Conversation = {
-  _id: string;
+  conversation_id: string;
   user_id: string;
 };
 
@@ -40,9 +41,12 @@ const cookies = new Cookies();
 const jwt = cookies.get('jwt') as string;
 const user_id = getUserIDFromJWT(jwt);
 const ChatBot = () => {
+
+  const navigate = useNavigate();
+
   const [conversationsHistory, setConversationsHistory] = useState([
     [
-      { sender: 'Cube-BOT', message: 'Hello! How can I help you?' },
+      { sender: 'Cube-BOT', message: 'Hello! How can I help you?' }, //Mora da se promeni
       { sender: 'User', message: 'Hi there! I have a question.' },
     ],
   ]);
@@ -50,6 +54,7 @@ const ChatBot = () => {
   const [currentConversationIndex, setCurrentConversationIndex] = useState(0);
   const [userInput, setUserInput] = useState('');
   const [disableInput, setDisableInput] = useState(false);
+  const [conversationsList, setConversationsList] = useState<Conversation[]>([]);
 
   const handleUserInput = (event: { target: { value: React.SetStateAction<string>; }; }) => {
     setUserInput(event.target.value);
@@ -61,6 +66,8 @@ const ChatBot = () => {
           const conversationsListPromise = await fetchConversations(jwt);
           if (conversationsListPromise.status === 200) {
             const conversationsList = await conversationsListPromise.json() as Conversation[];
+            console.log(conversationsList);
+            setConversationsList(conversationsList);
           } else {
             console.error('Error fetching previous conversations');
           }
@@ -123,8 +130,19 @@ const ChatBot = () => {
     setCurrentConversationIndex(conversationsHistory.length);
   };
 
-  const handleRestoreConversation = (index: React.SetStateAction<number>) => {
+  const handleRestoreConversation = async (index: number) => {
     setCurrentConversationIndex(index);
+  
+    const conversationId = conversationsList[index].conversation_id;
+    const promptsResponse = await fetchPreviousPrompts(jwt, conversationId);
+    navigate(`/ChatBot/${conversationId}`);
+    console.log(conversationId);
+    if (promptsResponse.status === 200) {
+      const promptsData = await promptsResponse.json();
+      setConversationsHistory(promptsData);
+    } else {
+      console.error('Error fetching prompts for conversation');
+    }
   };
 
   const currentConversation = conversationsHistory[currentConversationIndex];
@@ -143,7 +161,7 @@ const ChatBot = () => {
           </button>
           <div className="conversation-restore-points">
             <div className="restore-points-header">Previous Chats</div>
-            {conversationsHistory.map((_, index) => (
+            {conversationsList.map((conversation, index) => (
               <div
                 key={index}
                 className={`restore-point ${
