@@ -65,9 +65,11 @@ const ChatBot = () => {
         try {
           const conversationsListPromise = await fetchConversations(jwt);
           if (conversationsListPromise.status === 200) {
-            const conversationsList = await conversationsListPromise.json() as Conversation[];
+            const conversationsListPromiseData = await conversationsListPromise.json() as Conversation[];
+            const conversationList = conversationsListPromiseData.data;
             console.log(conversationsList);
             setConversationsList(conversationsList);
+          
           } else {
             console.error('Error fetching previous conversations');
           }
@@ -135,11 +137,23 @@ const ChatBot = () => {
   
     const conversationId = conversationsList[index].conversation_id;
     const promptsResponse = await fetchPreviousPrompts(jwt, conversationId);
-    navigate(`/ChatBot/${conversationId}`);
-    console.log(conversationId);
+  
     if (promptsResponse.status === 200) {
-      const promptsData = await promptsResponse.json();
-      setConversationsHistory(promptsData);
+      const responseJson = await promptsResponse.json();
+      const promptsData = responseJson.data;
+      if (Array.isArray(promptsData) && promptsData.length > 0) {
+        const formattedPrompts = promptsData.map((promptObj: any) => ({
+          sender: 'User', 
+          message: promptObj.prompt,
+        }));
+  
+        setConversationsHistory([formattedPrompts]);
+      } else {
+        console.log('No prompts available for this conversation');
+        const formattedPrompts2 = [{ sender: 'User', message: promptsData.prompt }]; 
+        console.log(promptsData.prompt);
+        setConversationsHistory([formattedPrompts2]);
+      }
     } else {
       console.error('Error fetching prompts for conversation');
     }
