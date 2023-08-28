@@ -79,7 +79,7 @@ const ChatBot = () => {
           if (conversationsListPromise.status === 200) {
             const conversationsListResponse = await conversationsListPromise.json() as ConversationResponse;
             const conversationsList = conversationsListResponse.data;
-            console.log(conversationsList);
+            //console.log(conversationsList);
             setConversationsList(conversationsList);
           
           } else {
@@ -112,30 +112,32 @@ const ChatBot = () => {
     const responsePython = await sendPromptToPython(userInput, user_id);
     if (responsePython.status === 200 || responsePython.status === 500) {
       const conversation_id = conversationsList[currentConversationIndex].conversation_id;
+      console.log(conversation_id, currentConversationIndex);
       const responsePrompt = await savePrompt(jwt, user_id, userInput, conversation_id);
       if (responsePrompt.status === 200) {
         const dataPrompt = await responsePrompt.json() as PromptResponse;
-        console.log(dataPrompt);
+        //console.log(dataPrompt);
         const prompt_id = dataPrompt.data.prompt_id; 
-        console.log(prompt_id);
+        //console.log(prompt_id);
         await saveAnswer(jwt, "pythonData.data", prompt_id, conversation_id);
       }
     } else {
       setDisableInput(false);
       console.error('Error: Unexpected response code from the Python script');
     }
-    const updatedConversation = [...conversationsHistory[currentConversationIndex]];
+    const updatedConversation = [...conversationsHistory[0]];
     updatedConversation.push({ sender: 'User', message: userInput });
 
     const newConversationsHistory = [...conversationsHistory];
-    newConversationsHistory[currentConversationIndex] = updatedConversation;
-
+    newConversationsHistory[0] = updatedConversation;
+    //console.log(conversationsHistory);
     setConversationsHistory(newConversationsHistory);
     setUserInput('');
     setDisableInput(false);
   };
 
   const handleStartNewChat = async () => {
+    /*
     if (!conversationsHistory[0].length) {
       // If the conversation is empty, create a new chat and write a prompt
       const responsePrompt = await savePrompt(jwt, user_id as string, "Hello! How can I help you?", conversationsList[0].conversation_id);
@@ -146,12 +148,13 @@ const ChatBot = () => {
           ...conversationsHistory,
           [{ sender: 'User', message: "Hello! How can I help you?" }]
         ]);
-        setCurrentConversationIndex(conversationsHistory.length);
+        //setCurrentConversationIndex(conversationsHistory.length);
       }
     } else {
       // If the conversation is not empty, simply switch to the chat
-      setCurrentConversationIndex(conversationsHistory.length - 1);
+      //setCurrentConversationIndex(conversationsHistory.length - 1);
     }
+    */
   };
 
   const handleNewChat = async () => {
@@ -190,8 +193,6 @@ const ChatBot = () => {
     }
   };
 
-  const currentConversation = conversationsHistory[0];
- 
   return (
     <div className="chatbot-container">
       <Header handleLoginClick={function (): void {
@@ -226,7 +227,7 @@ const ChatBot = () => {
         <div className="chat-content">
           <div className="previous-conversations">
             <div className="message-bubbles">
-              {currentConversation.map((msg, index) => (
+              {conversationsHistory[0].map((msg, index) => (
                 <div
                   key={index}
                   className={msg.sender === 'Cube-BOT' ? 'bot-message' : 'user-message'}
