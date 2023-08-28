@@ -70,15 +70,16 @@ AnswerModel.findByConversationId = async function (conversation_id, user_id) {
         if (conversationUserId.user_id.toString() !== user_id.toString()) {
             return { status: 403, message: 'Forbidden' };
         }
-        
         // Retrieve the answers associated with the provided conversation_id
-        const answers = await AnswerModel.find(new ObjectId(conversation_id) , { prompt_id: 1, answer: 1});
-        
+        const answers = await AnswerModel.find({ conversation_id: conversation_id } , { prompt_id: 1, answer: 1}).exec();
         if (!answers) {
             return { status: 404, message: 'Answers not found' };
         }
-        
-        return { status: 200, data: answers };
+        const modifiedData = answers.map(item => {
+            const { _id, ...rest } = item.toObject(); // Use toObject() to convert Mongoose document to plain JavaScript object
+            return { answer_id: _id, ...rest };
+        });
+        return { status: 200, data: modifiedData };
     } catch (error) {
         // Handle other errors gracefully
         console.log(error);

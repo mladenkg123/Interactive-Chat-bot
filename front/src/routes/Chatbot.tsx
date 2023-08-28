@@ -33,8 +33,9 @@ type PythonResponse = {
 };
 
 type Answer = {
-  name: string;
-  knownFor: string[];
+  answer: string;
+  prompt_id: string;
+  conversation_id: string;
 };
 
 type ConversationResponse = {
@@ -127,7 +128,7 @@ const ChatBot = () => {
     }
     const updatedConversation = [...conversationsHistory[0]];
     updatedConversation.push({ sender: 'User', message: userInput });
-
+    updatedConversation.push({ sender: 'Cube-BOT', message: "pythonData.data" });
     const newConversationsHistory = [...conversationsHistory];
     newConversationsHistory[0] = updatedConversation;
     //console.log(conversationsHistory);
@@ -173,16 +174,34 @@ const ChatBot = () => {
     setCurrentConversationIndex(index);
     const conversationId = conversationsList[index].conversation_id;
     const promptsResponse = await fetchPreviousPrompts(jwt, conversationId);
-
-    if (promptsResponse.status === 200) {
+    const answersResponse = await fetchPreviousAnswers(jwt, conversationId);
+    if (promptsResponse.status === 200 && answersResponse.status === 200) {
       const responseJson = await promptsResponse.json();
       const promptsData = responseJson.data;
-      if (Array.isArray(promptsData) && promptsData.length > 0) {
+      const responseJson2 = await answersResponse.json();
+      const answersData = responseJson2.data;
+      if (Array.isArray(promptsData) && promptsData.length > 0 && Array.isArray(answersData) && answersData.length > 0) {
         const formattedPrompts = promptsData.map((promptObj: Prompt) => ({
           sender: 'User',
           message: promptObj.prompt,
         }));
-        setConversationsHistory([formattedPrompts]);
+
+        const formattedAnswers = answersData.map((answerObj: Answer) => ({
+          sender: 'Cube-BOT',
+          message: answerObj.answer,
+        }));
+
+        let final = [];
+
+        for (let i = 0; i < promptsData.length * 2; i++) {
+          if(i%2 == 0) {
+            final[i] = formattedPrompts[i/2];
+          }
+          else {
+            final[i] = formattedAnswers[i%2];
+          }
+        }
+        setConversationsHistory([final]);
       } else {
         console.log('No prompts available for this conversation');
         const formattedPrompts2 = [{ sender: 'User', message: promptsData.prompt }];

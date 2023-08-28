@@ -16,9 +16,9 @@ const findByPromptId = function(prompt_id, user_id)
     return AnswerModel.findByPromptId(prompt_id, user_id)
 }
 
-const findByConversationId = function(prompt_id, user_id)
+const findByConversationId = function(conversation_id, user_id)
 {
-    return AnswerModel.findByConversationId(prompt_id, user_id)
+    return AnswerModel.findByConversationId(conversation_id, user_id)
 }
 
 const save = function(answer)
