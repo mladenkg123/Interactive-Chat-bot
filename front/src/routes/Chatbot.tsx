@@ -33,7 +33,7 @@ type Answer = {
 };
 
 type ConversationResponse = {
-  data: Array<string>;
+  data: Array<Conversation>;
   status: number;
 };
 
@@ -71,7 +71,7 @@ const ChatBot = () => {
           const conversationsListPromise = await fetchConversations(jwt);
           if (conversationsListPromise.status === 200) {
             const conversationsListResponse = await conversationsListPromise.json() as ConversationResponse;
-            const conversationsList = conversationsListResponse.data;
+            const conversationsList = conversationsListResponse.data as Conversation;
             console.log(conversationsList);
             setConversationsList(conversationsList);
           
