@@ -137,20 +137,49 @@ const ChatBot = () => {
   };
 
   const handleStartNewChat = async () => {
-    await startNewConversation(jwt, user_id as string);
-    setConversationsHistory([...conversationsHistory, []]);
-    setCurrentConversationIndex(conversationsHistory.length);
+    if (!conversationsHistory[currentConversationIndex].length) {
+      // If the conversation is empty, create a new chat and write a prompt
+      const responsePrompt = await savePrompt(jwt, user_id, "Hello! How can I help you?", conversationsList[currentConversationIndex].conversation_id);
+      if (responsePrompt.status === 200) {
+        const dataPrompt = await responsePrompt.json() as Prompt;
+        await startNewConversation(jwt, user_id as string);
+        setConversationsHistory([
+          ...conversationsHistory,
+          [{ sender: 'User', message: "Hello! How can I help you?" }]
+        ]);
+        setCurrentConversationIndex(conversationsHistory.length);
+      }
+    } else {
+      // If the conversation is not empty, simply switch to the chat
+      setCurrentConversationIndex(conversationsHistory.length - 1);
+    }
   };
+
+  const handleNewChat = async () => {
+
+    setConversationsHistory([
+      [
+        { sender: 'Cube-BOT', message: 'Hello! How can I help you?' },
+        { sender: 'User', message: 'Hi there! I have a question.' },
+      ],
+    ]);
+  
+    navigate('/ChatBot');
+  }
 
   const handleRestoreConversation = async (index: number) => {
     setCurrentConversationIndex(index);
   
     const conversationId = conversationsList[index].conversation_id;
     const promptsResponse = await fetchPreviousPrompts(jwt, conversationId);
-  
+    console.log(promptsResponse);
+    // navigate(`/ChatBot/${conversationId}`); 
+
     if (promptsResponse.status === 200) {
       const responseJson = await promptsResponse.json();
       const promptsData = responseJson.data;
+      console.log(promptsData);
+
       if (Array.isArray(promptsData) && promptsData.length > 0) {
         const formattedPrompts = promptsData.map((promptObj: any) => ({
           sender: 'User', 
@@ -180,7 +209,7 @@ const ChatBot = () => {
       } } />
       <div className="chat-container">
         <div className="chat-sidebar">
-          <button className="start-new-chat-button" onClick={handleStartNewChat}>
+          <button className="start-new-chat-button" onClick={handleNewChat}>
             New Chat
           </button>
           <div className="conversation-restore-points">
@@ -225,18 +254,18 @@ const ChatBot = () => {
             </div>
           </div>
           <div className="user-input">
-            <form onSubmit={handleSubmit}>
-              <input
-                type="text"
-                value={userInput}
-                onChange={handleUserInput}
-                placeholder="Type your message..."
-                disabled={disableInput}
-              />
-              <button className="send-button" type="submit">
-                Send
-              </button>
-            </form>
+                <form onSubmit={handleSubmit}>
+                  <input
+                    type="text"
+                    value={userInput}
+                    onChange={handleUserInput}
+                    placeholder="Type your message..."
+                    disabled={disableInput}
+                  />
+                  <button className="send-button" type="submit" onClick={handleStartNewChat}>
+                    {conversationsHistory[currentConversationIndex].length ? 'Send' : 'New Chat'}
+                  </button>
+                </form>
           </div>
         </div>
       </div>
