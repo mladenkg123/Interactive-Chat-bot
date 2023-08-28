@@ -32,9 +32,9 @@ type Answer = {
   knownFor: string[];
 };
 
-type Conversation = {
-  conversation_id: string;
-  user_id: string;
+type ConversationResponse = {
+  data: Array<string>;
+  status: number;
 };
 
 const cookies = new Cookies();
@@ -65,8 +65,8 @@ const ChatBot = () => {
         try {
           const conversationsListPromise = await fetchConversations(jwt);
           if (conversationsListPromise.status === 200) {
-            const conversationsListPromiseData = await conversationsListPromise.json() as Conversation[];
-            const conversationList = conversationsListPromiseData.data;
+            const conversationsListResponse = await conversationsListPromise.json() as ConversationResponse;
+            const conversationsList = conversationsListResponse.data;
             console.log(conversationsList);
             setConversationsList(conversationsList);
           
