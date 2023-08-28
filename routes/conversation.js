@@ -26,7 +26,7 @@ router.get('/',
             res.status(401).send('Unauthorized');
         } 
 })
-
+/*
 router.get('/:id',
     passport.authenticate('jwt', {session: false}),
     async (req, res) => {
@@ -48,6 +48,7 @@ router.get('/:id',
             res.status(401).send('Unauthorized');
         }
 })
+*/
 router.post('/',
     passport.authenticate('jwt', {session: false}),
     passport.authorizeRoles('ADMIN', 'USER'),

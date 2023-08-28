@@ -25,13 +25,25 @@ PromptModel.findByConversationId = async function (conversation_id, user_id) {
         if (!conversationUserId) {
             return { status: 404, message: 'Conversation not found' };
         }
+
         user_id = new ObjectId(user_id);
         // Check if the obtained user_id matches the provided user_id
         if (conversationUserId[0].user_id.toString() !== user_id.toString()) {
             return { status: 403, message: 'Forbidden' };
         }
         
-        return { status: 200, data: conversationUserId };
+
+        const prompts = await PromptModel.find({ conversation_id: conversation_id }).exec();
+        if (!prompts) {
+            return { status: 404, message: 'No prompts' };
+        }
+        
+        const modifiedData = prompts.map(item => {
+            const { _id, ...rest } = item.toObject(); // Use toObject() to convert Mongoose document to plain JavaScript object
+            return { prompt_id: _id, ...rest };
+        });
+
+        return { status: 200, data: modifiedData };
     } catch (error) {
         // Handle other errors gracefully
         console.log(error);
