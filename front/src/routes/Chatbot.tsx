@@ -55,12 +55,12 @@ const ChatBot = () => {
 
   const navigate = useNavigate();
 
-  const [conversationsHistory, setConversationsHistory] = useState([
+  const [conversationsHistory, setConversationsHistory] = useState(
     [
       { sender: 'Cube-BOT', message: 'Hello! How can I help you?' }, //Mora da se promeni
       { sender: 'User', message: 'Hi there! I have a question.' },
     ],
-  ]);
+  );
 
   const [currentConversationIndex, setCurrentConversationIndex] = useState(0);
   const [userInput, setUserInput] = useState('');
@@ -126,11 +126,11 @@ const ChatBot = () => {
       setDisableInput(false);
       console.error('Error: Unexpected response code from the Python script');
     }
-    const updatedConversation = [...conversationsHistory[0]];
+    const updatedConversation = [...conversationsHistory];
     updatedConversation.push({ sender: 'User', message: userInput });
     updatedConversation.push({ sender: 'Cube-BOT', message: "pythonData.data" });
     const newConversationsHistory = [...conversationsHistory];
-    newConversationsHistory[0] = updatedConversation;
+    newConversationsHistory = updatedConversation;
     //console.log(conversationsHistory);
     setConversationsHistory(newConversationsHistory);
     setUserInput('');
@@ -139,7 +139,7 @@ const ChatBot = () => {
 
   const handleStartNewChat = async () => {
     /*
-    if (!conversationsHistory[0].length) {
+    if (!conversationsHistory.length) {
       // If the conversation is empty, create a new chat and write a prompt
       const responsePrompt = await savePrompt(jwt, user_id as string, "Hello! How can I help you?", conversationsList[0].conversation_id);
       if (responsePrompt.status === 200) {
@@ -160,12 +160,12 @@ const ChatBot = () => {
 
   const handleNewChat = async () => {
 
-    setConversationsHistory([
+    setConversationsHistory(
       [
         { sender: 'Cube-BOT', message: 'Hello! How can I help you?' },
         { sender: 'User', message: 'Hi there! I have a question.' },
       ],
-    ]);
+    );
   
     navigate('/ChatBot');
   }
@@ -201,11 +201,11 @@ const ChatBot = () => {
             final[i] = formattedAnswers[i%2];
           }
         }
-        setConversationsHistory([final]);
+        setConversationsHistory(final);
       } else {
         console.log('No prompts available for this conversation');
         const formattedPrompts2 = [{ sender: 'User', message: promptsData.prompt }];
-        setConversationsHistory([formattedPrompts2]);
+        setConversationsHistory(formattedPrompts2);
       }
     } else {
       console.error('Error fetching prompts for conversation');
@@ -246,7 +246,7 @@ const ChatBot = () => {
         <div className="chat-content">
           <div className="previous-conversations">
             <div className="message-bubbles">
-              {conversationsHistory[0].map((msg, index) => (
+              {conversationsHistory.map((msg, index) => (
                 <div
                   key={index}
                   className={msg.sender === 'Cube-BOT' ? 'bot-message' : 'user-message'}
@@ -275,7 +275,7 @@ const ChatBot = () => {
                     disabled={disableInput}
                   />
                   <button className="send-button" type="submit" onClick={handleStartNewChat}>
-                    {conversationsHistory[0].length ? 'Send' : 'New Chat'}
+                    {conversationsHistory.length ? 'Send' : 'New Chat'}
                   </button>
                 </form>
           </div>
