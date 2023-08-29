@@ -129,10 +129,8 @@ const ChatBot = () => {
     const updatedConversation = [...conversationsHistory];
     updatedConversation.push({ sender: 'User', message: userInput });
     updatedConversation.push({ sender: 'Cube-BOT', message: "pythonData.data" });
-    const newConversationsHistory = [...conversationsHistory];
-    newConversationsHistory = updatedConversation;
     //console.log(conversationsHistory);
-    setConversationsHistory(newConversationsHistory);
+    setConversationsHistory(updatedConversation);
     setUserInput('');
     setDisableInput(false);
   };
