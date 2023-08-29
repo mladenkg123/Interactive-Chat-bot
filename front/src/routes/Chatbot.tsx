@@ -59,10 +59,6 @@ interface ChatMessageProps {
 }
 
 
-const cookies = new Cookies();
-const jwt = cookies.get('jwt') as string;
-const user_id = getUserIDFromJWT(jwt);
-
 const ChatMessage: React.FC<ChatMessageProps> = React.memo(({ msg }) => (
   <div className={msg.sender === 'Cube-BOT' ? 'bot-message' : 'user-message'}>
     <div className="message-avatar">
@@ -76,13 +72,20 @@ const ChatMessage: React.FC<ChatMessageProps> = React.memo(({ msg }) => (
       <strong>{msg.sender}</strong>: {msg.message}
     </div>
   </div>
-));
+), (prevProps, nextProps) => {
+  // Determine whether the component should re-render based on props changes
+  return prevProps.msg.message === nextProps.msg.message &&
+    prevProps.msg.sender === nextProps.msg.sender;
+});
 
 const Header = React.lazy(() => import('../components/Header'));
 
 const ChatBot = () => {
 
   const navigate = useNavigate();
+  const cookies = new Cookies();
+  const jwt = cookies.get('jwt') as string;
+  const user_id = getUserIDFromJWT(jwt);
 
   const [conversationsHistory, setConversationsHistory] = useState(
     [
@@ -90,7 +93,8 @@ const ChatBot = () => {
       { sender: 'User', message: 'Hi there! I have a question.' },
     ],
   );
-
+  
+  const [conversationCache, setConversationCache] = useState<{ [key: string]: any }>({});
   const [currentConversationIndex, setCurrentConversationIndex] = useState(0);
   const [userInput, setUserInput] = useState('');
   const [disableInput, setDisableInput] = useState(false);
@@ -118,6 +122,7 @@ const ChatBot = () => {
       }
     }
   };
+  
 
   useEffect(() => {
     loadConversations().catch(error => {
@@ -198,8 +203,15 @@ const ChatBot = () => {
   }
 
   const handleRestoreConversation = async (index: number) => {
+    const formattedMessages = [];
     setCurrentConversationIndex(index);
     const conversationId = conversationsList[index].conversation_id;
+    console.log(conversationCache);
+    console.log(conversationsList);
+    // Check if the conversation data is in the cache
+    if (conversationCache[conversationId]) {
+      setConversationsHistory(conversationCache[conversationId]);
+    } else {
     const promptsResponse = await fetchPreviousPrompts(jwt, conversationId);
     const answersResponse = await fetchPreviousAnswers(jwt, conversationId);
     if (promptsResponse.status === 200 && answersResponse.status === 200) {
@@ -218,8 +230,6 @@ const ChatBot = () => {
           message: answerObj.answer,
         }));
 
-        const formattedMessages = [];
-
         for (let i = 0; i < promptsData.length * 2; i++) {
           if(i%2 == 0) {
             formattedMessages[i] = formattedPrompts[i/2];
@@ -237,7 +247,12 @@ const ChatBot = () => {
     } else {
       console.error('Error fetching prompts for conversation');
     }
-  };
+      setConversationCache(prevCache => ({
+        ...prevCache,
+        [conversationsList[index].conversation_id]: formattedMessages,
+      }));
+  }
+};
 
   return (
     <div className="chatbot-container">
