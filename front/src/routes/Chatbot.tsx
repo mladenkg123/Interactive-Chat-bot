@@ -2,16 +2,15 @@ import React, { useEffect, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCube, faUser } from '@fortawesome/free-solid-svg-icons';
 import { useNavigate } from 'react-router-dom';
-import Header from '../components/Header';
 import Cookies from 'universal-cookie';
 import {
-  fetchPreviousPrompts,
-  fetchPreviousAnswers,
   fetchConversations,
-  savePrompt,
+  fetchPreviousAnswers,
+  fetchPreviousPrompts,
   saveAnswer,
-  startNewConversation,
-  sendPromptToPython
+  savePrompt,
+  sendPromptToPython,
+  startNewConversation
 } from '../logic/api';
 import { getUserIDFromJWT } from '../logic/utils';
 import './ChatbotCss.css';
@@ -32,6 +31,11 @@ type PythonResponse = {
   message: string;
 };
 
+type AnswerResponse = {
+  data: Answer;
+  status: number;
+};
+
 type Answer = {
   answer: string;
   prompt_id: string;
@@ -47,10 +51,35 @@ type Conversation = {
   conversation_id: string;
 };
 
+interface ChatMessageProps {
+  msg: {
+    sender: string;
+    message: string;
+  };
+}
+
 
 const cookies = new Cookies();
 const jwt = cookies.get('jwt') as string;
 const user_id = getUserIDFromJWT(jwt);
+
+const ChatMessage: React.FC<ChatMessageProps> = React.memo(({ msg }) => (
+  <div className={msg.sender === 'Cube-BOT' ? 'bot-message' : 'user-message'}>
+    <div className="message-avatar">
+      {msg.sender === 'Cube-BOT' ? (
+        <FontAwesomeIcon icon={faCube} />
+      ) : (
+        <FontAwesomeIcon icon={faUser} />
+      )}
+    </div>
+    <div className="message-content">
+      <strong>{msg.sender}</strong>: {msg.message}
+    </div>
+  </div>
+));
+
+const Header = React.lazy(() => import('../components/Header'));
+
 const ChatBot = () => {
 
   const navigate = useNavigate();
@@ -72,25 +101,25 @@ const ChatBot = () => {
   const handleUserInput = (event: { target: { value: React.SetStateAction<string>; }; }) => {
     setUserInput(event.target.value);
   };
-  useEffect(() => {
-    const loadConversations = async () => {
-      if (jwt && user_id) {
-        try {
-          const conversationsListPromise = await fetchConversations(jwt);
-          if (conversationsListPromise.status === 200) {
-            const conversationsListResponse = await conversationsListPromise.json() as ConversationResponse;
-            const conversationsList = conversationsListResponse.data;
-            //console.log(conversationsList);
-            setConversationsList(conversationsList);
-          
-          } else {
-            console.error('Error fetching previous conversations');
-          }
-        } catch (error) {
-          console.error('Error:', error);
+
+  const loadConversations = async () => {
+    if (jwt && user_id) {
+      try {
+        const conversationsListPromise = await fetchConversations(jwt);
+        if (conversationsListPromise.status === 200) {
+          const conversationsListResponse = await conversationsListPromise.json() as ConversationResponse;
+          const conversationsList = conversationsListResponse.data;
+          setConversationsList(conversationsList);
+        } else {
+          console.error('Error fetching previous conversations');
         }
+      } catch (error) {
+        console.error('Error:', error);
       }
-    };
+    }
+  };
+
+  useEffect(() => {
     loadConversations().catch(error => {
       console.error('Unhandled promise error:', error);
     });
@@ -110,15 +139,15 @@ const ChatBot = () => {
       return;
     }
 
-    const responsePython = await sendPromptToPython(userInput, user_id);
-    if (responsePython.status === 200 || responsePython.status === 500) {
+    const pythonResponse = await sendPromptToPython(userInput, user_id);
+    if (pythonResponse.status === 200 || pythonResponse.status === 500) {
       const conversation_id = conversationsList[currentConversationIndex].conversation_id;
-      console.log(conversation_id, currentConversationIndex);
-      const responsePrompt = await savePrompt(jwt, user_id, userInput, conversation_id);
-      if (responsePrompt.status === 200) {
-        const dataPrompt = await responsePrompt.json() as PromptResponse;
-        //console.log(dataPrompt);
-        const prompt_id = dataPrompt.data.prompt_id; 
+      //console.log(conversation_id, currentConversationIndex);
+      const promptResponse = await savePrompt(jwt, user_id, userInput, conversation_id);
+      if (promptResponse.status === 200) {
+        const promptData = await promptResponse.json() as PromptResponse;
+        //console.log(promptData);
+        const prompt_id = promptData.data.prompt_id; 
         //console.log(prompt_id);
         await saveAnswer(jwt, "pythonData.data", prompt_id, conversation_id);
       }
@@ -139,9 +168,9 @@ const ChatBot = () => {
     /*
     if (!conversationsHistory.length) {
       // If the conversation is empty, create a new chat and write a prompt
-      const responsePrompt = await savePrompt(jwt, user_id as string, "Hello! How can I help you?", conversationsList[0].conversation_id);
-      if (responsePrompt.status === 200) {
-        const dataPrompt = await responsePrompt.json() as Prompt;
+      const promptResponse = await savePrompt(jwt, user_id as string, "Hello! How can I help you?", conversationsList[0].conversation_id);
+      if (promptResponse.status === 200) {
+        const promptData = await promptResponse.json() as Prompt;
         await startNewConversation(jwt, user_id as string);
         setConversationsHistory([
           ...conversationsHistory,
@@ -156,7 +185,7 @@ const ChatBot = () => {
     */
   };
 
-  const handleNewChat = async () => {
+  const handleNewChat =  () => {
 
     setConversationsHistory(
       [
@@ -174,9 +203,9 @@ const ChatBot = () => {
     const promptsResponse = await fetchPreviousPrompts(jwt, conversationId);
     const answersResponse = await fetchPreviousAnswers(jwt, conversationId);
     if (promptsResponse.status === 200 && answersResponse.status === 200) {
-      const responseJson = await promptsResponse.json();
+      const responseJson = await promptsResponse.json() as PromptResponse;
       const promptsData = responseJson.data;
-      const responseJson2 = await answersResponse.json();
+      const responseJson2 = await answersResponse.json() as AnswerResponse;
       const answersData = responseJson2.data;
       if (Array.isArray(promptsData) && promptsData.length > 0 && Array.isArray(answersData) && answersData.length > 0) {
         const formattedPrompts = promptsData.map((promptObj: Prompt) => ({
@@ -189,17 +218,17 @@ const ChatBot = () => {
           message: answerObj.answer,
         }));
 
-        let final = [];
+        const formattedMessages = [];
 
         for (let i = 0; i < promptsData.length * 2; i++) {
           if(i%2 == 0) {
-            final[i] = formattedPrompts[i/2];
+            formattedMessages[i] = formattedPrompts[i/2];
           }
           else {
-            final[i] = formattedAnswers[i%2];
+            formattedMessages[i] = formattedAnswers[i%2];
           }
         }
-        setConversationsHistory(final);
+        setConversationsHistory(formattedMessages);
       } else {
         console.log('No prompts available for this conversation');
         const formattedPrompts2 = [{ sender: 'User', message: promptsData.prompt }];
@@ -212,11 +241,12 @@ const ChatBot = () => {
 
   return (
     <div className="chatbot-container">
-      <Header handleLoginClick={function (): void {
-        throw new Error('Function not implemented.');
-      } } handleRegisterClick={function (): void {
-        throw new Error('Function not implemented.');
-      } } />
+      <React.Suspense fallback={<div>Loading...</div>}>
+        <Header
+          handleLoginClick={() => { /* Handle login click */ }}
+          handleRegisterClick={() => { /* Handle register click */ }}
+        />
+      </React.Suspense>
       <div className="chat-container">
         <div className="chat-sidebar">
           <button className="start-new-chat-button" onClick={handleNewChat}>
@@ -224,7 +254,7 @@ const ChatBot = () => {
           </button>
           <div className="conversation-restore-points">
             <div className="restore-points-header">Previous Chats</div>
-            {conversationsList.map((conversation, index) => (
+            {conversationsList.map((_, index) => (
               <div
                 key={index}
                 className={`restore-point ${
@@ -245,21 +275,7 @@ const ChatBot = () => {
           <div className="previous-conversations">
             <div className="message-bubbles">
               {conversationsHistory.map((msg, index) => (
-                <div
-                  key={index}
-                  className={msg.sender === 'Cube-BOT' ? 'bot-message' : 'user-message'}
-                >
-                  <div className="message-avatar">
-                    {msg.sender === 'Cube-BOT' ? (
-                      <FontAwesomeIcon icon={faCube} />
-                    ) : (
-                      <FontAwesomeIcon icon={faUser} />
-                    )}
-                  </div>
-                  <div className="message-content">
-                    <strong>{msg.sender}</strong>: {msg.message}
-                  </div>
-                </div>
+                <ChatMessage key={index} msg={msg} />
               ))}
             </div>
           </div>
