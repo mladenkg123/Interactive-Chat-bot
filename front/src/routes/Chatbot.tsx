@@ -51,6 +51,11 @@ type Conversation = {
   conversation_id: string;
 };
 
+type Message = {
+    sender: string;
+    message: string;
+}
+
 interface ChatMessageProps {
   msg: {
     sender: string;
@@ -94,7 +99,7 @@ const ChatBot = () => {
     ],
   );
   
-  const [conversationCache, setConversationCache] = useState<{ [key: string]: any }>({});
+  const [conversationCache, setConversationCache] = useState<{ [key: string]: Message[] }>({});
   const [currentConversationIndex, setCurrentConversationIndex] = useState(0);
   const [userInput, setUserInput] = useState('');
   const [disableInput, setDisableInput] = useState(false);
@@ -203,7 +208,6 @@ const ChatBot = () => {
   }
 
   const handleRestoreConversation = async (index: number) => {
-    const formattedMessages = [];
     setCurrentConversationIndex(index);
     const conversationId = conversationsList[index].conversation_id;
     console.log(conversationCache);
@@ -229,7 +233,7 @@ const ChatBot = () => {
           sender: 'Cube-BOT',
           message: answerObj.answer,
         }));
-
+        const formattedMessages = [];
         for (let i = 0; i < promptsData.length * 2; i++) {
           if(i%2 == 0) {
             formattedMessages[i] = formattedPrompts[i/2];
@@ -239,6 +243,10 @@ const ChatBot = () => {
           }
         }
         setConversationsHistory(formattedMessages);
+        setConversationCache(prevCache => ({
+          ...prevCache,
+          [conversationsList[index].conversation_id]: formattedMessages,
+      }));
       } else {
         console.log('No prompts available for this conversation');
         const formattedPrompts2 = [{ sender: 'User', message: promptsData.prompt }];
@@ -247,10 +255,6 @@ const ChatBot = () => {
     } else {
       console.error('Error fetching prompts for conversation');
     }
-      setConversationCache(prevCache => ({
-        ...prevCache,
-        [conversationsList[index].conversation_id]: formattedMessages,
-      }));
   }
 };
 
