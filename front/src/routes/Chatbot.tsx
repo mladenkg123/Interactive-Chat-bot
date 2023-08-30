@@ -65,8 +65,6 @@ type Message = {
 interface ChatMessageProps {
   msg: Message;
 }
-
-
 const ChatMessage: React.FC<ChatMessageProps> = React.memo(({ msg }) => (
   <div className={msg.sender === 'Cube-BOT' ? 'bot-message' : 'user-message'}>
     <div className="message-avatar">
@@ -95,13 +93,10 @@ const ChatBot = () => {
   const jwt = cookies.get('jwt') as string;
   const user_id = getUserIDFromJWT(jwt);
 
-  const [conversationsHistory, setConversationsHistory] = useState(
-    [
-      { sender: 'Cube-BOT', message: 'Hello! How can I help you?' }, //Mora da se promeni
-      { sender: 'User', message: 'Hi there! I have a question.' },
-    ],
-  );
-  
+  const [conversationsHistory, setConversationsHistory] = useState([
+    { sender: 'Cube-BOT', message: 'Hello! How can I help you?' },
+    { sender: 'User', message: 'Hi there! I have a question.' },
+  ]);
   const [conversationCache, setConversationCache] = useState<{ [key: string]: Message[] }>({});
   const [currentConversationIndex, setCurrentConversationIndex] = useState(0);
   const [userInput, setUserInput] = useState('');
@@ -171,7 +166,6 @@ const ChatBot = () => {
     const updatedConversation = [...conversationsHistory];
     updatedConversation.push({ sender: 'User', message: userInput });
     updatedConversation.push({ sender: 'Cube-BOT', message: "pythonData.data" });
-    //console.log(conversationsHistory);
     setConversationsHistory(updatedConversation);
     setConversationCache(prevCache => ({
       ...prevCache,
@@ -203,15 +197,12 @@ const ChatBot = () => {
   };
 
   const handleNewChat = async () => {
-    console.log(conversationsList);
     if (jwt && user_id) {
       try {
-        const conversationsListPromise = await startNewConversation(jwt, user_id);
+        const conversationsListPromise = await startNewConversation(jwt);
         if (conversationsListPromise.status === 200) {
           const conversationsListResponse = await conversationsListPromise.json() as ConversationResponse;
           const conversationsListId = conversationsListResponse.data.conversation_id;
-          console.log(conversationsListResponse);
-          console.log(conversationsListId);
           setConversationsList(prevList => [
             ...prevList,
             { conversation_id: conversationsListId }
@@ -228,9 +219,6 @@ const ChatBot = () => {
   const handleRestoreConversation = async (index: number) => {
     setCurrentConversationIndex(index);
     const conversationId = conversationsList[index].conversation_id;
-    console.log(conversationCache);
-    console.log(conversationsList);
-    console.log(conversationsList[index]);
     // Check if the conversation data is in the cache
     if (conversationCache[conversationId]) {
       setConversationsHistory(conversationCache[conversationId]);
@@ -242,7 +230,6 @@ const ChatBot = () => {
       const promptsData = responseJson.data;
       const responseJson2 = await answersResponse.json() as AnswerResponse;
       const answersData = responseJson2.data;
-      
       if (Array.isArray(promptsData) && promptsData.length > 0 && Array.isArray(answersData) && answersData.length > 0) {
         const formattedPrompts: Message[] = promptsData.map((promptObj: Prompt) => ({
           sender: 'User',
@@ -254,13 +241,9 @@ const ChatBot = () => {
           message: answerObj.answer,
         }));
         const formattedMessages: Message[] = [];
-        for (let i = 0; i < promptsData.length * 2; i++) {
-          if(i%2 == 0) {
-            formattedMessages[i] = formattedPrompts[i/2];
-          }
-          else {
-            formattedMessages[i] = formattedAnswers[i%2];
-          }
+        for (let i = 0; i < promptsData.length; i+=2) {
+          formattedMessages[i] = formattedPrompts[i];
+          formattedMessages[i+1] = formattedAnswers[i];
         }
         setConversationsHistory(formattedMessages);
         setConversationCache(prevCache => ({
@@ -268,7 +251,6 @@ const ChatBot = () => {
           [conversationsList[index].conversation_id]: formattedMessages,
       }));
       } else {
-        console.log('No prompts available for this conversation');
         const formattedPrompts2 = [
         { sender: 'Cube-BOT', message: 'Hello! How can I help you?' }, 
         { sender: 'User', message: 'Hi there! I have a question.' },];
@@ -279,7 +261,6 @@ const ChatBot = () => {
     }
   }
 };
-
   return (
     <div className="chatbot-container">
       <React.Suspense fallback={<div>Loading...</div>}>
