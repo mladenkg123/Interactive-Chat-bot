@@ -8,6 +8,14 @@ const PromptSchema = mongoose.Schema({
 
 const PromptModel = mongoose.model('prompt', PromptSchema)
 
+PromptModel.deleteByConversationId = async function (conversation_id) {
+    try {
+        await PromptModel.deleteMany({ conversation_id: conversation_id }).exec();
+    } catch (error) {
+        console.error("Error deleting prompts:", error);
+    }
+};
+
 PromptModel.savePrompt = function (prompt){
     const newPrompt = new PromptModel({
         prompt: prompt.prompt,

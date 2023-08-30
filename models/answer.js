@@ -24,6 +24,15 @@ AnswerModel.saveAnswer = function (answer){
     newAnswer.save();
     return { status: 200, data: modifiedData };
 }
+
+AnswerModel.deleteByConversationId = async function (conversation_id) {
+    try {
+        await AnswerModel.deleteMany({ conversation_id: conversation_id }).exec();
+    } catch (error) {
+        console.error("Error deleting answers:", error);
+    }
+};
+
 AnswerModel.findByPromptId = async function (prompt_id, user_id) {
     const ObjectId = mongoose.Types.ObjectId;
     try {

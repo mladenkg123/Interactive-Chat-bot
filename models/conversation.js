@@ -1,5 +1,4 @@
 const mongoose = require('mongoose');
-
 const ConversationSchema = mongoose.Schema({
     user_id: { type: mongoose.Schema.Types.ObjectId, ref: "user" }
 });
@@ -23,8 +22,7 @@ ConversationModel.saveConversation = function (conversation) {
 ConversationModel.deleteConversation = async function (conversation_id, user_id) {
     const ObjectId = mongoose.Types.ObjectId;
     try {
-        const conversationUserId = await ConversationModel.find({ _id: conversation_id }, { user_id: 1 }).exec();
-
+        const conversationUserId = await ConversationModel.find({ _id: new ObjectId(conversation_id) }, { user_id: 1 }).exec();
         if (!conversationUserId) {
             return { status: 404, message: 'Conversation not found' };
         }
@@ -33,7 +31,6 @@ ConversationModel.deleteConversation = async function (conversation_id, user_id)
         if (conversationUserId[0].user_id.toString() !== user_id.toString()) {
             return { status: 403, message: 'Forbidden' };
         }
-
         const deletedConversation = await ConversationModel.findByIdAndDelete(conversation_id).exec();
         if (!deletedConversation) {
             return { status: 404, message: "Conversation not found" };
