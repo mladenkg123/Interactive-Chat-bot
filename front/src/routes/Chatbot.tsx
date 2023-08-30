@@ -42,8 +42,13 @@ type Answer = {
   conversation_id: string;
 };
 
-type ConversationResponse = {
+type ConversationsResponse = {
   data: Array<Conversation>;
+  status: number;
+};
+
+type ConversationResponse = {
+  data: Conversation;
   status: number;
 };
 
@@ -52,15 +57,13 @@ type Conversation = {
 };
 
 type Message = {
-    sender: string;
-    message: string;
-}
+  sender: string;
+  message: string;
+};
 
+// Define the props type for the ChatMessage component
 interface ChatMessageProps {
-  msg: {
-    sender: string;
-    message: string;
-  };
+  msg: Message;
 }
 
 
@@ -116,7 +119,7 @@ const ChatBot = () => {
       try {
         const conversationsListPromise = await fetchConversations(jwt);
         if (conversationsListPromise.status === 200) {
-          const conversationsListResponse = await conversationsListPromise.json() as ConversationResponse;
+          const conversationsListResponse = await conversationsListPromise.json() as ConversationsResponse;
           const conversationsList = conversationsListResponse.data;
           setConversationsList(conversationsList);
         } else {
@@ -170,6 +173,10 @@ const ChatBot = () => {
     updatedConversation.push({ sender: 'Cube-BOT', message: "pythonData.data" });
     //console.log(conversationsHistory);
     setConversationsHistory(updatedConversation);
+    setConversationCache(prevCache => ({
+      ...prevCache,
+      [conversationsList[currentConversationIndex].conversation_id]: updatedConversation,
+  }));
     setUserInput('');
     setDisableInput(false);
   };
@@ -197,13 +204,14 @@ const ChatBot = () => {
 
   const handleNewChat = async () => {
     console.log(conversationsList);
-    
     if (jwt && user_id) {
       try {
         const conversationsListPromise = await startNewConversation(jwt, user_id);
         if (conversationsListPromise.status === 200) {
           const conversationsListResponse = await conversationsListPromise.json() as ConversationResponse;
-          const conversationsListId = conversationsListResponse.data._id;
+          const conversationsListId = conversationsListResponse.data.conversation_id;
+          console.log(conversationsListResponse);
+          console.log(conversationsListId);
           setConversationsList(prevList => [
             ...prevList,
             { conversation_id: conversationsListId }
@@ -216,7 +224,6 @@ const ChatBot = () => {
       }
     } 
   };
-  
 
   const handleRestoreConversation = async (index: number) => {
     setCurrentConversationIndex(index);
@@ -237,16 +244,16 @@ const ChatBot = () => {
       const answersData = responseJson2.data;
       
       if (Array.isArray(promptsData) && promptsData.length > 0 && Array.isArray(answersData) && answersData.length > 0) {
-        const formattedPrompts = promptsData.map((promptObj: Prompt) => ({
+        const formattedPrompts: Message[] = promptsData.map((promptObj: Prompt) => ({
           sender: 'User',
           message: promptObj.prompt,
         }));
 
-        const formattedAnswers = answersData.map((answerObj: Answer) => ({
+        const formattedAnswers: Message[] = answersData.map((answerObj: Answer) => ({
           sender: 'Cube-BOT',
           message: answerObj.answer,
         }));
-        const formattedMessages = [];
+        const formattedMessages: Message[] = [];
         for (let i = 0; i < promptsData.length * 2; i++) {
           if(i%2 == 0) {
             formattedMessages[i] = formattedPrompts[i/2];

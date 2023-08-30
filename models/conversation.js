@@ -11,9 +11,13 @@ ConversationModel.saveConversation = function (conversation) {
     const newConversation = new ConversationModel({
         user_id: conversation.user_id
     });
-
     newConversation.save();
-    return { status: 200, data: newConversation };
+    
+    const modifiedData = {
+        user_id: newConversation.user_id,
+        conversation_id: newConversation._id
+    };
+    return { status: 200, data: modifiedData };
 };
 
 // Find conversations by user ID
