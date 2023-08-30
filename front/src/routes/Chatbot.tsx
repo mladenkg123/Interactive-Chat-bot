@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCube, faUser } from '@fortawesome/free-solid-svg-icons';
+import { faCube, faUser, faMessage, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { useNavigate } from 'react-router-dom';
 import Cookies from 'universal-cookie';
 import {
@@ -196,25 +196,65 @@ const ChatBot = () => {
     */
   };
 
-  const handleNewChat = async () => {
-    if (jwt && user_id) {
-      try {
-        const conversationsListPromise = await startNewConversation(jwt);
-        if (conversationsListPromise.status === 200) {
-          const conversationsListResponse = await conversationsListPromise.json() as ConversationResponse;
-          const conversationsListId = conversationsListResponse.data.conversation_id;
-          setConversationsList(prevList => [
-            ...prevList,
-            { conversation_id: conversationsListId }
-          ]);
-        } else {
-          console.error('Error fetching previous conversations');
-        }
-      } catch (error) {
-        console.error('Error:', error);
-      }
-    } 
+  const handleEmptyChat = () => {
+    const predefinedMessages = [
+      { sender: 'Cube-BOT', message: 'Hello! How can I help you?' },
+      { sender: 'User', message: 'Hi there! I have a question.' }
+    ];
+  
+    return (
+      conversationsHistory[0]?.sender === predefinedMessages[0].sender &&
+      conversationsHistory[0]?.message === predefinedMessages[0].message &&
+      conversationsHistory[1]?.sender === predefinedMessages[1].sender &&
+      conversationsHistory[1]?.message === predefinedMessages[1].message
+    );
   };
+
+
+    
+const handleNewChat = async () => {
+      console.log(conversationsList);
+      console.log(conversationsHistory);
+      if (jwt && user_id) {
+        try {
+          if (handleEmptyChat() && conversationsList.length === 0) {
+            const conversationsListPromise = await startNewConversation(jwt);
+            if (conversationsListPromise.status === 200) {
+              const conversationsListResponse = await conversationsListPromise.json() as ConversationResponse;
+              const conversationsListId = conversationsListResponse.data.conversation_id;
+              console.log(conversationsListResponse);
+              console.log(conversationsListId);
+              setConversationsList(prevList => [
+                ...prevList,
+                { conversation_id: conversationsListId }
+              ]);
+            } else {
+              console.error('Error fetching previous conversations');
+            }
+          }
+          else if (handleEmptyChat()) {
+            alert("Input Text First!");
+          }
+          else {
+            const conversationsListPromise = await startNewConversation(jwt);
+            if (conversationsListPromise.status === 200) {
+              const conversationsListResponse = await conversationsListPromise.json() as ConversationResponse;
+              const conversationsListId = conversationsListResponse.data.conversation_id;
+              console.log(conversationsListResponse);
+              console.log(conversationsListId);
+              setConversationsList(prevList => [
+                ...prevList,
+                { conversation_id: conversationsListId }
+              ]);
+            } else {
+              console.error('Error fetching previous conversations');
+            }
+          }
+        } catch (error) {
+          console.error('Error:', error);
+        }
+      } 
+};
 
   const handleRestoreConversation = async (index: number) => {
     setCurrentConversationIndex(index);
@@ -230,6 +270,7 @@ const ChatBot = () => {
       const promptsData = responseJson.data;
       const responseJson2 = await answersResponse.json() as AnswerResponse;
       const answersData = responseJson2.data;
+      console.log(responseJson,responseJson2);
       if (Array.isArray(promptsData) && promptsData.length > 0 && Array.isArray(answersData) && answersData.length > 0) {
         const formattedPrompts: Message[] = promptsData.map((promptObj: Prompt) => ({
           sender: 'User',
@@ -289,6 +330,7 @@ const ChatBot = () => {
                 ) : (
                   <span>Conversation {index + 1}</span>
                 )}
+                <FontAwesomeIcon className="DeleteIcon" icon={faTrash} style={{paddingLeft: '12px' }} onClick={() => (console.log('2'))}/>
               </div>
             ))}
           </div>
@@ -310,7 +352,7 @@ const ChatBot = () => {
                     placeholder="Type your message..."
                     disabled={disableInput}
                   />
-                  <button className="send-button" type="submit" onClick={handleStartNewChat}>
+                  <button className="send-button" type="submit" onClick={handleEmptyChat}>
                     {conversationsHistory.length ? 'Send' : 'New Chat'}
                   </button>
                 </form>

@@ -231,3 +231,7 @@
   .chatbot-container .btn.btn-signup { 
     visibility: hidden;
   }
+  .restore-point.selected .DeleteIcon{
+    background-color: #c5c5c5;
+    color: rgb(253, 0, 0);
+}
