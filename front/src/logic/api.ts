@@ -17,6 +17,16 @@ export async function startNewConversation(jwt: string): Promise<Response> {
   return response;
 }
 
+export async function deleteConversation(jwt: string, conversation_id: string): Promise<Response> {
+  const requestOptions: RequestInit = {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${jwt}` },
+  };
+
+  const response = await fetch(`${API_BASE_URL}/conversation/delete/${conversation_id}`, requestOptions);
+  return response;
+}
+
 export async function fetchConversations(jwt: string): Promise<Response> {
   const requestOptions = generateRequestOptionsGet(jwt);
 
