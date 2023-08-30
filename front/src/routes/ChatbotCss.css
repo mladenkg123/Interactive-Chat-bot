@@ -43,6 +43,7 @@
     align-self: flex-start;
     animation: fadeInFromLeft 0.6s ease;
     border-radius: 30px;
+    margin-top: 10px;
   }
   
   .user-message {

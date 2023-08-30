@@ -195,23 +195,35 @@ const ChatBot = () => {
     */
   };
 
-  const handleNewChat =  () => {
-
-    setConversationsHistory(
-      [
-        { sender: 'Cube-BOT', message: 'Hello! How can I help you?' },
-        { sender: 'User', message: 'Hi there! I have a question.' },
-      ],
-    );
+  const handleNewChat = async () => {
+    console.log(conversationsList);
+    
+    if (jwt && user_id) {
+      try {
+        const conversationsListPromise = await startNewConversation(jwt, user_id);
+        if (conversationsListPromise.status === 200) {
+          const conversationsListResponse = await conversationsListPromise.json() as ConversationResponse;
+          const conversationsListId = conversationsListResponse.data._id;
+          setConversationsList(prevList => [
+            ...prevList,
+            { conversation_id: conversationsListId }
+          ]);
+        } else {
+          console.error('Error fetching previous conversations');
+        }
+      } catch (error) {
+        console.error('Error:', error);
+      }
+    } 
+  };
   
-    navigate('/ChatBot');
-  }
 
   const handleRestoreConversation = async (index: number) => {
     setCurrentConversationIndex(index);
     const conversationId = conversationsList[index].conversation_id;
     console.log(conversationCache);
     console.log(conversationsList);
+    console.log(conversationsList[index]);
     // Check if the conversation data is in the cache
     if (conversationCache[conversationId]) {
       setConversationsHistory(conversationCache[conversationId]);
@@ -223,6 +235,7 @@ const ChatBot = () => {
       const promptsData = responseJson.data;
       const responseJson2 = await answersResponse.json() as AnswerResponse;
       const answersData = responseJson2.data;
+      
       if (Array.isArray(promptsData) && promptsData.length > 0 && Array.isArray(answersData) && answersData.length > 0) {
         const formattedPrompts = promptsData.map((promptObj: Prompt) => ({
           sender: 'User',
@@ -249,7 +262,9 @@ const ChatBot = () => {
       }));
       } else {
         console.log('No prompts available for this conversation');
-        const formattedPrompts2 = [{ sender: 'User', message: promptsData.prompt }];
+        const formattedPrompts2 = [
+        { sender: 'Cube-BOT', message: 'Hello! How can I help you?' }, 
+        { sender: 'User', message: 'Hi there! I have a question.' },];
         setConversationsHistory(formattedPrompts2);
       }
     } else {
