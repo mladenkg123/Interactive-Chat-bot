@@ -241,9 +241,9 @@ const ChatBot = () => {
           message: answerObj.answer,
         }));
         const formattedMessages: Message[] = [];
-        for (let i = 0; i < promptsData.length; i+=2) {
-          formattedMessages[i] = formattedPrompts[i];
-          formattedMessages[i+1] = formattedAnswers[i];
+        for (let i = 0; i < promptsData.length; i++) {
+          formattedMessages[i * 2] = formattedPrompts[i];
+          formattedMessages[i * 2 + 1] = formattedAnswers[i];
         }
         setConversationsHistory(formattedMessages);
         setConversationCache(prevCache => ({
