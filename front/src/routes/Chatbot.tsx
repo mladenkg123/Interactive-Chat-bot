@@ -3,6 +3,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCube, faUser, faMessage, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { useNavigate } from 'react-router-dom';
 import Cookies from 'universal-cookie';
+import Swal from 'sweetalert2';
 import {
   deleteConversation,
   fetchConversations,
@@ -262,20 +263,36 @@ const handleDeleteChat = async () => {
   const conversation_id = cookies.get('conversation_id');
   console.log(conversation_id);
   if (jwt && conversation_id) {
-      try {
-        const conversationsListPromise = await deleteConversation(jwt, conversation_id);
-        if (conversationsListPromise.status === 200) {
-          const conversationsListResponse = await conversationsListPromise.json() as ConversationsResponse;
-          console.log(conversationsListResponse);
-          
-        } else {
-          console.error('Error Deleting Conversation');
+    try {
+      Swal.fire({
+        title: 'Are you sure?',
+        text: "You won't be able to revert this!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Yes, delete it!',
+      }).then(async (result) => {
+        if (result.isConfirmed) {
+          const conversationsListPromise = await deleteConversation(jwt, conversation_id);
+          if (conversationsListPromise.status === 200) {
+            const conversationsListResponse = await conversationsListPromise.json() as ConversationsResponse;
+            console.log(conversationsListResponse);
+            Swal.fire(
+              'Deleted!',
+              'Your conversation has been deleted.',
+              'success'
+            );
+          } else {
+            console.error('Error Deleting Conversation');
+          }
         }
-      } catch (error) {
-        console.error('Error:', error);
-      }
+      });
+    } catch (error) {
+      console.error('Error:', error);
     }
-  };
+  }
+};
 
 
 
@@ -356,7 +373,7 @@ const handleDeleteChat = async () => {
                 ) : (
                   <span>Conversation {index + 1}</span>
                 )}
-                <FontAwesomeIcon className="DeleteIcon" icon={faTrash} style={{paddingLeft: '12px' }} onClick={() => handleDeleteChat()}/>
+                <FontAwesomeIcon className="DeleteIcon" icon={faTrash} style={{paddingLeft: '10px' }} onClick={() => handleDeleteChat()}/>
               </div>
             ))}
           </div>
