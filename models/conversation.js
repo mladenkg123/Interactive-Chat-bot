@@ -6,12 +6,11 @@ const ConversationSchema = mongoose.Schema({
 const ConversationModel = mongoose.model('conversation', ConversationSchema);
 
 // Save conversation
-ConversationModel.saveConversation = function (conversation) {
+ConversationModel.saveConversation = function (user_id) {
     const newConversation = new ConversationModel({
-        user_id: conversation.user_id
+        user_id: user_id
     });
     newConversation.save();
-    
     const modifiedData = {
         user_id: newConversation.user_id,
         conversation_id: newConversation._id
