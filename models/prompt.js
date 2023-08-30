@@ -26,11 +26,10 @@ PromptModel.findByConversationId = async function (conversation_id, user_id) {
     const ObjectId = mongoose.Types.ObjectId;
     try {
         // Retrieve the user_id using the obtained conversation_id
-        const conversationUserId = await ConversationModel.find({ conversation_id: conversation_id }, { user_id: 1 }).exec();
+        const conversationUserId = await ConversationModel.find({ _id: conversation_id }, { user_id: 1 }).exec();
         if (!conversationUserId) {
             return { status: 404, message: 'Conversation not found' };
         }
-
         user_id = new ObjectId(user_id);
         // Check if the obtained user_id matches the provided user_id
         if (conversationUserId[0].user_id.toString() !== user_id.toString()) {
@@ -38,7 +37,7 @@ PromptModel.findByConversationId = async function (conversation_id, user_id) {
         }
         
 
-        const prompts = await PromptModel.find({ conversation_id: conversation_id }, {prompt_id: 1, prompt: 1}).exec();
+        const prompts = await PromptModel.find({ _id: conversation_id }, {prompt_id: 1, prompt: 1}).exec();
         if (!prompts) {
             return { status: 404, message: 'No prompts' };
         }
@@ -67,7 +66,7 @@ PromptModel.findById = async function (prompt_id, user_id) {
             return { status: 404, message: 'Prompt not found' };
         }
         // Retrieve the user_id using the obtained conversation_id
-        const conversationUserId = await ConversationModel.findOne({ conversation_id: prompt.conversation_id }, { user_id: 1 }).exec();
+        const conversationUserId = await ConversationModel.findOne({ _id: prompt.conversation_id }, { user_id: 1 }).exec();
         if (!conversationUserId) {
             return { status: 404, message: 'Conversation not found' };
         }
