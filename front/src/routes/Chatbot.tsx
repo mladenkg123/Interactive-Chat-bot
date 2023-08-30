@@ -4,6 +4,7 @@ import { faCube, faUser, faMessage, faTrash } from '@fortawesome/free-solid-svg-
 import { useNavigate } from 'react-router-dom';
 import Cookies from 'universal-cookie';
 import {
+  deleteConversation,
   fetchConversations,
   fetchPreviousAnswers,
   fetchPreviousPrompts,
@@ -256,9 +257,34 @@ const handleNewChat = async () => {
       } 
 };
 
+const handleDeleteChat = async () => {
+
+  const conversation_id = cookies.get('conversation_id');
+  console.log(conversation_id);
+  if (jwt && conversation_id) {
+      try {
+        const conversationsListPromise = await deleteConversation(jwt, conversation_id);
+        if (conversationsListPromise.status === 200) {
+          const conversationsListResponse = await conversationsListPromise.json() as ConversationsResponse;
+          console.log(conversationsListResponse);
+          
+        } else {
+          console.error('Error Deleting Conversation');
+        }
+      } catch (error) {
+        console.error('Error:', error);
+      }
+    }
+  };
+
+
+
   const handleRestoreConversation = async (index: number) => {
     setCurrentConversationIndex(index);
     const conversationId = conversationsList[index].conversation_id;
+
+    cookies.set('conversation_id', conversationId);
+
     // Check if the conversation data is in the cache
     if (conversationCache[conversationId]) {
       setConversationsHistory(conversationCache[conversationId]);
@@ -330,7 +356,7 @@ const handleNewChat = async () => {
                 ) : (
                   <span>Conversation {index + 1}</span>
                 )}
-                <FontAwesomeIcon className="DeleteIcon" icon={faTrash} style={{paddingLeft: '12px' }} onClick={() => (console.log('2'))}/>
+                <FontAwesomeIcon className="DeleteIcon" icon={faTrash} style={{paddingLeft: '12px' }} onClick={() => handleDeleteChat()}/>
               </div>
             ))}
           </div>
