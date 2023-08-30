@@ -20,6 +20,31 @@ ConversationModel.saveConversation = function (conversation) {
     return { status: 200, data: modifiedData };
 };
 
+ConversationModel.deleteConversation = async function (conversation_id, user_id) {
+    const ObjectId = mongoose.Types.ObjectId;
+    try {
+        const conversationUserId = await ConversationModel.find({ _id: conversation_id }, { user_id: 1 }).exec();
+
+        if (!conversationUserId) {
+            return { status: 404, message: 'Conversation not found' };
+        }
+        user_id = new ObjectId(user_id);
+        // Check if the obtained user_id matches the provided user_id
+        if (conversationUserId[0].user_id.toString() !== user_id.toString()) {
+            return { status: 403, message: 'Forbidden' };
+        }
+
+        const deletedConversation = await ConversationModel.findByIdAndDelete(conversation_id).exec();
+        if (!deletedConversation) {
+            return { status: 404, message: "Conversation not found" };
+        }
+        return { status: 200, message: "Conversation deleted successfully" };
+    } catch (error) {
+        console.error("Error deleting conversation:", error);
+        return { status: 500, message: "An error occurred while deleting the conversation" };
+    }
+};
+
 // Find conversations by user ID
 ConversationModel.findByUserId = async function (user_id) {
     const ObjectId = mongoose.Types.ObjectId;
