@@ -24,7 +24,7 @@ ConversationModel.saveConversation = function (conversation) {
 ConversationModel.findByUserId = async function (user_id) {
     const ObjectId = mongoose.Types.ObjectId;
 
-    const conversations = await ConversationModel.find({ _id: new ObjectId(user_id) }, {conversation_id: 1}).exec();
+    const conversations = await ConversationModel.find({ user_id: new ObjectId(user_id) }, {conversation_id: 1}).exec();
     const modifiedData = conversations.map(item => {
         const { _id, ...rest } = item.toObject(); // Use toObject() to convert Mongoose document to plain JavaScript object
         return { conversation_id: _id, ...rest };

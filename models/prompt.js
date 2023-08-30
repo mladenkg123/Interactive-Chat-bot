@@ -37,7 +37,7 @@ PromptModel.findByConversationId = async function (conversation_id, user_id) {
         }
         
 
-        const prompts = await PromptModel.find({ _id: conversation_id }, {prompt_id: 1, prompt: 1}).exec();
+        const prompts = await PromptModel.find({ conversation_id: conversation_id }, {prompt_id: 1, prompt: 1}).exec();
         if (!prompts) {
             return { status: 404, message: 'No prompts' };
         }

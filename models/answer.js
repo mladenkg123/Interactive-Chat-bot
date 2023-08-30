@@ -46,7 +46,7 @@ AnswerModel.findByPromptId = async function (prompt_id, user_id) {
         }
 
         // Retrieve the answers associated with the provided prompt_id
-        const answers = await AnswerModel.find({ _id: new ObjectId(prompt_id) }, { answer: 1, _id: 0 }).exec();
+        const answers = await AnswerModel.find({ prompt_id: new ObjectId(prompt_id) }, { answer: 1, _id: 0 }).exec();
         
         return { status: 200, data: answers };
     } catch (error) {
@@ -71,7 +71,7 @@ AnswerModel.findByConversationId = async function (conversation_id, user_id) {
             return { status: 403, message: 'Forbidden' };
         }
         // Retrieve the answers associated with the provided conversation_id
-        const answers = await AnswerModel.find({ _id: conversation_id } , { prompt_id: 1, answer: 1}).exec();
+        const answers = await AnswerModel.find({ conversation_id: conversation_id } , { prompt_id: 1, answer: 1}).exec();
         if (!answers) {
             return { status: 404, message: 'Answers not found' };
         }
