@@ -7,11 +7,10 @@ function generateRequestOptionsGet(jwt: string): RequestInit {
   };
 }
 
-export async function startNewConversation(jwt: string, user_id: string): Promise<Response> {
+export async function startNewConversation(jwt: string): Promise<Response> {
   const requestOptions: RequestInit = {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${jwt}` },
-    body: JSON.stringify({ user_id }),
   };
 
   const response = await fetch(`${API_BASE_URL}/conversation`, requestOptions);
