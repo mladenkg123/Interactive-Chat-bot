@@ -100,6 +100,7 @@ const ChatBot = () => {
   };
 
   const loadConversations = async () => {
+    console.log(conversationsList);
     if (jwt && user_id) {
       try {
         const conversationsListPromise = await fetchConversations(jwt);
@@ -232,15 +233,21 @@ const handleDeleteChat = () => {
           const conversationsListPromise = await deleteConversation(jwt, conversation_id);
           if (conversationsListPromise.status === 200) {
             const conversationsListResponse = await conversationsListPromise.json() as ConversationsResponse;
-            const index = conversationsList.indexOf(conversation_id);
-            const updatedconversationsList = conversationsList.splice(index, 1);
-            setConversationsList(updatedconversationsList);
-            handleActiveConversation();
-            Swal.fire(
-              'Deleted!',
-              'Your conversation has been deleted.',
-              'success'
-            );
+            const index = conversationsList.findIndex(conversation => conversation.conversation_id === conversation_id);
+            console.log(index);
+            if (index !== -1) {
+              conversationsList.splice(index, 1);
+              console.log(index, conversationsList);
+              setConversationsList([...conversationsList]); 
+              handleActiveConversation();
+              Swal.fire(
+                'Deleted!',
+                'Your conversation has been deleted.',
+                'success'
+              );
+            } else {
+              console.error('Error.');
+            }
           } else {
             console.error('Error Deleting Conversation');
           }
@@ -325,7 +332,6 @@ const handleDeleteChat = () => {
                 className={`restore-point ${
                   index === currentConversationIndex ? 'selected' : ''
                 }`}
-                onLoad={() => handleActiveConversation()}
                 onClick={() => handleRestoreConversation(index)}
               >
                 {index === currentConversationIndex ? (
