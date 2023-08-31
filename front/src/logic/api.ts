@@ -1,5 +1,10 @@
 import { API_BASE_URL } from './constants';
 
+type Message = {
+  sender: string;
+  message: string;
+};
+
 function generateRequestOptionsGet(jwt: string): RequestInit {
   return {
     method: 'GET',
@@ -70,11 +75,11 @@ export async function saveAnswer(jwt: string, answer: string, prompt_id: string,
   return response;
 }
 
-export async function sendPromptToPython(prompt: string, user_id: string) : Promise<Response> {
+export async function sendPromptToPython(conversation: Message[], user_id: string) : Promise<Response> {
     const requestOptions = {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ prompt, user_id }),
+      body: JSON.stringify({ conversation, user_id }),
     };
 
     const response = await fetch('http://localhost:5000', requestOptions);

@@ -95,7 +95,7 @@ const ChatBot = () => {
   const jwt = cookies.get('jwt') as string;
   const user_id = getUserIDFromJWT(jwt);
 
-  const [conversationsHistory, setConversationsHistory] = useState([
+  const [conversationsHistory, setConversationsHistory] = useState<Message[]>([
     { sender: 'Cube-BOT', message: 'Hello! How can I help you?' },
     { sender: 'User', message: 'Hi there! I have a question.' },
   ]);
@@ -104,7 +104,6 @@ const ChatBot = () => {
   const [userInput, setUserInput] = useState('');
   const [disableInput, setDisableInput] = useState(false);
   const [conversationsList, setConversationsList] = useState<Conversation[]>([]);
-  const [currentConversationId, setCurrentConversationId] = useState<string | null>(null);
 
 
   const handleUserInput = (event: { target: { value: React.SetStateAction<string>; }; }) => {
@@ -148,8 +147,9 @@ const ChatBot = () => {
       setDisableInput(false);
       return;
     }
-
-    const pythonResponse = await sendPromptToPython(userInput, user_id);
+    const currentContext = [...conversationsHistory];
+    currentContext.push({sender: 'User', message: userInput});
+    const pythonResponse = await sendPromptToPython(currentContext, user_id);
     if (pythonResponse.status === 200 || pythonResponse.status === 500) {
       const conversation_id = conversationsList[currentConversationIndex].conversation_id;
       //console.log(conversation_id, currentConversationIndex);
@@ -157,22 +157,23 @@ const ChatBot = () => {
       if (promptResponse.status === 200) {
         const promptData = await promptResponse.json() as PromptResponse;
         //console.log(promptData);
-        const prompt_id = promptData.data.prompt_id; 
+        const prompt_id = promptData.data.prompt_id;
+        const pythonData = await pythonResponse.text();
         //console.log(prompt_id);
-        await saveAnswer(jwt, "pythonData.data", prompt_id, conversation_id);
+        await saveAnswer(jwt, pythonData, prompt_id, conversation_id);
+        const updatedConversation = [...conversationsHistory];
+        updatedConversation.push({ sender: 'User', message: userInput });
+        updatedConversation.push({ sender: 'Cube-BOT', message: pythonData });
+        setConversationsHistory(updatedConversation);
+        setConversationCache(prevCache => ({
+          ...prevCache,
+          [conversationsList[currentConversationIndex].conversation_id]: updatedConversation,
+      }));
       }
     } else {
       setDisableInput(false);
       console.error('Error: Unexpected response code from the Python script');
     }
-    const updatedConversation = [...conversationsHistory];
-    updatedConversation.push({ sender: 'User', message: userInput });
-    updatedConversation.push({ sender: 'Cube-BOT', message: "pythonData.data" });
-    setConversationsHistory(updatedConversation);
-    setConversationCache(prevCache => ({
-      ...prevCache,
-      [conversationsList[currentConversationIndex].conversation_id]: updatedConversation,
-  }));
     setUserInput('');
     setDisableInput(false);
   };
