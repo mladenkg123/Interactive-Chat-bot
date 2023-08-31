@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCube, faUser, faMessage, faTrash } from '@fortawesome/free-solid-svg-icons';
-import { useNavigate } from 'react-router-dom';
+import { faCube, faTrash, faUser } from '@fortawesome/free-solid-svg-icons';
 import Cookies from 'universal-cookie';
 import Swal from 'sweetalert2';
 import {
@@ -9,8 +8,6 @@ import {
   fetchConversations,
   fetchPreviousAnswers,
   fetchPreviousPrompts,
-  saveAnswer,
-  savePrompt,
   sendPromptToPython,
   startNewConversation
 } from '../logic/api';
@@ -26,11 +23,6 @@ type Prompt = {
   prompt: string;
   conversation_id: string;
   prompt_id: string;
-};
-
-type PythonResponse = {
-  data: string;
-  message: string;
 };
 
 type AnswerResponse = {
@@ -63,7 +55,6 @@ type Message = {
   message: string;
 };
 
-// Define the props type for the ChatMessage component
 interface ChatMessageProps {
   msg: Message;
 }
@@ -81,7 +72,6 @@ const ChatMessage: React.FC<ChatMessageProps> = React.memo(({ msg }) => (
     </div>
   </div>
 ), (prevProps, nextProps) => {
-  // Determine whether the component should re-render based on props changes
   return prevProps.msg.message === nextProps.msg.message &&
     prevProps.msg.sender === nextProps.msg.sender;
 });
@@ -90,7 +80,6 @@ const Header = React.lazy(() => import('../components/Header'));
 
 const ChatBot = () => {
 
-  const navigate = useNavigate();
   const cookies = new Cookies();
   const jwt = cookies.get('jwt') as string;
   const user_id = getUserIDFromJWT(jwt);
@@ -132,7 +121,7 @@ const ChatBot = () => {
     loadConversations().catch(error => {
       console.error('Unhandled promise error:', error);
     });
-  }, [conversationsList]);
+  }, []);
   
   
   
@@ -149,18 +138,10 @@ const ChatBot = () => {
     }
     const currentContext = [...conversationsHistory];
     currentContext.push({sender: 'User', message: userInput});
-    const pythonResponse = await sendPromptToPython(currentContext, user_id);
+    const conversation_id = conversationsList[currentConversationIndex].conversation_id;
+    const pythonResponse = await sendPromptToPython(jwt, userInput, conversation_id, currentContext, user_id);
     if (pythonResponse.status === 200 || pythonResponse.status === 500) {
-      const conversation_id = conversationsList[currentConversationIndex].conversation_id;
-      //console.log(conversation_id, currentConversationIndex);
-      const promptResponse = await savePrompt(jwt, user_id, userInput, conversation_id);
-      if (promptResponse.status === 200) {
-        const promptData = await promptResponse.json() as PromptResponse;
-        //console.log(promptData);
-        const prompt_id = promptData.data.prompt_id;
         const pythonData = await pythonResponse.text();
-        //console.log(prompt_id);
-        await saveAnswer(jwt, pythonData, prompt_id, conversation_id);
         const updatedConversation = [...conversationsHistory];
         updatedConversation.push({ sender: 'User', message: userInput });
         updatedConversation.push({ sender: 'Cube-BOT', message: pythonData });
@@ -169,34 +150,12 @@ const ChatBot = () => {
           ...prevCache,
           [conversationsList[currentConversationIndex].conversation_id]: updatedConversation,
       }));
-      }
     } else {
       setDisableInput(false);
       console.error('Error: Unexpected response code from the Python script');
     }
     setUserInput('');
     setDisableInput(false);
-  };
-
-  const handleStartNewChat = async () => {
-    /*
-    if (!conversationsHistory.length) {
-      // If the conversation is empty, create a new chat and write a prompt
-      const promptResponse = await savePrompt(jwt, user_id as string, "Hello! How can I help you?", conversationsList[0].conversation_id);
-      if (promptResponse.status === 200) {
-        const promptData = await promptResponse.json() as Prompt;
-        await startNewConversation(jwt, user_id as string);
-        setConversationsHistory([
-          ...conversationsHistory,
-          [{ sender: 'User', message: "Hello! How can I help you?" }]
-        ]);
-        //setCurrentConversationIndex(conversationsHistory.length);
-      }
-    } else {
-      // If the conversation is not empty, simply switch to the chat
-      //setCurrentConversationIndex(conversationsHistory.length - 1);
-    }
-    */
   };
 
   const handleEmptyChat = () => {
@@ -214,8 +173,6 @@ const ChatBot = () => {
   };
 
 const handleNewChat = async () => {
-      console.log(conversationsList);
-      console.log(conversationsHistory);
       if (jwt && user_id) {
         try {
           if (handleEmptyChat() && conversationsList.length === 0) {
@@ -223,8 +180,6 @@ const handleNewChat = async () => {
             if (conversationsListPromise.status === 200) {
               const conversationsListResponse = await conversationsListPromise.json() as ConversationResponse;
               const conversationsListId = conversationsListResponse.data.conversation_id;
-              console.log(conversationsListResponse);
-              console.log(conversationsListId);
               setConversationsList(prevList => [
                 ...prevList,
                 { conversation_id: conversationsListId }
@@ -241,8 +196,6 @@ const handleNewChat = async () => {
             if (conversationsListPromise.status === 200) {
               const conversationsListResponse = await conversationsListPromise.json() as ConversationResponse;
               const conversationsListId = conversationsListResponse.data.conversation_id;
-              console.log(conversationsListResponse);
-              console.log(conversationsListId);
               setConversationsList(prevList => [
                 ...prevList,
                 { conversation_id: conversationsListId }
@@ -257,10 +210,9 @@ const handleNewChat = async () => {
       } 
 };
 
-const handleDeleteChat = async () => {
+const handleDeleteChat = () => {
 
-  const conversation_id = cookies.get('conversation_id');
-  console.log(conversation_id);
+  const conversation_id = conversationsList[currentConversationIndex].conversation_id;
   if (jwt && conversation_id) {
     try {
       Swal.fire({
@@ -276,11 +228,9 @@ const handleDeleteChat = async () => {
           const conversationsListPromise = await deleteConversation(jwt, conversation_id);
           if (conversationsListPromise.status === 200) {
             const conversationsListResponse = await conversationsListPromise.json() as ConversationsResponse;
-            console.log(conversationsList);
             const index = conversationsList.indexOf(conversation_id);
             const updatedconversationsList = conversationsList.splice(index, 1);
             setConversationsList(updatedconversationsList);
-            console.log(conversationsList);
             Swal.fire(
               'Deleted!',
               'Your conversation has been deleted.',
@@ -301,8 +251,6 @@ const handleDeleteChat = async () => {
     setCurrentConversationIndex(index);
     const conversationId = conversationsList[index].conversation_id;
 
-    cookies.set('conversation_id', conversationId);
-
     // Check if the conversation data is in the cache
     if (conversationCache[conversationId]) {
       setConversationsHistory(conversationCache[conversationId]);
@@ -314,7 +262,6 @@ const handleDeleteChat = async () => {
       const promptsData = responseJson.data;
       const responseJson2 = await answersResponse.json() as AnswerResponse;
       const answersData = responseJson2.data;
-      console.log(responseJson,responseJson2);
       if (Array.isArray(promptsData) && promptsData.length > 0 && Array.isArray(answersData) && answersData.length > 0) {
         const formattedPrompts: Message[] = promptsData.map((promptObj: Prompt) => ({
           sender: 'User',

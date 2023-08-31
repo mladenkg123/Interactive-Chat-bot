@@ -53,35 +53,13 @@ export async function fetchPreviousAnswers(jwt: string, conversation_id: string)
   return answerResponse;
 }
 
-export async function savePrompt(jwt: string, user_id: string, prompt: string, conversation_id: string): Promise<Response> {
-  const requestOptions: RequestInit = {
+export async function sendPromptToPython(jwt: string, prompt: string, conversation_id: string, conversation: Message[], user_id: string) : Promise<Response> {
+  const requestOptions = {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${jwt}` },
-    body: JSON.stringify({ user_id, prompt, conversation_id: conversation_id}),
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ jwt, prompt, conversation_id, conversation, user_id }),
   };
 
-  const response = await fetch(`${API_BASE_URL}/prompt`, requestOptions);
+  const response = await fetch('http://localhost:5000', requestOptions);
   return response;
-}
-
-export async function saveAnswer(jwt: string, answer: string, prompt_id: string, conversation_id: string): Promise<Response> {
-  const requestOptions: RequestInit = {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${jwt}` },
-    body: JSON.stringify({ answer, prompt_id, conversation_id }),
-  };
-
-  const response = await fetch(`${API_BASE_URL}/answer`, requestOptions);
-  return response;
-}
-
-export async function sendPromptToPython(conversation: Message[], user_id: string) : Promise<Response> {
-    const requestOptions = {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ conversation, user_id }),
-    };
-
-    const response = await fetch('http://localhost:5000', requestOptions);
-    return response;
 }
