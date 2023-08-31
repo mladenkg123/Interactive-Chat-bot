@@ -106,8 +106,9 @@ const ChatBot = () => {
         const conversationsListPromise = await fetchConversations(jwt);
         if (conversationsListPromise.status === 200) {
           const conversationsListResponse = await conversationsListPromise.json() as ConversationsResponse;
-          const conversationsList = conversationsListResponse.data;
-          setConversationsList(conversationsList);
+          const loadedConversationsList  = conversationsListResponse.data;
+          setConversationsList(loadedConversationsList);
+          handleRestoreConversation(0); //Ovo ga jebe nesto
           handleActiveConversation();
         } else {
           console.error('Error fetching previous conversations');
@@ -186,6 +187,7 @@ const handleNewChat = async () => {
                 ...prevList,
                 { conversation_id: conversationsListId }
               ]);
+              handleNewChatActive();
             } else {
               console.error('Error fetching previous conversations');
             }
@@ -206,6 +208,7 @@ const handleNewChat = async () => {
                 ...prevList,
                 { conversation_id: conversationsListId }
               ]);
+              handleNewChatActive();
             } else {
               console.error('Error fetching previous conversations');
             }
@@ -259,16 +262,31 @@ const handleDeleteChat = () => {
   }
 };
 
-  const handleActiveConversation = () => {   
-    const conversationId = conversationsList[currentConversationIndex]?.conversation_id; 
-    
+const handleActiveConversation = () => {
+  if (conversationsList.length > 0) {
+    setCurrentConversationIndex(0); 
+    handleRestoreConversation(0); 
+  }
+};
 
+const handleNewChatActive = () => {
+  
+  const reversedConversationsList = conversationsList.slice().reverse()
+  const lastIndex = reversedConversationsList.findIndex(conversation => conversation.conversation_id);
+  if (lastIndex !== -1) { 
+    const lastCreatedIndex = conversationsList.length - lastIndex; 
+    setCurrentConversationIndex(lastCreatedIndex);
+    handleRestoreConversation(lastCreatedIndex); 
+    console.log()   // ovde isto
+    console.log(lastCreatedIndex); 
+  } else { 
+    
   };
+};
  
   const handleRestoreConversation = async (index: number) => {
     setCurrentConversationIndex(index);
     const conversationId = conversationsList[index].conversation_id;
-
     // Check if the conversation data is in the cache
     if (conversationCache[conversationId]) {
       setConversationsHistory(conversationCache[conversationId]);
@@ -300,6 +318,7 @@ const handleDeleteChat = () => {
           ...prevCache,
           [conversationsList[index].conversation_id]: formattedMessages,
       }));
+
       } else {
         const formattedPrompts2 = [
         { sender: 'Cube-BOT', message: 'Hello! How can I help you?' }, 
