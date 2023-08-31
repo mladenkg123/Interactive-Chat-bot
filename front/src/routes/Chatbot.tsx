@@ -132,7 +132,7 @@ const ChatBot = () => {
     loadConversations().catch(error => {
       console.error('Unhandled promise error:', error);
     });
-  }, []);
+  }, [conversationsList]);
   
   
   
@@ -213,8 +213,6 @@ const ChatBot = () => {
     );
   };
 
-
-    
 const handleNewChat = async () => {
       console.log(conversationsList);
       console.log(conversationsHistory);
@@ -278,7 +276,11 @@ const handleDeleteChat = async () => {
           const conversationsListPromise = await deleteConversation(jwt, conversation_id);
           if (conversationsListPromise.status === 200) {
             const conversationsListResponse = await conversationsListPromise.json() as ConversationsResponse;
-            console.log(conversationsListResponse);
+            console.log(conversationsList);
+            const index = conversationsList.indexOf(conversation_id);
+            const updatedconversationsList = conversationsList.splice(index, 1);
+            setConversationsList(updatedconversationsList);
+            console.log(conversationsList);
             Swal.fire(
               'Deleted!',
               'Your conversation has been deleted.',
@@ -294,8 +296,6 @@ const handleDeleteChat = async () => {
     }
   }
 };
-
-
 
   const handleRestoreConversation = async (index: number) => {
     setCurrentConversationIndex(index);
