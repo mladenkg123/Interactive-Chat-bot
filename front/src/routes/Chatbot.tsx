@@ -107,6 +107,7 @@ const ChatBot = () => {
           const conversationsListResponse = await conversationsListPromise.json() as ConversationsResponse;
           const conversationsList = conversationsListResponse.data;
           setConversationsList(conversationsList);
+          handleActiveConversation();
         } else {
           console.error('Error fetching previous conversations');
         }
@@ -175,7 +176,7 @@ const ChatBot = () => {
 const handleNewChat = async () => {
       if (jwt && user_id) {
         try {
-          if (handleEmptyChat() && conversationsList.length === 0) {
+          if (handleEmptyChat() && conversationsList.length === 0 || handleEmptyChat() && conversationsHistory[2]?.sender ) {
             const conversationsListPromise = await startNewConversation(jwt);
             if (conversationsListPromise.status === 200) {
               const conversationsListResponse = await conversationsListPromise.json() as ConversationResponse;
@@ -189,7 +190,11 @@ const handleNewChat = async () => {
             }
           }
           else if (handleEmptyChat()) {
-            alert("Input Text First!");
+            Swal.fire({
+              icon: 'error',
+              title: 'Oops...',
+              text: 'Input some text!',
+            })
           }
           else {
             const conversationsListPromise = await startNewConversation(jwt);
@@ -211,7 +216,6 @@ const handleNewChat = async () => {
 };
 
 const handleDeleteChat = () => {
-
   const conversation_id = conversationsList[currentConversationIndex].conversation_id;
   if (jwt && conversation_id) {
     try {
@@ -231,6 +235,7 @@ const handleDeleteChat = () => {
             const index = conversationsList.indexOf(conversation_id);
             const updatedconversationsList = conversationsList.splice(index, 1);
             setConversationsList(updatedconversationsList);
+            handleActiveConversation();
             Swal.fire(
               'Deleted!',
               'Your conversation has been deleted.',
@@ -247,6 +252,12 @@ const handleDeleteChat = () => {
   }
 };
 
+  const handleActiveConversation = () => {   
+    const conversationId = conversationsList[currentConversationIndex]?.conversation_id; 
+    
+
+  };
+ 
   const handleRestoreConversation = async (index: number) => {
     setCurrentConversationIndex(index);
     const conversationId = conversationsList[index].conversation_id;
@@ -314,6 +325,7 @@ const handleDeleteChat = () => {
                 className={`restore-point ${
                   index === currentConversationIndex ? 'selected' : ''
                 }`}
+                onLoad={() => handleActiveConversation()}
                 onClick={() => handleRestoreConversation(index)}
               >
                 {index === currentConversationIndex ? (
