@@ -77,6 +77,8 @@ const ChatMessage: React.FC<ChatMessageProps> = React.memo(({ msg }) => (
     prevProps.msg.sender === nextProps.msg.sender;
 });
 
+let conversationList2  : Conversation[] = [];
+
 const Header = React.lazy(() => import('../components/Header'));
 
 const ChatBot = () => {
@@ -93,15 +95,12 @@ const ChatBot = () => {
   const [currentConversationIndex, setCurrentConversationIndex] = useState(0);
   const [userInput, setUserInput] = useState('');
   const [disableInput, setDisableInput] = useState(false);
-  const [conversationsList, setConversationsList] = useState<Conversation[]>([]);
   const [selectedModel, setSelectedModel] = useState(null);
   const options=[
     { value: 'Cube-BOT', label: 'Cube-BOT(GPT3.5)' },
     { value: 'Llama', label: 'Llama' },
     { value: 'SQL Prompts', label: 'SQL Propmts', },
   ];
-
-  let conversationList2  : Conversation[] = [];
   
 
   const handleUserInput = (event: { target: { value: React.SetStateAction<string>; }; }) => {
@@ -119,7 +118,6 @@ const ChatBot = () => {
           conversationList2 = loadedConversationsList;
           handleRestoreConversation(0);
           handleActiveConversation();
-          
         } else {
           console.error('Error fetching previous conversations');
         }
@@ -191,7 +189,7 @@ const handleNewChat = async () => {
             if (conversationsListPromise.status === 200) {
               const conversationsListResponse = await conversationsListPromise.json() as ConversationResponse;
               const conversationsListId = conversationsListResponse.data.conversation_id;
-              conversationList2.append({
+              conversationList2.push({
                 conversation_id : conversationsListId
               })             
             handleNewChatActive();
@@ -211,7 +209,7 @@ const handleNewChat = async () => {
             if (conversationsListPromise.status === 200) {
               const conversationsListResponse = await conversationsListPromise.json() as ConversationResponse;
               const conversationsListId = conversationsListResponse.data.conversation_id;
-              conversationList2.append({
+              conversationList2.push({
                 conversation_id : conversationsListId
               })             
               handleNewChatActive();
@@ -246,7 +244,6 @@ const handleDeleteChat = () => {
             console.log(index);
             if (index !== -1) {
               conversationList2.splice(index, 1);
-              console.log(index, conversationsList);
               //setConversationsList([...conversationsList]); 
               handleActiveConversation();
               Swal.fire(
@@ -277,10 +274,11 @@ const handleActiveConversation = async () => {
 
 const handleNewChatActive = async () => {
   
-  const reversedConversationsList = conversationList2.slice().reverse()
+  const reversedConversationsList = conversationList2.slice().reverse();
+  console.log(conversationList2);
   const lastIndex = reversedConversationsList.findIndex(conversation => conversation.conversation_id);
   if (lastIndex !== -1) { 
-    const lastCreatedIndex = conversationList2.length - lastIndex; 
+    const lastCreatedIndex = conversationList2.length - lastIndex - 1; 
     setCurrentConversationIndex(lastCreatedIndex);
     await handleRestoreConversation(lastCreatedIndex); 
     console.log()   // ovde isto
@@ -292,7 +290,7 @@ const handleNewChatActive = async () => {
  
   const handleRestoreConversation = async (index: number) => {
     setCurrentConversationIndex(index);
-    console.log(conversationsList, index);
+    console.log(conversationList2, index);
     const conversationId = conversationList2[index].conversation_id;
     // Check if the conversation data is in the cache
     if (conversationCache[conversationId]) {
@@ -337,7 +335,6 @@ const handleNewChatActive = async () => {
     }
   }
 };
-
   return (
     <div className="chatbot-container">
       <React.Suspense fallback={<div>Loading...</div>}>
