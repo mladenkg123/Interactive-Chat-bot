@@ -108,7 +108,6 @@ const ChatBot = () => {
   };
 
   const loadConversations = async () => {
-    
     if (jwt && user_id) {
       try {
         const conversationsListPromise = await fetchConversations(jwt);
