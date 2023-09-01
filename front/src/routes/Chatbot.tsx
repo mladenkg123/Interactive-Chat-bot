@@ -108,7 +108,7 @@ const ChatBot = () => {
   };
 
   const loadConversations = async () => {
-    console.log(conversationsList);
+    
     if (jwt && user_id) {
       try {
         const conversationsListPromise = await fetchConversations(jwt);
@@ -116,7 +116,9 @@ const ChatBot = () => {
           const conversationsListResponse = await conversationsListPromise.json() as ConversationsResponse;
           const loadedConversationsList  = conversationsListResponse.data;
           setConversationsList(loadedConversationsList);
+          handleRestoreConversation(0);
           handleActiveConversation();
+          
         } else {
           console.error('Error fetching previous conversations');
         }
@@ -291,6 +293,7 @@ const handleNewChatActive = async () => {
  
   const handleRestoreConversation = async (index: number) => {
     setCurrentConversationIndex(index);
+    console.log(conversationsList, index);
     const conversationId = conversationsList[index].conversation_id;
     // Check if the conversation data is in the cache
     if (conversationCache[conversationId]) {
