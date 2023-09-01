@@ -116,7 +116,6 @@ const ChatBot = () => {
           const conversationsListResponse = await conversationsListPromise.json() as ConversationsResponse;
           const loadedConversationsList  = conversationsListResponse.data;
           setConversationsList(loadedConversationsList);
-          handleRestoreConversation(0); //Ovo ga jebe nesto
           handleActiveConversation();
         } else {
           console.error('Error fetching previous conversations');
@@ -133,8 +132,6 @@ const ChatBot = () => {
       console.error('Unhandled promise error:', error);
     });
   }, []);
-  
-  
   
   const handleSubmit = async (event: { preventDefault: () => void }) => {
     setDisableInput(true);
@@ -243,7 +240,7 @@ const handleDeleteChat = () => {
         if (result.isConfirmed) {
           const conversationsListPromise = await deleteConversation(jwt, conversation_id);
           if (conversationsListPromise.status === 200) {
-            const conversationsListResponse = await conversationsListPromise.json() as ConversationsResponse;
+            await conversationsListPromise.json() as ConversationsResponse;
             const index = conversationsList.findIndex(conversation => conversation.conversation_id === conversation_id);
             console.log(index);
             if (index !== -1) {
@@ -270,21 +267,21 @@ const handleDeleteChat = () => {
   }
 };
 
-const handleActiveConversation = () => {
+const handleActiveConversation = async () => {
   if (conversationsList.length > 0) {
     setCurrentConversationIndex(0); 
-    handleRestoreConversation(0); 
+    await handleRestoreConversation(0);
   }
 };
 
-const handleNewChatActive = () => {
+const handleNewChatActive = async () => {
   
   const reversedConversationsList = conversationsList.slice().reverse()
   const lastIndex = reversedConversationsList.findIndex(conversation => conversation.conversation_id);
   if (lastIndex !== -1) { 
     const lastCreatedIndex = conversationsList.length - lastIndex; 
     setCurrentConversationIndex(lastCreatedIndex);
-    handleRestoreConversation(lastCreatedIndex); 
+    await handleRestoreConversation(lastCreatedIndex); 
     console.log()   // ovde isto
     console.log(lastCreatedIndex); 
   } else { 
