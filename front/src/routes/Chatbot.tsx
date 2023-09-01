@@ -101,6 +101,7 @@ const ChatBot = () => {
     { value: 'SQL Prompts', label: 'SQL Propmts', },
   ];
 
+  let conversationList2  : Conversation[] = [];
   
 
   const handleUserInput = (event: { target: { value: React.SetStateAction<string>; }; }) => {
@@ -115,7 +116,7 @@ const ChatBot = () => {
         if (conversationsListPromise.status === 200) {
           const conversationsListResponse = await conversationsListPromise.json() as ConversationsResponse;
           const loadedConversationsList  = conversationsListResponse.data;
-          setConversationsList(loadedConversationsList);
+          conversationList2 = loadedConversationsList;
           handleRestoreConversation(0);
           handleActiveConversation();
           
@@ -148,7 +149,7 @@ const ChatBot = () => {
     }
     const currentContext = [...conversationsHistory];
     currentContext.push({sender: 'User', message: userInput});
-    const conversation_id = conversationsList[currentConversationIndex].conversation_id;
+    const conversation_id = conversationList2[currentConversationIndex].conversation_id;
     const pythonResponse = await sendPromptToPython(jwt, userInput, conversation_id, currentContext, user_id);
     if (pythonResponse.status === 200 || pythonResponse.status === 500) {
         const pythonData = await pythonResponse.text();
@@ -158,7 +159,7 @@ const ChatBot = () => {
         setConversationsHistory(updatedConversation);
         setConversationCache(prevCache => ({
           ...prevCache,
-          [conversationsList[currentConversationIndex].conversation_id]: updatedConversation,
+          [conversationList2[currentConversationIndex].conversation_id]: updatedConversation,
       }));
     } else {
       setDisableInput(false);
@@ -185,16 +186,15 @@ const ChatBot = () => {
 const handleNewChat = async () => {
       if (jwt && user_id) {
         try {
-          if (handleEmptyChat() && conversationsList.length === 0 || handleEmptyChat() && conversationsHistory[2]?.sender ) {
+          if (handleEmptyChat() && conversationList2.length === 0 || handleEmptyChat() && conversationsHistory[2]?.sender ) {
             const conversationsListPromise = await startNewConversation(jwt);
             if (conversationsListPromise.status === 200) {
               const conversationsListResponse = await conversationsListPromise.json() as ConversationResponse;
               const conversationsListId = conversationsListResponse.data.conversation_id;
-              setConversationsList(prevList => [
-                ...prevList,
-                { conversation_id: conversationsListId }
-              ]);
-              handleNewChatActive();
+              conversationList2.append({
+                conversation_id : conversationsListId
+              })             
+            handleNewChatActive();
             } else {
               console.error('Error fetching previous conversations');
             }
@@ -211,10 +211,9 @@ const handleNewChat = async () => {
             if (conversationsListPromise.status === 200) {
               const conversationsListResponse = await conversationsListPromise.json() as ConversationResponse;
               const conversationsListId = conversationsListResponse.data.conversation_id;
-              setConversationsList(prevList => [
-                ...prevList,
-                { conversation_id: conversationsListId }
-              ]);
+              conversationList2.append({
+                conversation_id : conversationsListId
+              })             
               handleNewChatActive();
             } else {
               console.error('Error fetching previous conversations');
@@ -227,7 +226,7 @@ const handleNewChat = async () => {
 };
 
 const handleDeleteChat = () => {
-  const conversation_id = conversationsList[currentConversationIndex].conversation_id;
+  const conversation_id = conversationList2[currentConversationIndex].conversation_id;
   if (jwt && conversation_id) {
     try {
       Swal.fire({
@@ -243,12 +242,12 @@ const handleDeleteChat = () => {
           const conversationsListPromise = await deleteConversation(jwt, conversation_id);
           if (conversationsListPromise.status === 200) {
             await conversationsListPromise.json() as ConversationsResponse;
-            const index = conversationsList.findIndex(conversation => conversation.conversation_id === conversation_id);
+            const index = conversationList2.findIndex(conversation => conversation.conversation_id === conversation_id);
             console.log(index);
             if (index !== -1) {
-              conversationsList.splice(index, 1);
+              conversationList2.splice(index, 1);
               console.log(index, conversationsList);
-              setConversationsList([...conversationsList]); 
+              //setConversationsList([...conversationsList]); 
               handleActiveConversation();
               Swal.fire(
                 'Deleted!',
@@ -270,7 +269,7 @@ const handleDeleteChat = () => {
 };
 
 const handleActiveConversation = async () => {
-  if (conversationsList.length > 0) {
+  if (conversationList2.length > 0) {
     setCurrentConversationIndex(0); 
     await handleRestoreConversation(0);
   }
@@ -278,10 +277,10 @@ const handleActiveConversation = async () => {
 
 const handleNewChatActive = async () => {
   
-  const reversedConversationsList = conversationsList.slice().reverse()
+  const reversedConversationsList = conversationList2.slice().reverse()
   const lastIndex = reversedConversationsList.findIndex(conversation => conversation.conversation_id);
   if (lastIndex !== -1) { 
-    const lastCreatedIndex = conversationsList.length - lastIndex; 
+    const lastCreatedIndex = conversationList2.length - lastIndex; 
     setCurrentConversationIndex(lastCreatedIndex);
     await handleRestoreConversation(lastCreatedIndex); 
     console.log()   // ovde isto
@@ -294,7 +293,7 @@ const handleNewChatActive = async () => {
   const handleRestoreConversation = async (index: number) => {
     setCurrentConversationIndex(index);
     console.log(conversationsList, index);
-    const conversationId = conversationsList[index].conversation_id;
+    const conversationId = conversationList2[index].conversation_id;
     // Check if the conversation data is in the cache
     if (conversationCache[conversationId]) {
       setConversationsHistory(conversationCache[conversationId]);
@@ -324,7 +323,7 @@ const handleNewChatActive = async () => {
         setConversationsHistory(formattedMessages);
         setConversationCache(prevCache => ({
           ...prevCache,
-          [conversationsList[index].conversation_id]: formattedMessages,
+          [conversationList2[index].conversation_id]: formattedMessages,
       }));
 
       } else {
@@ -354,7 +353,7 @@ const handleNewChatActive = async () => {
           </button>
           <div className="conversation-restore-points">
             <div className="restore-points-header">Previous Chats</div>
-            {conversationsList.map((_, index) => (
+            {conversationList2.map((_, index) => (
               <div
                 key={index}
                 className={`restore-point ${
