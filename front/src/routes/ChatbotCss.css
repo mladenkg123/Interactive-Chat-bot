@@ -166,6 +166,15 @@
     align-items: center;
     
   }
+  .chat-sidebar2 {
+    width: 250px;
+    background-color: #f0f0f0;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    
+  }
   
   .start-new-chat-button {
     background-color: #3498db;
@@ -234,4 +243,24 @@
   .restore-point.selected .DeleteIcon{
     background-color: #c5c5c5;
     color: rgb(253, 0, 0);
+}
+.model-selection {
+  display: grid;
+  flex-direction: row;
+  align-items: center;
+  font-family: Arial, sans-serif;
+}
+
+label {
+  margin-right: 10px;
+  font-weight: bold;
+  color: #333;
+}
+.css-1nmdiq5-menu {
+  color:black;
+}
+.css-b62m3t-container {
+  position: relative;
+  margin-top: 15px;
+  box-sizing: border-box;
 }

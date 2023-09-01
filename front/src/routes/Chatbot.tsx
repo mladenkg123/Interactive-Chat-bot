@@ -3,6 +3,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCube, faTrash, faUser } from '@fortawesome/free-solid-svg-icons';
 import Cookies from 'universal-cookie';
 import Swal from 'sweetalert2';
+import Select from 'react-select';
 import {
   deleteConversation,
   fetchConversations,
@@ -93,7 +94,14 @@ const ChatBot = () => {
   const [userInput, setUserInput] = useState('');
   const [disableInput, setDisableInput] = useState(false);
   const [conversationsList, setConversationsList] = useState<Conversation[]>([]);
+  const [selectedModel, setSelectedModel] = useState(null);
+  const options=[
+    { value: 'Cube-BOT', label: 'Cube-BOT(GPT3.5)' },
+    { value: 'Llama', label: 'Llama' },
+    { value: 'SQL Prompts', label: 'SQL Propmts', },
+  ];
 
+  
 
   const handleUserInput = (event: { target: { value: React.SetStateAction<string>; }; }) => {
     setUserInput(event.target.value);
@@ -330,6 +338,7 @@ const handleNewChatActive = () => {
     }
   }
 };
+
   return (
     <div className="chatbot-container">
       <React.Suspense fallback={<div>Loading...</div>}>
@@ -384,6 +393,16 @@ const handleNewChatActive = () => {
                     {conversationsHistory.length ? 'Send' : 'New Chat'}
                   </button>
                 </form>
+          </div>
+        </div>
+        <div className='chat-sidebar2'>
+          <div className="model-selection">
+            <label htmlFor="CubeBOT-model">Choose a Cube-BOT model:</label>
+            <Select
+             defaultValue={selectedModel}
+              onChange={setSelectedModel}
+              options={options}
+              />
           </div>
         </div>
       </div>
