@@ -169,7 +169,57 @@ const ChatBot = () => {
 
   }, [conversationsHistory]);
   
+ /* useEffect(() => {
+    const findConversationIndexByDescription = (description: string) =>
+      conversationList2.findIndex((conversation) =>
+        conversation.conversation_description === description
+      );
+  
+    const index = findConversationIndexByDescription(
+      conversationList2[currentConversationIndex]?.conversation_description
+    );
+  
+    if (index !== -1) {
+      loadConversationByID(index);
+    }
+  }, [conversationList2, currentConversationIndex]);
+  
+  
  
+
+  const loadConversationByID = async (index : number) => {
+
+    const conversation_id = conversationList2[index].conversation_id;
+    console.log(conversation_id);
+
+    if (jwt && user_id) {
+      try {
+        const conversationsListPromise = await fetchConversationById(jwt, conversation_id);
+        if (conversationsListPromise.status === 200) {
+          const conversationsListResponse = await conversationsListPromise.json() as ConversationsResponse;
+          
+          const loadedConversationDescripition = conversationsListResponse.data.conversation_description;
+                  
+          console.log(loadedConversationDescripition);
+            const promptTexts = conversationList2.map((conversation) =>
+            conversation.conversation_description
+              ? conversation.conversation_description.substring(0, 15)
+              : 'No prompt available'
+          );
+          setPromptTexts(promptTexts);
+          console.log(promptTexts);
+        } else {
+          console.error('Error fetching previous conversations');
+        }
+      } catch (error) {
+        console.error('Error:', error);
+      }
+    }
+   
+
+  }; */
+
+
 
   const handleSubmit = async (event: { preventDefault: () => void }) => {
     setDisableInput(true);
