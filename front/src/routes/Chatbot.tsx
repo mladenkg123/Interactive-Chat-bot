@@ -49,6 +49,7 @@ type ConversationResponse = {
 
 type Conversation = {
   conversation_id: string;
+  user_id: string;
 };
 
 type Message = {
@@ -115,7 +116,9 @@ const ChatBot = () => {
           const conversationsListResponse = await conversationsListPromise.json() as ConversationsResponse;
           const loadedConversationsList  = conversationsListResponse.data;
           conversationList2 = loadedConversationsList;
-          await handleRestoreConversation(0);
+          if(conversationList2.length > 0) {
+            await handleRestoreConversation(0);
+          }
           await handleActiveConversation();
         } else {
           console.error('Error fetching previous conversations');
@@ -189,7 +192,8 @@ const handleNewChat = async () => {
               const conversationsListResponse = await conversationsListPromise.json() as ConversationResponse;
               const conversationsListId = conversationsListResponse.data.conversation_id;
               conversationList2.push({
-                conversation_id : conversationsListId
+                conversation_id : conversationsListId,
+                user_id: user_id
               })             
             await handleNewChatActive();
             } else {
@@ -209,7 +213,8 @@ const handleNewChat = async () => {
               const conversationsListResponse = await conversationsListPromise.json() as ConversationResponse;
               const conversationsListId = conversationsListResponse.data.conversation_id;
               conversationList2.push({
-                conversation_id : conversationsListId
+                conversation_id : conversationsListId,
+                user_id: user_id
               })             
               await handleNewChatActive();
             } else {

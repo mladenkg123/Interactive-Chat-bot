@@ -1,21 +1,54 @@
 const mongoose = require('mongoose');
 const ConversationSchema = mongoose.Schema({
-    user_id: { type: mongoose.Schema.Types.ObjectId, ref: "user" }
+    user_id: { type: mongoose.Schema.Types.ObjectId, ref: "user" },
+    last_accessed: {type: Date, required: true}
 });
 
 const ConversationModel = mongoose.model('conversation', ConversationSchema);
 
 // Save conversation
 ConversationModel.saveConversation = function (user_id) {
+    const last_accessed = new Date();
     const newConversation = new ConversationModel({
-        user_id: user_id
+        user_id: user_id,
+        last_accessed: last_accessed
     });
     newConversation.save();
     const modifiedData = {
         user_id: newConversation.user_id,
-        conversation_id: newConversation._id
+        conversation_id: newConversation._id,
+        last_accessed: newConversation.last_accessed
     };
     return { status: 200, data: modifiedData };
+};
+
+ConversationModel.modifyLastAccessedById = async function (conversation_id, user_id) {
+    const ObjectId = mongoose.Types.ObjectId;
+    try {
+        const conversationUserId = await ConversationModel.find({ _id: new ObjectId(conversation_id) }, { user_id: 1 }).exec();
+        if (conversationUserId.length == 0) {
+            return { status: 404, message: 'Conversation not found' };
+        }
+        user_id = new ObjectId(user_id);
+        // Check if the obtained user_id matches the provided user_id
+        if (conversationUserId[0].user_id.toString() !== user_id.toString()) {
+            return { status: 403, message: 'Forbidden' };
+        }
+        const last_accessed = new Date();
+        const updatedConversation = await ConversationModel.findByIdAndUpdate(
+            conversation_id,
+            { $set: { last_accessed } }, // Update only the last_accessed field
+            { new: true } // This option returns the updated document
+        ).exec();
+        if (!updatedConversation) {
+            return { status: 404, message: 'Conversation not found' };
+        }
+
+        return { status: 200 };
+    } catch (error) {
+        console.error("Error modifying last_accessed of conversation:", error);
+        return { status: 500, message: "An error occurred while modifying last_accessed of the conversation" };
+    }
 };
 
 ConversationModel.deleteConversation = async function (conversation_id, user_id) {
@@ -52,11 +85,5 @@ ConversationModel.findByUserId = async function (user_id) {
     });
     return { status: 200, data: modifiedData };
 };
-/*
-ConversationModel.findById = function (conversation_id, user_id) {
-    const ObjectId = mongoose.Types.ObjectId;
-    return ConversationModel.findOne({ user_id: new ObjectId(user_id),  conversation_id: new ObjectId(conversation_id)});
-};
-*/
 
 module.exports = ConversationModel;

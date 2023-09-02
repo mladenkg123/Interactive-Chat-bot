@@ -68,6 +68,16 @@ def save_answer(jwt, answer, prompt_id, conversation_id):
     response = requests.post(url, json=data, headers=headers)
     return response
 
+def update_conversation(jwt, conversation_id):
+    headers = {
+        'Content-Type': 'application/json',
+        'Authorization': f'Bearer {jwt}'
+    }
+    url = f'http://localhost:8000/conversation/{conversation_id}'
+    
+    response = requests.patch(url, headers=headers)
+    return response
+
 def chat(system, user_assistant):
   assert isinstance(system, str), "`system` should be a string"
   assert isinstance(user_assistant, list), "`user_assistant` should be a list"
@@ -115,6 +125,7 @@ def handle_post():
             response += item
     prompt_id = save_prompt(data.get("jwt"), data.get("user_id"), data.get("prompt"), data.get("conversation_id")).json().get("data").get("prompt_id")
     answer_response = save_answer(data.get("jwt"), response, prompt_id, data.get("conversation_id")).json()
+    print(update_conversation(data.get("jwt"), data.get("conversation_id")))
     #print(conversation)
     return response, 200
 
