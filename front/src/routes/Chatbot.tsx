@@ -1,10 +1,9 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCube, faTrash, faUser } from '@fortawesome/free-solid-svg-icons';
 import Cookies from 'universal-cookie';
 import Swal from 'sweetalert2';
 import Select from 'react-select';
-import { animateScroll as scroll } from 'react-scroll';
 import {
   deleteConversation,
   fetchConversations,
@@ -51,6 +50,7 @@ type ConversationResponse = {
 type Conversation = {
   conversation_id: string;
   user_id: string;
+  last_accessed: Date;
 };
 
 type Message = {
@@ -207,7 +207,8 @@ const handleNewChat = async () => {
               const conversationsListId = conversationsListResponse.data.conversation_id;
               conversationList2.push({
                 conversation_id : conversationsListId,
-                user_id: user_id
+                user_id: user_id,
+                last_accessed: new Date()
               })             
             await handleNewChatActive();
             } else {
@@ -228,7 +229,8 @@ const handleNewChat = async () => {
               const conversationsListId = conversationsListResponse.data.conversation_id;
               conversationList2.push({
                 conversation_id : conversationsListId,
-                user_id: user_id
+                user_id: user_id,
+                last_accessed: new Date()
               })             
               await handleNewChatActive();
             } else {
