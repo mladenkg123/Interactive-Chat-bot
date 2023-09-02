@@ -100,6 +100,7 @@ const ChatBot = () => {
   const [userInput, setUserInput] = useState('');
   const [disableInput, setDisableInput] = useState(false);
   const [selectedModel, setSelectedModel] = useState({ value: 'Cube-BOT', label: 'Cube-BOT(GPT3.5)' });
+  const [promptTexts, setPromptTexts] = useState<string[]>([]);
   const options=[
     { value: 'Cube-BOT', label: 'Cube-BOT(GPT3.5)' },
     { value: 'Llama', label: 'Llama' },
@@ -112,6 +113,7 @@ const ChatBot = () => {
   };
 
   const loadConversations = async () => {
+
     if (jwt && user_id) {
       try {
         const conversationsListPromise = await fetchConversations(jwt);
@@ -120,10 +122,21 @@ const ChatBot = () => {
           const loadedConversationsList = conversationsListResponse.data.map((conversation) => ({
             ...conversation,
             last_accessed: new Date(conversation.last_accessed),
-          }));
-          conversationList2 = loadedConversationsList;
-          console.log(conversationList2);
+          }));          
+          
+          
+          var sorter =  loadedConversationsList.sort((a, b) => b.last_accessed.getTime() - a.last_accessed.getTime());
+          
+          conversationList2 = sorter;
+
           if(conversationList2.length > 0) {
+            const promptTexts = conversationList2.map((conversation) =>
+            conversation.conversation_description
+              ? conversation.conversation_description.substring(0, 15)
+              : 'No prompt available'
+          );
+          setPromptTexts(promptTexts);
+
             await handleRestoreConversation(0);
           }
           await handleActiveConversation();
@@ -134,6 +147,8 @@ const ChatBot = () => {
         console.error('Error:', error);
       }
     }
+    console.log(conversationList2);
+
   };
   
   const scrollToBottom = () => {
@@ -177,10 +192,19 @@ const ChatBot = () => {
         updatedConversation.push({ sender: 'User', message: userInput });
         updatedConversation.push({ sender: 'Cube-BOT', message: pythonData });
         setConversationsHistory(updatedConversation);
+
+        const conversationIndex = conversationList2.findIndex(conversation => conversation.conversation_id === conversation_id);
+        console.log(conversationIndex);
+        if (conversationIndex !== -1) {
+          conversationList2[conversationIndex].last_accessed = new Date();
+          console.log(conversationList2[conversationIndex].last_accessed, conversation_id);
+        }
+
         setConversationCache(prevCache => ({
           ...prevCache,
           [conversationList2[currentConversationIndex].conversation_id]: updatedConversation,
       }));
+             
     } else {
       setDisableInput(false);
       console.error('Error: Unexpected response code from the Python script');
@@ -343,7 +367,6 @@ const handleNewChatActive = async () => {
           ...prevCache,
           [conversationList2[index].conversation_id]: formattedMessages,
       }));
-
       } else {
         const formattedPrompts2 = [
         { sender: 'Cube-BOT', message: 'Hello! How can I help you?' }, 
@@ -369,24 +392,27 @@ const handleNewChatActive = async () => {
             New Chat
           </button>
           <div className="conversation-restore-points">
-            <div className="restore-points-header">Previous Chats</div>
-            {conversationList2.map((_, index) => (
+          <div className="restore-points-header">Previous Chats</div>
+          {conversationList2.map((_, index) => {
+
+            const promptText = promptTexts[index];
+
+            return (
               <div
                 key={index}
-                className={`restore-point ${
-                  index === currentConversationIndex ? 'selected' : ''
-                }`}
+                className={`restore-point ${index === currentConversationIndex ? 'selected' : ''}`}
                 onClick={() => handleRestoreConversation(index)}
               >
                 {index === currentConversationIndex ? (
-                  <strong>Conversation {index + 1}</strong>
+                  <strong>{promptText}</strong>
                 ) : (
-                  <span>Conversation {index + 1}</span>
+                  <span>{promptText}</span>
                 )}
-                <FontAwesomeIcon className="DeleteIcon" icon={faTrash} style={{paddingLeft: '10px' }} onClick={() => handleDeleteChat()}/>
+                <FontAwesomeIcon className="DeleteIcon" icon={faTrash} style={{ paddingLeft: '10px' }} onClick={() => handleDeleteChat()} />
               </div>
-            ))}
-          </div>
+            );
+          })}
+        </div>
         </div>
         <div className="chat-content">
           <div className="previous-conversations">
