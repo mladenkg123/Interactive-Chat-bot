@@ -16,6 +16,11 @@ const modifyLastAccessedById = function(conversation_id, user_id)
     return ConversationModel.modifyLastAccessedById(conversation_id, user_id)
 }
 
+const modifyConversationDescripitonById = function(conversation_id, user_id, conversation_description)
+{
+    return ConversationModel.modifyConversationDescripitonById(conversation_id, user_id, conversation_description)
+}
+
 const deleteById = async function(conversation_id, user_id)
 {
     try {
@@ -44,6 +49,7 @@ module.exports = {
     find,
     findByUserId,
     modifyLastAccessedById,
+    modifyConversationDescripitonById,
     deleteById,
     save
 }

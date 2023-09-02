@@ -115,7 +115,10 @@ const ChatBot = () => {
         const conversationsListPromise = await fetchConversations(jwt);
         if (conversationsListPromise.status === 200) {
           const conversationsListResponse = await conversationsListPromise.json() as ConversationsResponse;
-          const loadedConversationsList  = conversationsListResponse.data;
+          const loadedConversationsList = conversationsListResponse.data.map((conversation) => ({
+            ...conversation,
+            last_accessed: new Date(conversation.last_accessed),
+          }));
           conversationList2 = loadedConversationsList;
           if(conversationList2.length > 0) {
             await handleRestoreConversation(0);
