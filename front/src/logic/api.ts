@@ -39,6 +39,13 @@ export async function fetchConversations(jwt: string): Promise<Response> {
   return conversationsResponse;
 }
 
+export async function fetchConversationById(jwt: string, conversation_id: string): Promise<Response> {
+  const requestOptions = generateRequestOptionsGet(jwt);
+
+  const conversationsResponse = await fetch(`${API_BASE_URL}/conversation/${conversation_id}`, requestOptions);
+  return conversationsResponse;
+}
+
 export async function fetchPreviousPrompts(jwt: string, conversation_id: string): Promise<Response> {
   const requestOptions = generateRequestOptionsGet(jwt);
 

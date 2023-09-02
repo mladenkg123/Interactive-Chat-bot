@@ -118,4 +118,31 @@ ConversationModel.findByUserId = async function (user_id) {
     return { status: 200, data: modifiedData };
 };
 
+ConversationModel.findById = async function (conversation_id, user_id) {
+    const ObjectId = mongoose.Types.ObjectId;
+    try {
+        const conversationUserId = await ConversationModel.find({ _id: new ObjectId(conversation_id) }, { user_id: 1 }).exec();
+        if (conversationUserId.length == 0) {
+            return { status: 404, message: 'Conversation not found' };
+        }
+        user_id = new ObjectId(user_id);
+        // Check if the obtained user_id matches the provided user_id
+        if (conversationUserId[0].user_id.toString() !== user_id.toString()) {
+            return { status: 403, message: 'Forbidden' };
+        }
+        const conversation = await ConversationModel.findOne({ conversation_id: new ObjectId(conversation_id)})
+        const modifiedData = {
+            conversation_id: conversation._id,
+            user_id: conversation.user_id,
+            last_accessed: conversation.last_accessed,
+            conversation_description: conversation.conversation_description
+        }
+        return { status: 200, data: modifiedData };
+    }
+    catch {
+        console.error("Error modifying conversation_description of conversation:", error);
+        return { status: 500, message: "An error occurred while modifying conversation_description of the conversation" };
+    }
+};
+
 module.exports = ConversationModel;

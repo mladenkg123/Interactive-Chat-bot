@@ -6,6 +6,12 @@ const find = function()
 {
     return ConversationModel.find()
 }
+
+const findById = function(id, user_id)
+{
+    return ConversationModel.findById(id, user_id)
+}
+
 const findByUserId = function(user_id)
 {
     return ConversationModel.findByUserId(user_id)
@@ -39,7 +45,6 @@ const deleteById = async function(conversation_id, user_id)
     }
 }
 
-
 const save = function(conversation)
 {
     return ConversationModel.saveConversation(conversation);
@@ -47,6 +52,7 @@ const save = function(conversation)
 
 module.exports = {
     find,
+    findById,
     findByUserId,
     modifyLastAccessedById,
     modifyConversationDescripitonById,

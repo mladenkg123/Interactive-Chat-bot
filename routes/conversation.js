@@ -27,6 +27,28 @@ router.get('/',
         } 
 })
 
+router.get('/:conversation_id',
+    passport.authenticate('jwt', {session: false}),
+    async (req, res) => {
+        const jwtToken = req.headers.authorization;
+        if (jwtToken.startsWith('Bearer ')) {
+            const token = jwtToken.split(' ')[1]; // Extract the token without the "Bearer " prefix
+            // Verify the token and extract user_id
+            try {
+                const decodedToken = jwt.verify(token, 'SECRET'); // Replace 'your-secret-key' with your actual secret key
+                const user_id = decodedToken._id; // Assuming the user_id is stored in the JWT payload
+
+                const conversations = await ConversationService.findById(req.params.conversation_id, user_id);
+                res.send(conversations);
+            } catch (error) {
+                console.error('Error decoding JWT:', error);
+                res.status(401).send('Unauthorized');
+            }
+        } else {
+            res.status(401).send('Unauthorized');
+        }
+})
+
 router.post('/delete/:conversation_id',
     passport.authenticate('jwt', {session: false}),
     passport.authorizeRoles('ADMIN', 'USER'),

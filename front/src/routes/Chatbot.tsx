@@ -7,6 +7,7 @@ import Select from 'react-select';
 import {
   deleteConversation,
   fetchConversations,
+  fetchConversationById,
   fetchPreviousAnswers,
   fetchPreviousPrompts,
   sendPromptToPython,
