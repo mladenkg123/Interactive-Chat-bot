@@ -95,7 +95,7 @@ const ChatBot = () => {
   const [currentConversationIndex, setCurrentConversationIndex] = useState(0);
   const [userInput, setUserInput] = useState('');
   const [disableInput, setDisableInput] = useState(false);
-  const [selectedModel, setSelectedModel] = useState(null);
+  const [selectedModel, setSelectedModel] = useState({ value: 'Cube-BOT', label: 'Cube-BOT(GPT3.5)' });
   const options=[
     { value: 'Cube-BOT', label: 'Cube-BOT(GPT3.5)' },
     { value: 'Llama', label: 'Llama' },
@@ -147,7 +147,7 @@ const ChatBot = () => {
     const currentContext = [...conversationsHistory];
     currentContext.push({sender: 'User', message: userInput});
     const conversation_id = conversationList2[currentConversationIndex].conversation_id;
-    const pythonResponse = await sendPromptToPython(jwt, userInput, conversation_id, currentContext, user_id);
+    const pythonResponse = await sendPromptToPython(jwt, userInput, conversation_id, currentContext, user_id, selectedModel);
     if (pythonResponse.status === 200 || pythonResponse.status === 500) {
         const pythonData = await pythonResponse.text();
         const updatedConversation = [...conversationsHistory];

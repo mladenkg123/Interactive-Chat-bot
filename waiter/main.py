@@ -2,12 +2,41 @@ import pymongo
 import requests
 import json
 import openai
+import replicate
 import os
 from flask_cors import CORS
 from flask import Flask, request
 
 openai.api_key = os.environ["OPENAI_API_KEY"]
 
+replicate_api = os.environ['REPLICATE_API_TOKEN']
+# Replicate Credentials
+if not (replicate_api.startswith('r8_') and len(replicate_api) == 40):
+    exit(1)
+
+llm = 'replicate/llama70b-v2-chat:2796ee9483c3fd7aa2e171d38f4ca12251a30609463dcfd4cd76703f22e96cdf'
+
+temperature = 0.1
+top_p = 0.9
+max_length = 512
+
+# Initialize chat history
+messages = [{"role": "assistant", "content": "Hello! How may I assist you today?"}]
+
+def generate_llama2_response(messages):
+    string_dialogue = "You are a helpful, enthusiastic assistant. You do not respond as 'User' or pretend to be 'User'. You only respond once as 'Assistant'.You are curious, funny and intelligent. You do not respond or answer as 'User', it's important that you only respond as an 'Assistant' and end the answer."
+    
+    for dict_message in messages:
+        if dict_message["role"] == "user":
+            string_dialogue += dict_message["content"] + "\\n\\n"
+        else:
+            string_dialogue += "Assistant: " + dict_message["content"] + "\\n\\n"
+    
+    output = replicate.run(llm,
+        input={"prompt": f"{string_dialogue} Assistant: ",
+               "temperature": temperature, "top_p": top_p, "max_length": max_length, "repetition_penalty": 1})
+    
+    return output
 
 def save_prompt(jwt, user_id, prompt, conversation_id):
     headers = {
@@ -66,16 +95,28 @@ def handle_post():
     if not user_id:
         return {"error": "No user ID provided"}, 400
     # Return a response
-    response = {"message": "POST request received", "data": data}
+    #response = {"message": "POST request received", "data": data}
     conversation = []
-    #print(data)
-    for i in data.get("conversation"):
-        conversation.append(i.get("message"))
-    response_fn_test = chat("", conversation)
+    messages = []
+    model = data.get("selectedModel").get("value")
+    if(model == "Cube-BOT"):
+        for i in data.get("conversation"):
+            conversation.append(i.get("message"))
+        response = chat("", conversation)
+    elif(model == "Llama"):
+        for i in data.get("conversation"):
+            if(i.get("sender") == "User"):
+                messages.append({"role": "user", "content": f"User: {i.get('message')}"})
+            elif(i.get("sender") == "Cube-BOT"):
+                messages.append({"role": "assistant", "content": f"User: {i.get('message')}"})
+        response_generator = generate_llama2_response(messages)
+        response = ''
+        for item in response_generator:
+            response += item
     prompt_id = save_prompt(data.get("jwt"), data.get("user_id"), data.get("prompt"), data.get("conversation_id")).json().get("data").get("prompt_id")
-    answer_response = save_answer(data.get("jwt"), response_fn_test, prompt_id, data.get("conversation_id")).json()
+    answer_response = save_answer(data.get("jwt"), response, prompt_id, data.get("conversation_id")).json()
     #print(conversation)
-    return response_fn_test, 200
+    return response, 200
 
 
 def main():
