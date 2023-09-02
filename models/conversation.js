@@ -110,7 +110,7 @@ ConversationModel.deleteConversation = async function (conversation_id, user_id)
 ConversationModel.findByUserId = async function (user_id) {
     const ObjectId = mongoose.Types.ObjectId;
 
-    const conversations = await ConversationModel.find({ user_id: new ObjectId(user_id) }, {conversation_id: 1, user_id: 1, last_accessed: 1}).exec();
+    const conversations = await ConversationModel.find({ user_id: new ObjectId(user_id) }, {conversation_id: 1, user_id: 1, last_accessed: 1, conversation_description: 1}).exec();
     const modifiedData = conversations.map(item => {
         const { _id, ...rest } = item.toObject(); // Use toObject() to convert Mongoose document to plain JavaScript object
         return { conversation_id: _id, ...rest };

@@ -68,7 +68,7 @@ def save_answer(jwt, answer, prompt_id, conversation_id):
     response = requests.post(url, json=data, headers=headers)
     return response
 
-def update_conversation(jwt, conversation_id):
+def update_conversation_time(jwt, conversation_id):
     headers = {
         'Content-Type': 'application/json',
         'Authorization': f'Bearer {jwt}'
@@ -76,6 +76,19 @@ def update_conversation(jwt, conversation_id):
     url = f'http://localhost:8000/conversation/{conversation_id}'
     
     response = requests.patch(url, headers=headers)
+    return response
+
+def update_conversation_description(jwt, conversation_id, conversation_description):
+    headers = {
+        'Content-Type': 'application/json',
+        'Authorization': f'Bearer {jwt}'
+    }
+    data = {
+        'conversation_description': conversation_description
+    }
+    url = f'http://localhost:8000/conversation/description/{conversation_id}'
+    
+    response = requests.patch(url, json=data, headers=headers)
     return response
 
 def chat(system, user_assistant):
@@ -125,8 +138,17 @@ def handle_post():
             response += item
     prompt_id = save_prompt(data.get("jwt"), data.get("user_id"), data.get("prompt"), data.get("conversation_id")).json().get("data").get("prompt_id")
     answer_response = save_answer(data.get("jwt"), response, prompt_id, data.get("conversation_id")).json()
-    print(update_conversation(data.get("jwt"), data.get("conversation_id")))
+    update_conversation_time(data.get("jwt"), data.get("conversation_id"))
     #print(conversation)
+    user_propmts = []
+    if (len(conversation) <= 7):
+        for i in range(len(conversation)):
+            if (i % 2 == 0):
+                user_propmts.append(conversation[i])
+    print(user_propmts)
+    chat_description = chat("Generate a very brief title that describes the user prompts and what he wants to talk about", user_propmts)
+    print(chat_description)
+    update_conversation_description(data.get("jwt"), data.get("conversation_id"), chat_description)
     return response, 200
 
 

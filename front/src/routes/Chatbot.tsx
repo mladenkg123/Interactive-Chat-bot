@@ -51,6 +51,7 @@ type Conversation = {
   conversation_id: string;
   user_id: string;
   last_accessed: Date;
+  conversation_description: string;
 };
 
 type Message = {
@@ -120,6 +121,7 @@ const ChatBot = () => {
             last_accessed: new Date(conversation.last_accessed),
           }));
           conversationList2 = loadedConversationsList;
+          console.log(conversationList2);
           if(conversationList2.length > 0) {
             await handleRestoreConversation(0);
           }
@@ -211,7 +213,8 @@ const handleNewChat = async () => {
               conversationList2.push({
                 conversation_id : conversationsListId,
                 user_id: user_id,
-                last_accessed: new Date()
+                last_accessed: new Date(),
+                conversation_description: ""
               })             
             await handleNewChatActive();
             } else {
@@ -233,7 +236,8 @@ const handleNewChat = async () => {
               conversationList2.push({
                 conversation_id : conversationsListId,
                 user_id: user_id,
-                last_accessed: new Date()
+                last_accessed: new Date(),
+                conversation_description: ""
               })             
               await handleNewChatActive();
             } else {
