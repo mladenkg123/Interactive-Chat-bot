@@ -1,9 +1,10 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCube, faTrash, faUser } from '@fortawesome/free-solid-svg-icons';
 import Cookies from 'universal-cookie';
 import Swal from 'sweetalert2';
 import Select from 'react-select';
+import { animateScroll as scroll } from 'react-scroll';
 import {
   deleteConversation,
   fetchConversations,
@@ -102,7 +103,7 @@ const ChatBot = () => {
     { value: 'Llama', label: 'Llama' },
     { value: 'SQL Prompts', label: 'SQL Propmts', },
   ];
-  
+  const chatContentLastMessage = useRef(null);
 
   const handleUserInput = (event: { target: { value: React.SetStateAction<string>; }; }) => {
     setUserInput(event.target.value);
@@ -129,13 +130,26 @@ const ChatBot = () => {
     }
   };
   
+  const scrollToBottom = () => {
+    if (chatContentLastMessage.current) {
+      chatContentLastMessage.current.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
 
   useEffect(() => {
     loadConversations().catch(error => {
       console.error('Unhandled promise error:', error);
     });
   }, []);
+
+  useEffect(() => {
+      
+    scrollToBottom();
+
+  }, [conversationsHistory]);
   
+ 
+
   const handleSubmit = async (event: { preventDefault: () => void }) => {
     setDisableInput(true);
     event.preventDefault();
@@ -284,7 +298,7 @@ const handleNewChatActive = async () => {
     await handleRestoreConversation(lastCreatedIndex);
   }
 };
- 
+
   const handleRestoreConversation = async (index: number) => {
     setCurrentConversationIndex(index);
     const conversationId = conversationList2[index].conversation_id;
@@ -370,6 +384,7 @@ const handleNewChatActive = async () => {
               {conversationsHistory.map((msg, index) => (
                 <ChatMessage key={index} msg={msg} />
               ))}
+              <div ref={chatContentLastMessage}></div>
             </div>
           </div>
           <div className="user-input">
