@@ -115,8 +115,8 @@ const ChatBot = () => {
           const conversationsListResponse = await conversationsListPromise.json() as ConversationsResponse;
           const loadedConversationsList  = conversationsListResponse.data;
           conversationList2 = loadedConversationsList;
-          handleRestoreConversation(0);
-          handleActiveConversation();
+          await handleRestoreConversation(0);
+          await handleActiveConversation();
         } else {
           console.error('Error fetching previous conversations');
         }
@@ -191,13 +191,13 @@ const handleNewChat = async () => {
               conversationList2.push({
                 conversation_id : conversationsListId
               })             
-            handleNewChatActive();
+            await handleNewChatActive();
             } else {
               console.error('Error fetching previous conversations');
             }
           }
           else if (handleEmptyChat()) {
-            Swal.fire({
+            await Swal.fire({
               icon: 'error',
               title: 'Oops...',
               text: 'Input some text!',
@@ -211,7 +211,7 @@ const handleNewChat = async () => {
               conversationList2.push({
                 conversation_id : conversationsListId
               })             
-              handleNewChatActive();
+              await handleNewChatActive();
             } else {
               console.error('Error fetching previous conversations');
             }
@@ -222,11 +222,11 @@ const handleNewChat = async () => {
       } 
 };
 
-const handleDeleteChat = () => {
+const handleDeleteChat = async () => {
   const conversation_id = conversationList2[currentConversationIndex].conversation_id;
   if (jwt && conversation_id) {
     try {
-      Swal.fire({
+     await Swal.fire({
         title: 'Are you sure?',
         text: "You won't be able to revert this!",
         icon: 'warning',
@@ -240,12 +240,10 @@ const handleDeleteChat = () => {
           if (conversationsListPromise.status === 200) {
             await conversationsListPromise.json() as ConversationsResponse;
             const index = conversationList2.findIndex(conversation => conversation.conversation_id === conversation_id);
-            console.log(index);
             if (index !== -1) {
               conversationList2.splice(index, 1);
-              //setConversationsList([...conversationsList]); 
-              handleActiveConversation();
-              Swal.fire(
+              await handleActiveConversation();
+              await Swal.fire(
                 'Deleted!',
                 'Your conversation has been deleted.',
                 'success'
@@ -274,22 +272,16 @@ const handleActiveConversation = async () => {
 const handleNewChatActive = async () => {
   
   const reversedConversationsList = conversationList2.slice().reverse();
-  console.log(conversationList2);
   const lastIndex = reversedConversationsList.findIndex(conversation => conversation.conversation_id);
   if (lastIndex !== -1) { 
     const lastCreatedIndex = conversationList2.length - lastIndex - 1; 
     setCurrentConversationIndex(lastCreatedIndex);
-    await handleRestoreConversation(lastCreatedIndex); 
-    console.log()   // ovde isto
-    console.log(lastCreatedIndex); 
-  } else { 
-    
-  };
+    await handleRestoreConversation(lastCreatedIndex);
+  }
 };
  
   const handleRestoreConversation = async (index: number) => {
     setCurrentConversationIndex(index);
-    console.log(conversationList2, index);
     const conversationId = conversationList2[index].conversation_id;
     // Check if the conversation data is in the cache
     if (conversationCache[conversationId]) {

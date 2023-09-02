@@ -53,7 +53,7 @@ export async function fetchPreviousAnswers(jwt: string, conversation_id: string)
   return answerResponse;
 }
 
-export async function sendPromptToPython(jwt: string, prompt: string, conversation_id: string, conversation: Message[], user_id: string, selectedModel: string) : Promise<Response> {
+export async function sendPromptToPython(jwt: string, prompt: string, conversation_id: string, conversation: Message[], user_id: string, selectedModel: object) : Promise<Response> {
   const requestOptions = {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
