@@ -69,16 +69,16 @@ const Register = ({ isShowRegister, onCloseRegister, isAuthenticated} : Register
         <div className="form-box solid">
         <button className="close-button" onClick={onCloseRegister}>X</button> {/* Close button */}
           <form onSubmit={handleSubmit}>
-            <h1 className="register-text">Register</h1>
-            <label>E-mail</label>
+            <h1 className="register-text">REGISTRACIJA</h1>
+            <label style={{color:"white"}}>E-mail</label>
             <br></br>
-            <input className="register-box" value={email} onChange={(e) => setEmail(e.target.value)} type="email" placeholder="youremail@gmail.com" id="email" name="email" />
+            <input className="register-box" value={email} onChange={(e) => setEmail(e.target.value)} type="email" placeholder="vašemail@gmail.com" id="email" name="email" />
             <br></br>
-            <label>Password</label>
+            <label style={{color:"white"}}>Šifra</label>
             <br></br>
             <input className="register-box"  value={pass} onChange={(e) => setPass(e.target.value)} type="password" placeholder="********" id="password" name="password" />
             <br></br>
-            <input type="submit" value="REGISTER" className="register-btn" />
+            <input type="submit" value="REGISTRUJ ME" className="register-btn" />
           </form>
         </div>
       </div>

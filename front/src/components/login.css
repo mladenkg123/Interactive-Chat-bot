@@ -41,7 +41,6 @@
     width: 100%;
     color: white;
     border-bottom: 2px solid white;
-    line-height: 30px;
     font-weight: bolder;
     text-align: center;
     display: flex;
@@ -51,9 +50,10 @@
   }
   
   label {
-    color:white;
-    width: 100%;
-    text-align: center;
+    margin-right: 10px;
+    font-weight: bold;
+    color: #fff;
+    font-size: 20px;
   }
   
   .login-box{

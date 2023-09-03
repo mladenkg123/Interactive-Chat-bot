@@ -87,16 +87,16 @@ const Login = ({ isShowLogin, onCloseLogin, onLoginSuccess } : LoginProps) => {
         <div className="form-box solid">
         <button className="close-button" onClick={onCloseLogin}>X</button>
           <form onSubmit={handleSubmit}>
-            <h1 className="login-text">Sign In</h1>
-            <label>E-mail</label>
+            <h1 className="login-text">LOGIN</h1>
+            <label style={{color:"white"}}>E-mail</label>
             <br></br>
-            <input className="login-box" value={email} onChange={(e) => setEmail(e.target.value)} type="email" placeholder="youremail@gmail.com" id="email" name="email" />
+            <input className="login-box" value={email} onChange={(e) => setEmail(e.target.value)} type="email" placeholder="vašemail@gmail.com" id="email" name="email" />
             <br></br>
-            <label>Password</label>
+            <label style={{color:"white"}}>Šifra</label>
             <br></br>
             <input className="login-box" value={pass} onChange={(e) => setPass(e.target.value)} type="password" placeholder="********" id="password" name="password" />
             <br></br>
-            <input type="submit" value="LOGIN" className="login-btn" />
+            <input type="submit" value="ULOGUJ ME" className="login-btn" />
           </form>
         </div>
       </div>

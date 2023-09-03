@@ -32,70 +32,71 @@ function Hero({ handleRegisterClick }: HeroProps) {
       
 
     <section className="Home_part1__Xn7G4">
-      <h1>Chat with Cube-BOT online.</h1>
-      <p>Ask Cube-BOT to generate a response!</p>
+      <h1>Četujte sa Cube-BOT-om onlajn!</h1>
+      <p>Pitajte Cube-BOT-a da generiše odgovor!</p>
     </section>
 
     <section className="Home_about__3GJD3">
       <div>
         <div>
-          <h2>AI Chatbot: Ask and Talk to AI about Anything</h2>
+          <h2>AI četbot: Postavite pitanje i razgovarajte s veštačkom inteligencijom o bilo čemu.</h2>
           <span>
-            The free chatbot by Cube-BOT that can answer any question you may have. It's user-friendly and easy to
-            interact with, simply type your question and get a response. Try it now and see how it can help you!
+          Besplatan četbot od strane Cube-BOT-a koji može odgovoriti na sva vaša pitanja. Korisniku prijateljski nastrojen i jednostavan za interakciju, samo unesite svoje pitanje i dobijte odgovor. Isprobajte ga sada i vidite kako vam može pomoći!
           </span>
           <div className="Home_txt__mutBF">
-            <i>How to make a cup of latte in short</i>
-            <i>Which type of diet is the healthiest</i>
-            <i>Write an apology letter to a customer</i>
-            <i>Write a 4-line funny poem</i>
-            <i>Write a horror story in one sentence</i>
-            <i>Birthday wishes for friend to write in a card</i>
+            <i>Uputstvo za pripremu ukusne šolje kafe u nekoliko jednostavnih koraka.</i>
+            <i>Kojom ishranom do što boljeg zdravlja?</i>
+            <i>Napiši mi najpopularije modele automobila u prethodnoj godini.</i>
+            <i>Ispričaj mi zanimljivu priču u samo jednoj rečenici.</i>
+            <i>Pronađi mi savršenu rođendansku želju koja će ostaviti poseban utisak.</i>
           </div>
         </div>
-        <img src="src/assets/1.png" alt="AI Chatbot: Ask and Talk to AI about Anything" />
+        <img src="src/assets/1.png" alt="AI Chatbot" />
       </div>
       <div>
         <div>
-            <h2>Chat with AI-Powerd Character Asistants</h2>
-            <span>Cube-BOT offers AI character assistants who can provide informative conversations on various topics, including education, careers, business, lifestyle, and more. Whether you need assistance with language learning, gaining knowledge, creative inspiration, business strategies, or a healthier lifestyle, our chatbot is here for you.</span>
-            <a href="/ChatBot">Chat Now &gt;</a></div>
+            <h2>Razgovarajte sa sa različitim AI modelima i testirajte njihove mogućnosti!</h2>
+            <span>Cube-BOT nudi različite AI modele koji mogu pružiti informativne razgovore o različitim temama, uključujući obrazovanje, karijeru, poslovanje, način života i još mnogo toga. Bez obzira da li vam je potrebna pomoć u učenju jezika, sticanju znanja, poslovnim strategijama ili zdravijem načinu života, naš četbot je tu za vas.</span>
+            <a href="/ChatBot">Četuj sada &gt;</a></div>
             <img src="src/assets/2.png" alt="Chat with AI-Powerd Character Asistants"/></div>
     </section>
 
     <section className="Home_feature__2hbt-" data-aos="zoom-in">
-        <h2>Cube-BOT: Chat, Answer, Create, Inspire, and More</h2>
-        <p>Discover the limitless potential of AI with Cube-BOT now!</p>
+        <h2>Cube-BOT: Četujte, odgovarajte, stvarajte, informišite se i mnogo više.</h2>
+        <p>Istražite neograničene potencijale veštačke inteligencije uz Cube-BOT sada!</p>
         <div className="Home_featureList__3yC4P">
-            <span> <FontAwesomeIcon icon={faRobot} style={{color:"#646cff"}} /> GPT powers our AI chatbot, delivering high-quality and expert-level content.</span>
-            <span> <FontAwesomeIcon icon={faCogs}  style={{color:"#646cff"}}/> Easily accessible online, our AI chat website is both free and user-friendly.</span>
-            <span> <FontAwesomeIcon icon={faShieldAlt} style={{color:"#646cff"}}/> Prioritizing information security, and data protection assured on Cube-BOT.</span>
+            <span> <FontAwesomeIcon icon={faRobot} style={{color:"#646cff"}} /> GPT i Llama modeli pokreću našeg AI četbota, pružajući visokokvalitetan sadržaj na stručnom nivou.</span>
+            <span> <FontAwesomeIcon icon={faCogs}  style={{color:"#646cff"}}/> Lako dostupna na mreži, naša veb stranica za AI čet je besplatna i jednostavna za korišćenje.</span>
+            <span> <FontAwesomeIcon icon={faShieldAlt} style={{color:"#646cff"}}/>Dajući prioritet sigurnosti informacija, Cube-BOT garantuje zaštitu podataka.</span>
         </div>
     </section>
     <section id="pricingContainer" style={{margin:"50px auto 0", padding:"550px 20px"}} data-aos="flip-right" data-aos-delay="550">
         {/* PRICING SECTION */}
         <div className="pricing-section">
-          <h2>Pricing Plans</h2>
+          <h2>Cenovnik : </h2>
           <PricingTable highlightColor="#ffd700">
-            <PricingSlot title="Free Plan" price="$0">
+            <PricingSlot title="Besplatan Plan" price="$0Month">
+              <PricingDetail>Cena: $0</PricingDetail>
               <PricingDetail>Basic features included</PricingDetail>
-              <PricingDetail>100 queries/month</PricingDetail>
+              <PricingDetail>100 promptova/mesečno</PricingDetail>
               <button className="pricing-button" onClick={handleRegisterClick}>
-                Sign Up
+                Registruj se
               </button>
             </PricingSlot>
             <PricingSlot title="Pro Plan" price="$9.99">
-              <PricingDetail>All features included</PricingDetail>
-              <PricingDetail>Unlimited queries/month</PricingDetail>
+              <PricingDetail>Cena: $9.99</PricingDetail>
+              <PricingDetail>Svi sadržaji uključeni</PricingDetail>
+              <PricingDetail>Neograničeno promptova/mesečno</PricingDetail>
               <button className="pricing-button" onClick={handleRegisterClick}>
-                Sign Up
+                Registruj se
               </button>
             </PricingSlot>
-            <PricingSlot title="Business Plan" price="$19.99">
-              <PricingDetail>Priority support</PricingDetail>
-              <PricingDetail>Unlimited queries/month</PricingDetail>
+            <PricingSlot title="Biznis Plan" price="$19.99">
+              <PricingDetail>Cena: $19.99</PricingDetail>
+              <PricingDetail>Prioritetna podrška</PricingDetail>
+              <PricingDetail>Neograničeno promptova/mesečno</PricingDetail>
               <button className="pricing-button" onClick={handleRegisterClick}>
-                Sign Up
+                Registruj se
               </button>
             </PricingSlot>
           </PricingTable>
@@ -109,34 +110,28 @@ function Hero({ handleRegisterClick }: HeroProps) {
             <img src="src/assets/3.png" alt="About Cube-BOT" />
           </div>
           <div className="About_feature_text">
-            <h2>About Cube-BOT</h2>
+            <h2>O Cube-BOT-u :</h2>
             <p>
-              Cube-BOT is a revolutionary AI chatbot designed to provide insightful
-              and informative conversations. With cutting-edge technology and a
-              friendly interface, Cube-BOT is here to answer your questions, assist you
-              in your learning journey, and offer creative inspiration. Our goal is to
-              make your interactions with Cube-BOT enjoyable and enriching, helping you
-              achieve more in less time.
+            Cube-BOT je revolucionarni AI četbot dizajniran da pruži duboke i informativne razgovore. 
+            Sa najsavremenijom tehnologijom i korisnički prijateljskim interfejsom, Cube-BOT je tu da odgovori na vaša pitanja, pomogne vam u vašem procesu učenja i pruži kreativnu inspiraciju. 
+            Naš cilj je da vaši interakcije sa Cube-BOT budu prijatne i obogaćujuće, pomažući vam da postignete više u manje vremena.
             </p>
           </div>
         </div>
         <div className="About_feature_extra">
           <div className="About_feature_extra_item">
-            <h3>Benefits of Cube-BOT</h3>
+          <h3>Prednosti Cube-BOT-a</h3>
             <ul>
-              <li>Instant responses to your queries</li>
-              <li>Access to expert-level knowledge</li>
-              <li>Creative inspiration for various topics</li>
-              <li>Support for language learning</li>
+              <li>Brzi odgovori na vaša pitanja</li>
+              <li>Pristup stručnom znanju</li>
+              <li>Kreativna inspiracija za različite teme</li>
+              <li>Podrška za učenje jezika</li>
             </ul>
           </div>
           <div className="About_feature_extra_item">
-            <h3>Our Mission</h3>
+          <h3>Naša Misija</h3>
             <p>
-              Our mission is to empower individuals with AI technology that enhances
-              their productivity, learning, and creativity. We strive to provide an
-              AI chatbot that not only answers questions but also inspires and assists
-              users in achieving their goals.
+              Naša misija je osnažiti pojedince AI tehnologijom koja poboljšava njihovu produktivnost, učenje i kreativnost. Trudimo se da predstavimo AI četbota koji ne samo da odgovara na pitanja, već i inspiriše i pomaže korisnicima da postignu svoje ciljeve.
             </p>
           </div>
         </div>

@@ -439,7 +439,7 @@ const handleNewChatActive = async () => {
       <div className="chat-container">
         <div className="chat-sidebar">
           <button className="start-new-chat-button" onClick={handleNewChat}>
-            New Chat
+            Novi Čet
           </button>
           <div className="conversation-restore-points">
           <div className="restore-points-header">Previous Chats</div>
@@ -479,18 +479,18 @@ const handleNewChatActive = async () => {
                     type="text"
                     value={userInput}
                     onChange={handleUserInput}
-                    placeholder="Type your message..."
+                    placeholder="Unesite vašu poruku..."
                     disabled={disableInput}
                   />
                   <button className="send-button" type="submit" onClick={handleEmptyChat}>
-                    {conversationsHistory.length ? 'Send' : 'New Chat'}
+                    {conversationsHistory.length ? 'Pošalji' : 'Novi Čet'}
                   </button>
                 </form>
           </div>
         </div>
         <div className='chat-sidebar2'>
           <div className="model-selection">
-            <label htmlFor="CubeBOT-model">Choose a Cube-BOT model:</label>
+            <label htmlFor="CubeBOT-model">Izaberi Cube-BOT model :</label>
             <Select
              defaultValue={selectedModel}
               onChange={setSelectedModel}

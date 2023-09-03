@@ -233,3 +233,8 @@ h2 {
     line-height: 1.6;
     opacity: 0.8;
   }
+  .li {
+    padding: 5px;
+    text-align: center;
+    font-size: 20px;
+}

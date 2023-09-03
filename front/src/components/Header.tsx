@@ -159,16 +159,16 @@ function Header({handleLoginClick, handleRegisterClick, handleSignOut, isAuthent
         </div>
         <ul className="nav-menu">
           <li className="nav-item">
-            <a href="/">Home</a>
+            <a href="/">Pocetna</a>
           </li>
           <li className="nav-item">
           <ScrollLink to="pricingContainer" smooth={true} duration={500} offset={570} spy={true}>
-              Pricing
+              Cenovnik
           </ScrollLink>
           </li>
           <li className="nav-item">
           <ScrollLink to="aboutContainer" smooth={true} duration={500} offset={280} spy={true}>
-              About
+              O nama
           </ScrollLink>
           </li>
           <li className="nav-item">
