@@ -159,7 +159,7 @@
     border-bottom: 16px solid transparent;
   }
   .chat-sidebar {
-    width: 250px;
+    width: 300px;
     background-color: #00000038;
     padding: 20px;
     display: flex;
@@ -168,7 +168,7 @@
     
   }
   .chat-sidebar2 {
-    width: 250px;
+    width: 300px;
     background-color: #00000038;
     padding: 20px;
     display: flex;
@@ -285,4 +285,5 @@ label {
   font-size: 25px;
   margin-bottom: 25px;
   font-family: inherit;
+  color:#000;
 }

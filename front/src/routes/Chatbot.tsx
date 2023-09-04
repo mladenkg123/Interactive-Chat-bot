@@ -5,6 +5,7 @@ import Cookies from 'universal-cookie';
 import Swal from 'sweetalert2';
 import Select from 'react-select';
 import {
+  deleteAllConversationsByUserId,
   deleteConversation,
   fetchConversationById,
   fetchConversations,
@@ -394,6 +395,41 @@ const handleDeleteChat = async () => {
     }
   }
 };
+const handleDeleteAllChat = async () => {
+    try {
+     await Swal.fire({
+        title: 'Are you sure?',
+        text: "You won't be able to revert this!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Yes, delete it!',
+      }).then(async (result) => {
+        if (result.isConfirmed) {
+          const conversationsListPromise = await deleteAllConversationsByUserId(jwt, user_id);
+          if (conversationsListPromise.status === 200) {
+            await conversationsListPromise.json() as ConversationsResponse;
+             
+              conversationList2 = [];
+              setConversationCache({});
+
+              await Swal.fire(
+                'Deleted!',
+                'Your conversation has been deleted.',
+                'success'
+              );
+            } else {
+              console.error('Error.');
+            }
+          } else {
+            console.error('Error Deleting Conversation');
+          }
+        });
+    } catch (error) {
+      console.error('Error:', error);
+    }
+  };
 
 const handleNewChatActive = async () => {
   
@@ -462,8 +498,8 @@ const handleNewChatActive = async () => {
             <button className="start-new-chat-button" onClick={handleNewChat}>
               Novi Čet
             </button>
-            <button className="delete-all-chat-button">
-              Obiši
+            <button className="delete-all-chat-button" onClick={handleDeleteAllChat}>
+              Obrisi sve
             </button>
           </div>
           <div className="conversation-restore-points">
