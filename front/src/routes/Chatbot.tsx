@@ -253,8 +253,7 @@ const ChatBot = () => {
     currentContext.push({sender: 'User', message: userInput});
     const conversation_id = conversationList2[currentConversationIndex].conversation_id;
     const pythonResponse = await sendPromptToPython(jwt, userInput, conversation_id, currentContext, user_id, selectedModel);
-    if (pythonResponse.status === 200 || pythonResponse.status === 500) {
-
+    if (pythonResponse.status === 200) {
         const pythonData = await pythonResponse.text();
         let updatedConversation = [];
         if(conversationsHistory[0]?.sender == 'Cube-BOT') {
@@ -279,13 +278,14 @@ const ChatBot = () => {
       }));
 
       await loadConversationByID(currentConversationIndex);
-      setPromptsLeft(promptsLeft-1);
-
-    } else {
-      setDisableInput(false);
-      console.error('Error: Unexpected response code from the Python script');
+      setUserInput('');
+    } else if(pythonResponse.status === 403) {
+      alert("No prompts available");
+      console.error('No prompts available');
     }
-    setUserInput('');
+    else {
+      console.error('No prompts available');
+    }
     setDisableInput(false);
   };
 

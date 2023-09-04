@@ -34,7 +34,7 @@ PromptModel.savePrompt = async function (prompt){
     return { status: 200, data: modifiedData };
     }
     else {
-        return { status: 150, message: 'No prompts remaining' };
+        return { status: 403, message: 'No prompts remaining' };
     }
 }
 
