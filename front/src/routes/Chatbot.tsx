@@ -279,6 +279,7 @@ const ChatBot = () => {
 
       await loadConversationByID(currentConversationIndex);
       setUserInput('');
+      setPromptsLeft(promptsLeft-1);
     } else if(pythonResponse.status === 403) {
       alert("No prompts available");
       console.error('No prompts available');
