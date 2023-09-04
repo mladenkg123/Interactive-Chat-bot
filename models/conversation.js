@@ -106,7 +106,19 @@ ConversationModel.deleteConversation = async function (conversation_id, user_id)
     }
 };
 
-// Find conversations by user ID
+ConversationModel.deleteAllByUserId = async function (user_id) {
+    try {
+        const deleteResult = await ConversationModel.deleteMany({ user_id }).exec();
+        if (deleteResult.deletedCount === 0) {
+            return { status: 404, message: "No conversations found for the user" };
+        }
+        return { status: 200, message: "All conversations deleted successfully" };
+    } catch (error) {
+        console.error("Error deleting conversation:", error);
+        return { status: 500, message: "An error occurred while deleting the conversation" };
+    }
+};
+
 ConversationModel.findByUserId = async function (user_id) {
     const ObjectId = mongoose.Types.ObjectId;
 

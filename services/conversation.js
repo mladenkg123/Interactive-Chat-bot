@@ -30,14 +30,28 @@ const modifyConversationDescripitonById = function(conversation_id, user_id, con
 const deleteById = async function(conversation_id, user_id)
 {
     try {
-
         const deletedConversation = await ConversationModel.deleteConversation(conversation_id, user_id);
         if (!deletedConversation) {
             return { status: 404, message: "Conversation not found" };
         }
-        
         await PromptModel.deleteByConversationId(conversation_id);
         await AnswerModel.deleteByConversationId(conversation_id);
+        return { status: 200, message: "Conversation deleted successfully" };
+    } catch (error) {
+        console.error("Error deleting conversation:", error);
+        return { status: 500, message: "An error occurred while deleting the conversation" };
+    }
+}
+
+const deleteAllByUserId = async function(user_id)
+{
+    try {
+        const deletedConversation = await ConversationModel.deleteAllByUserId(user_id);
+        if (!deletedConversation) {
+            return { status: 404, message: "Conversation not found" };
+        }
+        await PromptModel.deleteAllByUserId(user_id);
+        await AnswerModel.deleteAllByUserId(user_id);
         return { status: 200, message: "Conversation deleted successfully" };
     } catch (error) {
         console.error("Error deleting conversation:", error);
@@ -57,5 +71,6 @@ module.exports = {
     modifyLastAccessedById,
     modifyConversationDescripitonById,
     deleteById,
+    deleteAllByUserId,
     save
 }

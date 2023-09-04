@@ -69,6 +69,32 @@ router.post('/delete/:conversation_id',
             res.status(401).send('Unauthorized');
         } 
 })
+
+router.post('/delete/user/:user_id',
+    passport.authenticate('jwt', {session: false}),
+    async (req, res) => {
+        const jwtToken = req.headers.authorization;
+        if (jwtToken.startsWith('Bearer ')) {
+            const token = jwtToken.split(' ')[1]; // Extract the token without the "Bearer " prefix
+            try {
+                const decodedToken = jwt.verify(token, 'SECRET'); 
+                const user_id = decodedToken._id;
+                if (user_id === req.params.user_id) {
+                    const conversation = await ConversationService.deleteAllByUserId(user_id);
+                    res.send(conversation);
+                }
+                else {
+                    res.status(401).send('Unauthorized');
+                }
+            } catch (error) {
+                console.error('Error decoding JWT:', error);
+                res.status(401).send('Unauthorized');
+            }
+        } else {
+            res.status(401).send('Unauthorized');
+        } 
+})
+
 router.post('/',
     passport.authenticate('jwt', {session: false}),
     async (req, res) => {

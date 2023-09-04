@@ -17,6 +17,14 @@ PromptModel.deleteByConversationId = async function (conversation_id) {
     }
 };
 
+PromptModel.deleteAllByUserId = async function (user_id) {
+    try {
+        await PromptModel.deleteMany({ user_id: user_id }).exec();
+    } catch (error) {
+        console.error("Error deleting prompts:", error);
+    }
+};
+
 PromptModel.savePrompt = async function (prompt){
     const user = await UserModel.findOne({ _id: prompt.user_id }, { remaining_prompts: 1 });
     if(user.remaining_prompts > 0) {

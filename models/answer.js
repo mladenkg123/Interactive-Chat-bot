@@ -33,6 +33,14 @@ AnswerModel.deleteByConversationId = async function (conversation_id) {
     }
 };
 
+AnswerModel.deleteAllByUserId  = async function (user_id) {
+    try {
+        await AnswerModel.deleteMany({ user_id: user_id }).exec();
+    } catch (error) {
+        console.error("Error deleting answers:", error);
+    }
+};
+
 AnswerModel.findByPromptId = async function (prompt_id, user_id) {
     const ObjectId = mongoose.Types.ObjectId;
     try {
