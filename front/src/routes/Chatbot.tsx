@@ -1,13 +1,13 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faAudioDescription, faCube, faTrash, faUser } from '@fortawesome/free-solid-svg-icons';
+import { faCube, faTrash, faUser } from '@fortawesome/free-solid-svg-icons';
 import Cookies from 'universal-cookie';
 import Swal from 'sweetalert2';
 import Select from 'react-select';
 import {
   deleteConversation,
-  fetchConversations,
   fetchConversationById,
+  fetchConversations,
   fetchPreviousAnswers,
   fetchPreviousPrompts,
   sendPromptToPython,
@@ -124,10 +124,8 @@ const ChatBot = () => {
           }));          
           
           
-          var sorter =  loadedConversationsList.sort((a, b) => b.last_accessed.getTime() - a.last_accessed.getTime());
-          
-          conversationList2 = sorter;
-          console.log(conversationsHistory[0]?.sender);
+          conversationList2 =  loadedConversationsList.sort((a, b) => b.last_accessed.getTime() - a.last_accessed.getTime());
+          //console.log(conversationsHistory[0]?.sender);
 
           if(conversationList2.length > 0) {
             const updatedPromptTexts = [...promptTexts]; 
@@ -147,7 +145,7 @@ const ChatBot = () => {
         console.error('Error:', error);
       }
     }
-    console.log(conversationList2);
+    //console.log(conversationList2);
 
   };
   
@@ -174,7 +172,7 @@ const ChatBot = () => {
   const loadConversationByID = async (index : number) => {
 
     const conversation_id = conversationList2[index].conversation_id;
-    console.log(conversation_id);
+    //console.log(conversation_id);
 
     if (jwt && user_id) {
       try {
@@ -187,7 +185,7 @@ const ChatBot = () => {
           const updatedPromptTexts = [...promptTexts];
           updatedPromptTexts[index] = loadedConversationDescripition.substring(0, 15);
           setPromptTexts(updatedPromptTexts);
-          console.log(loadedConversationDescripition);
+          //console.log(loadedConversationDescripition);
 
         } else {
           console.error('Error fetching previous conversations');
@@ -216,7 +214,7 @@ const ChatBot = () => {
 
     if(conversationsHistory[0]?.sender == 'Cube-BOT'){
       await handleNewChat();
-      await setConversationsHistory([]);
+      setConversationsHistory([]);
       console.log(conversationsHistory);
     }
 
@@ -227,22 +225,27 @@ const ChatBot = () => {
     if (pythonResponse.status === 200 || pythonResponse.status === 500) {
 
         const pythonData = await pythonResponse.text();
-        const updatedConversation = [...conversationsHistory];
-        updatedConversation.push({ sender: 'User', message: userInput });
-        updatedConversation.push({ sender: 'Cube-BOT', message: pythonData });
+        let updatedConversation = [];
+        if(conversationsHistory[0]?.sender == 'Cube-BOT') {
+          updatedConversation.push({ sender: 'User', message: userInput });
+          updatedConversation.push({ sender: 'Cube-BOT', message: pythonData });
+        }
+        else {
+          updatedConversation = [...conversationsHistory];
+          updatedConversation.push({ sender: 'User', message: userInput });
+          updatedConversation.push({ sender: 'Cube-BOT', message: pythonData });
+        }
         setConversationsHistory(updatedConversation);
-
+        console.log(conversationsHistory);
         const conversationIndex = conversationList2.findIndex(conversation => conversation.conversation_id === conversation_id);
-        console.log(conversationIndex);
+        //console.log(conversationIndex);
         if (conversationIndex !== -1) {
           conversationList2[conversationIndex].last_accessed = new Date();
         }    
         setConversationCache(prevCache => ({
           ...prevCache,
           [conversationList2[currentConversationIndex].conversation_id]: updatedConversation,
-      })); 
-
-      
+      }));
 
       await loadConversationByID(currentConversationIndex);
 
@@ -261,7 +264,7 @@ const ChatBot = () => {
   };
 
 const handleNewChat = async () => {
-  console.log(conversationsHistory[0]?.sender);
+  //console.log(conversationsHistory[0]?.sender);
       if (jwt && user_id) {
         try {
           if (handleEmptyChat() && conversationList2.length === 0 || handleEmptyChat() && conversationsHistory[2]?.sender ) {
@@ -269,7 +272,7 @@ const handleNewChat = async () => {
             if (conversationsListPromise.status === 200) {
               const conversationsListResponse = await conversationsListPromise.json() as ConversationResponse;
               const conversationsListId = conversationsListResponse.data.conversation_id;
-              console.log(conversationsListId);
+              //console.log(conversationsListId);
               conversationList2.push({
                 conversation_id : conversationsListId,
                 user_id: user_id,
@@ -335,7 +338,7 @@ const handleDeleteChat = async () => {
               const updatedCache = { ...conversationCache };
               delete updatedCache[conversation_id];
               setConversationCache(updatedCache);
-              console.log(conversationsHistory)
+              //console.log(conversationsHistory)
               setConversationsHistory([{ 
                 sender: 'Cube-BOT', message: 'Hello! How can I help you?' },
               { sender: 'User', message: 'Hi there! I have a question.' },]);
@@ -343,7 +346,7 @@ const handleDeleteChat = async () => {
               
 
               setCurrentConversationIndex(0);
-              loadConversationByID(currentConversationIndex);
+              await loadConversationByID(currentConversationIndex);
               await handleRestoreConversation(0);
 
               await Swal.fire(

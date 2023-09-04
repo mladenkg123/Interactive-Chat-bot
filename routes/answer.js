@@ -16,7 +16,6 @@ const restrictToAllowedIP = (req, res, next) => {
 */
 router.get('/',
     passport.authenticate('jwt', {session: false}),
-    passport.authorizeRoles('ADMIN'),
     async (req, res) => {
         const answers = await AnswerService.find()
         res.send(answers);
@@ -65,7 +64,6 @@ router.get('/conversation/:conversation_id', passport.authenticate('jwt', { sess
 router.post('/',
     //restrictToAllowedIP,
     passport.authenticate('jwt', {session: false}),
-    passport.authorizeRoles('ADMIN', 'USER'),
     (req, res) => { 
         const answer = AnswerService.save(req.body)
         res.send(answer)
