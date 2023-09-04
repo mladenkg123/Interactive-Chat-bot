@@ -91,7 +91,6 @@ const ChatBot = () => {
   const cookies = new Cookies();
   const jwt = cookies.get('jwt') as string;
   const user_id = getUserIDFromJWT(jwt);
-
   const [conversationsHistory, setConversationsHistory] = useState<Message[]>([
     { sender: 'Cube-BOT', message: 'Hello! How can I help you?' },
     { sender: 'User', message: 'Hi there! I have a question.' },
@@ -109,13 +108,13 @@ const ChatBot = () => {
     { value: 'SQL Prompts', label: 'SQL Propmts', },
   ];
   const chatContentLastMessage = useRef(null);
-
+  
+  
   const handleUserInput = (event: { target: { value: React.SetStateAction<string>; }; }) => {
     setUserInput(event.target.value);
   };
 
   const loadConversations = async () => {
-    if (jwt && user_id) {
       try {
         const conversationsListPromise = await fetchConversations(jwt);
         if (conversationsListPromise.status === 200) {
@@ -146,7 +145,6 @@ const ChatBot = () => {
       } catch (error) {
         console.error('Error:', error);
       }
-    }
     //console.log(conversationList2);
 
   };
@@ -177,14 +175,15 @@ const ChatBot = () => {
 
   }, []);
   
-
+ if(!jwt || !user_id) {
+    window.location.href = "/";
+    return;
+  }
 
   const loadConversationByID = async (index : number) => {
 
     const conversation_id = conversationList2[index].conversation_id;
     //console.log(conversation_id);
-
-    if (jwt && user_id) {
       try {
         const conversationsListPromise = await fetchConversationById(jwt, conversation_id);
         if (conversationsListPromise.status === 200) {
@@ -203,9 +202,6 @@ const ChatBot = () => {
       } catch (error) {
         console.error('Error:', error);
       }
-    }
-   
-
   }; 
 
 
@@ -230,15 +226,10 @@ const ChatBot = () => {
 
   }; 
 
-
   const handleSubmit = async (event: { preventDefault: () => void }) => {
     setDisableInput(true);
     event.preventDefault();
     if (userInput.trim() === '') {
-      setDisableInput(false);
-      return;
-    }
-    if (!jwt || !user_id) {
       setDisableInput(false);
       return;
     }
@@ -284,8 +275,13 @@ const ChatBot = () => {
       alert("No prompts available");
       console.error('No prompts available');
     }
+    else if(pythonResponse.status === 500) {
+      alert("Unexpected server problem please try again");
+      console.error('Unexpected server problem please try again');
+    }
     else {
-      console.error('No prompts available');
+      alert("Unexpected server problem please try again 2");
+      console.error('Unexpected server problem please try again 2');
     }
     setDisableInput(false);
   };
@@ -298,57 +294,55 @@ const ChatBot = () => {
 
 const handleNewChat = async () => {
   //console.log(conversationsHistory[0]?.sender);
-      if (jwt && user_id) {
-        try {
-          if (handleEmptyChat() && conversationList2.length === 0 || handleEmptyChat() && conversationsHistory[2]?.sender ) {
-            const conversationsListPromise = await startNewConversation(jwt);
-            if (conversationsListPromise.status === 200) {
-              const conversationsListResponse = await conversationsListPromise.json() as ConversationResponse;
-              const conversationsListId = conversationsListResponse.data.conversation_id;
-              //console.log(conversationsListId);
-              conversationList2.push({
-                conversation_id : conversationsListId,
-                user_id: user_id,
-                last_accessed: new Date(),
-                conversation_description: ""
-              })             
-            await handleNewChatActive();
-            } else {
-              console.error('Error fetching previous conversations');
-            }
+      try {
+        if (handleEmptyChat() && conversationList2.length === 0 || handleEmptyChat() && conversationsHistory[2]?.sender ) {
+          const conversationsListPromise = await startNewConversation(jwt);
+          if (conversationsListPromise.status === 200) {
+            const conversationsListResponse = await conversationsListPromise.json() as ConversationResponse;
+            const conversationsListId = conversationsListResponse.data.conversation_id;
+            //console.log(conversationsListId);
+            conversationList2.push({
+              conversation_id : conversationsListId,
+              user_id: user_id,
+              last_accessed: new Date(),
+              conversation_description: ""
+            })             
+          await handleNewChatActive();
+          } else {
+            console.error('Error fetching previous conversations');
           }
-          else if (handleEmptyChat()) {
-            await Swal.fire({
-              icon: 'error',
-              title: 'Oops...',
-              text: 'Input some text!',
-            })
-          }
-          else {
-            const conversationsListPromise = await startNewConversation(jwt);
-            if (conversationsListPromise.status === 200) {
-              const conversationsListResponse = await conversationsListPromise.json() as ConversationResponse;
-              const conversationsListId = conversationsListResponse.data.conversation_id;
-              conversationList2.push({
-                conversation_id : conversationsListId,
-                user_id: user_id,
-                last_accessed: new Date(),
-                conversation_description: ""
-              })             
-              await handleNewChatActive();
-            } else {
-              console.error('Error fetching previous conversations');
-            }
-          }
-        } catch (error) {
-          console.error('Error:', error);
         }
-      } 
+        else if (handleEmptyChat()) {
+          await Swal.fire({
+            icon: 'error',
+            title: 'Oops...',
+            text: 'Input some text!',
+          })
+        }
+        else {
+          const conversationsListPromise = await startNewConversation(jwt);
+          if (conversationsListPromise.status === 200) {
+            const conversationsListResponse = await conversationsListPromise.json() as ConversationResponse;
+            const conversationsListId = conversationsListResponse.data.conversation_id;
+            conversationList2.push({
+              conversation_id : conversationsListId,
+              user_id: user_id,
+              last_accessed: new Date(),
+              conversation_description: ""
+            })             
+            await handleNewChatActive();
+          } else {
+            console.error('Error fetching previous conversations');
+          }
+        }
+      } catch (error) {
+        console.error('Error:', error);
+      }
 };
 
 const handleDeleteChat = async () => {
   const conversation_id = conversationList2[currentConversationIndex].conversation_id;
-  if (jwt && conversation_id) {
+  if (conversation_id) {
     try {
      await Swal.fire({
         title: 'Are you sure?',
