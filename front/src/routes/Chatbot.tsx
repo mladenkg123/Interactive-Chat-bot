@@ -18,50 +18,6 @@ import {
 import { getUserIDFromJWT } from '../logic/utils';
 import './ChatbotCss.css';
 
-type PromptResponse = {
-  data: Prompt;
-  status: number;
-};
-
-type Prompt = {
-  prompt: string;
-  conversation_id: string;
-  prompt_id: string;
-};
-
-type AnswerResponse = {
-  data: Answer;
-  status: number;
-};
-
-type Answer = {
-  answer: string;
-  prompt_id: string;
-  conversation_id: string;
-};
-
-type ConversationsResponse = {
-  data: Array<Conversation>;
-  status: number;
-};
-
-type ConversationResponse = {
-  data: Conversation;
-  status: number;
-};
-
-type Conversation = {
-  conversation_id: string;
-  user_id: string;
-  last_accessed: Date;
-  conversation_description: string;
-};
-
-type Message = {
-  sender: string;
-  message: string;
-};
-
 interface ChatMessageProps {
   msg: Message;
 }
@@ -125,8 +81,8 @@ const ChatBot = () => {
             last_accessed: new Date(conversation.last_accessed),
           }));          
           
-          
-          conversationList2 =  loadedConversationsList.sort((a, b) => b.last_accessed.getTime() - a.last_accessed.getTime());
+          loadedConversationsList.sort((a, b) => b.last_accessed.getTime() - a.last_accessed.getTime());
+          conversationList2 =  loadedConversationsList;
           //console.log(conversationsHistory[0]?.sender);
 
           if(conversationList2.length > 0) {
@@ -188,7 +144,7 @@ const ChatBot = () => {
       try {
         const conversationsListPromise = await fetchConversationById(jwt, conversation_id);
         if (conversationsListPromise.status === 200) {
-          const conversationsListResponse = await conversationsListPromise.json() as ConversationsResponse;
+          const conversationsListResponse = await conversationsListPromise.json() as ConversationResponse;
           
           const loadedConversationDescripition = conversationsListResponse.data.conversation_description;
                   
@@ -196,7 +152,6 @@ const ChatBot = () => {
           updatedPromptTexts[index] = loadedConversationDescripition.substring(0, 15);
           setPromptTexts(updatedPromptTexts);
           //console.log(loadedConversationDescripition);
-
         } else {
           console.error('Error fetching previous conversations');
         }
@@ -205,26 +160,19 @@ const ChatBot = () => {
       }
   }; 
 
-
   const loadRemainingPropmts = async () => {
-
-    if (jwt && user_id) {
       try {
         const userPromptRem = await fetchUserData(jwt, user_id);
         if (userPromptRem.status === 200) {
-          const userPromptCount = await userPromptRem.json() as ConversationsResponse;
+          const userPromptCount = await userPromptRem.json() as UserDataResponse;
           const remainingPrompts = userPromptCount.data.remaining_prompts;
           setPromptsLeft(remainingPrompts);
-
         } else {
           console.error('Error fetching remaining propmts');
         }
       } catch (error) {
         console.error('Error:', error);
       }
-    }
-   
-
   }; 
 
   const handleSubmit = async (event: { preventDefault: () => void }) => {
@@ -238,7 +186,7 @@ const ChatBot = () => {
     if(conversationsHistory[0]?.sender == 'Cube-BOT'){
       await handleNewChat();
       setConversationsHistory([]);
-      console.log(conversationsHistory);
+      //console.log(conversationsHistory);
     }
 
     const currentContext = [...conversationsHistory];
@@ -247,7 +195,7 @@ const ChatBot = () => {
     const pythonResponse = await sendPromptToPython(jwt, userInput, conversation_id, currentContext, user_id, selectedModel);
     if (pythonResponse.status === 200) {
         const pythonData = await pythonResponse.text();
-        let updatedConversation = [];
+        let updatedConversation: Message[] = [];
         if(conversationsHistory[0]?.sender == 'Cube-BOT') {
           updatedConversation.push({ sender: 'User', message: userInput });
           updatedConversation.push({ sender: 'Cube-BOT', message: pythonData });
@@ -258,7 +206,7 @@ const ChatBot = () => {
           updatedConversation.push({ sender: 'Cube-BOT', message: pythonData });
         }
         setConversationsHistory(updatedConversation);
-        console.log(conversationsHistory);
+        //console.log(conversationsHistory);
         const conversationIndex = conversationList2.findIndex(conversation => conversation.conversation_id === conversation_id);
         //console.log(conversationIndex);
         if (conversationIndex !== -1) {
@@ -272,7 +220,8 @@ const ChatBot = () => {
       await loadConversationByID(currentConversationIndex);
       setUserInput('');
       setPromptsLeft(promptsLeft-1);
-    } else if(pythonResponse.status === 403) {
+    }
+    else if(pythonResponse.status === 403) {
       alert("No prompts available");
       console.error('No prompts available');
     }
@@ -361,8 +310,7 @@ const handleDeleteChat = async () => {
             const index = conversationList2.findIndex(conversation => conversation.conversation_id === conversation_id);
             if (index !== -1) {
               conversationList2.splice(index, 1);
-              
-              if (conversationList2.length === 0){
+              if (conversationList2.length === 0) {
               const updatedCache = { ...conversationCache };
               delete updatedCache[conversation_id];
               setConversationCache(updatedCache);
@@ -371,8 +319,6 @@ const handleDeleteChat = async () => {
                 sender: 'Cube-BOT', message: 'Hello! How can I help you?' },
               { sender: 'User', message: 'Hi there! I have a question.' },]);
               }
-              
-
               setCurrentConversationIndex(0);
               await loadConversationByID(currentConversationIndex);
               await handleRestoreConversation(0);
@@ -432,7 +378,6 @@ const handleDeleteAllChat = async () => {
   };
 
 const handleNewChatActive = async () => {
-  
   const reversedConversationsList = conversationList2.slice().reverse();
   const lastIndex = reversedConversationsList.findIndex(conversation => conversation.conversation_id);
   if (lastIndex !== -1) { 

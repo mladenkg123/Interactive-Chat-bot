@@ -1,10 +1,5 @@
 import { API_BASE_URL } from './constants';
 
-type Message = {
-  sender: string;
-  message: string;
-};
-
 function generateRequestOptionsGet(jwt: string): RequestInit {
   return {
     method: 'GET',
