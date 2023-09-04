@@ -152,8 +152,9 @@ def handle_post():
         print(chat_description)
         update_conversation_description(data.get("jwt"), data.get("conversation_id"), chat_description)
         return response, 200
-    elif(prompt_response.get("status") == 150):
-        return prompt_response.get("message"), 150
+    elif(prompt_response.get("status") == 403):
+        print(prompt_response.get("message"))
+        return prompt_response.get("message"), 403
 
 
 def main():
