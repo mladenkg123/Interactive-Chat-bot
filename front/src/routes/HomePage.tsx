@@ -40,7 +40,7 @@ function HomePage(){
             <div>
                 <Header handleLoginClick={handleLoginClick} handleRegisterClick={handleRegisterClick} handleSignOut={handleSignOut} isAuthenticated={isAuthenticated} />
                 <Login isShowLogin={isShowLogin} onCloseLogin={handleLoginClick}  onLoginSuccess={() => setIsAuthenticated(true)}/>
-                <Register isShowRegister={isShowRegister} onCloseRegister={handleRegisterClick} isAuthenticated={()=>isAuthenticated}/>
+                <Register isShowRegister={isShowRegister} onCloseRegister={handleRegisterClick}/>
                 <div className="hero-container">
                   <ParticleComponent />
                   <div className="hero-content">

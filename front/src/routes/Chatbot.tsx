@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCube, faTrash, faUser } from '@fortawesome/free-solid-svg-icons';
+import { faAudioDescription, faCube, faTrash, faUser } from '@fortawesome/free-solid-svg-icons';
 import Cookies from 'universal-cookie';
 import Swal from 'sweetalert2';
 import Select from 'react-select';
@@ -113,7 +113,6 @@ const ChatBot = () => {
   };
 
   const loadConversations = async () => {
-
     if (jwt && user_id) {
       try {
         const conversationsListPromise = await fetchConversations(jwt);
@@ -128,18 +127,19 @@ const ChatBot = () => {
           var sorter =  loadedConversationsList.sort((a, b) => b.last_accessed.getTime() - a.last_accessed.getTime());
           
           conversationList2 = sorter;
+          console.log(conversationsHistory[0]?.sender);
 
           if(conversationList2.length > 0) {
-            const promptTexts = conversationList2.map((conversation) =>
-            conversation.conversation_description
-              ? conversation.conversation_description.substring(0, 15)
-              : 'No prompt available'
-          );
-          setPromptTexts(promptTexts);
-
-            await handleRestoreConversation(0);
+            const updatedPromptTexts = [...promptTexts]; 
+            conversationList2.forEach((conversation, index) => {
+              updatedPromptTexts[index] = conversation.conversation_description
+                ? conversation.conversation_description.substring(0, 15)
+                : 'No prompt available';
+            });
+            setPromptTexts(updatedPromptTexts);
+          await handleRestoreConversation(0);
           }
-          await handleActiveConversation();
+          setCurrentConversationIndex(0);
         } else {
           console.error('Error fetching previous conversations');
         }
@@ -169,22 +169,6 @@ const ChatBot = () => {
 
   }, [conversationsHistory]);
   
- /* useEffect(() => {
-    const findConversationIndexByDescription = (description: string) =>
-      conversationList2.findIndex((conversation) =>
-        conversation.conversation_description === description
-      );
-  
-    const index = findConversationIndexByDescription(
-      conversationList2[currentConversationIndex]?.conversation_description
-    );
-  
-    if (index !== -1) {
-      loadConversationByID(index);
-    }
-  }, [conversationList2, currentConversationIndex]);
-  
-  
  
 
   const loadConversationByID = async (index : number) => {
@@ -200,14 +184,11 @@ const ChatBot = () => {
           
           const loadedConversationDescripition = conversationsListResponse.data.conversation_description;
                   
+          const updatedPromptTexts = [...promptTexts];
+          updatedPromptTexts[index] = loadedConversationDescripition.substring(0, 15);
+          setPromptTexts(updatedPromptTexts);
           console.log(loadedConversationDescripition);
-            const promptTexts = conversationList2.map((conversation) =>
-            conversation.conversation_description
-              ? conversation.conversation_description.substring(0, 15)
-              : 'No prompt available'
-          );
-          setPromptTexts(promptTexts);
-          console.log(promptTexts);
+
         } else {
           console.error('Error fetching previous conversations');
         }
@@ -217,7 +198,7 @@ const ChatBot = () => {
     }
    
 
-  }; */
+  }; 
 
 
 
@@ -232,11 +213,19 @@ const ChatBot = () => {
       setDisableInput(false);
       return;
     }
+
+    if(conversationsHistory[0]?.sender == 'Cube-BOT'){
+      await handleNewChat();
+      await setConversationsHistory([]);
+      console.log(conversationsHistory);
+    }
+
     const currentContext = [...conversationsHistory];
     currentContext.push({sender: 'User', message: userInput});
     const conversation_id = conversationList2[currentConversationIndex].conversation_id;
     const pythonResponse = await sendPromptToPython(jwt, userInput, conversation_id, currentContext, user_id, selectedModel);
     if (pythonResponse.status === 200 || pythonResponse.status === 500) {
+
         const pythonData = await pythonResponse.text();
         const updatedConversation = [...conversationsHistory];
         updatedConversation.push({ sender: 'User', message: userInput });
@@ -247,14 +236,16 @@ const ChatBot = () => {
         console.log(conversationIndex);
         if (conversationIndex !== -1) {
           conversationList2[conversationIndex].last_accessed = new Date();
-          console.log(conversationList2[conversationIndex].last_accessed, conversation_id);
-        }
-
+        }    
         setConversationCache(prevCache => ({
           ...prevCache,
           [conversationList2[currentConversationIndex].conversation_id]: updatedConversation,
-      }));
-             
+      })); 
+
+      
+
+      await loadConversationByID(currentConversationIndex);
+
     } else {
       setDisableInput(false);
       console.error('Error: Unexpected response code from the Python script');
@@ -264,20 +255,13 @@ const ChatBot = () => {
   };
 
   const handleEmptyChat = () => {
-    const predefinedMessages = [
-      { sender: 'Cube-BOT', message: 'Hello! How can I help you?' },
-      { sender: 'User', message: 'Hi there! I have a question.' }
-    ];
-  
     return (
-      conversationsHistory[0]?.sender === predefinedMessages[0].sender &&
-      conversationsHistory[0]?.message === predefinedMessages[0].message &&
-      conversationsHistory[1]?.sender === predefinedMessages[1].sender &&
-      conversationsHistory[1]?.message === predefinedMessages[1].message
-    );
+      conversationsHistory[0]?.sender === undefined
+    )
   };
 
 const handleNewChat = async () => {
+  console.log(conversationsHistory[0]?.sender);
       if (jwt && user_id) {
         try {
           if (handleEmptyChat() && conversationList2.length === 0 || handleEmptyChat() && conversationsHistory[2]?.sender ) {
@@ -285,6 +269,7 @@ const handleNewChat = async () => {
             if (conversationsListPromise.status === 200) {
               const conversationsListResponse = await conversationsListPromise.json() as ConversationResponse;
               const conversationsListId = conversationsListResponse.data.conversation_id;
+              console.log(conversationsListId);
               conversationList2.push({
                 conversation_id : conversationsListId,
                 user_id: user_id,
@@ -345,7 +330,22 @@ const handleDeleteChat = async () => {
             const index = conversationList2.findIndex(conversation => conversation.conversation_id === conversation_id);
             if (index !== -1) {
               conversationList2.splice(index, 1);
-              await handleActiveConversation();
+              
+              if (conversationList2.length === 0){
+              const updatedCache = { ...conversationCache };
+              delete updatedCache[conversation_id];
+              setConversationCache(updatedCache);
+              console.log(conversationsHistory)
+              setConversationsHistory([{ 
+                sender: 'Cube-BOT', message: 'Hello! How can I help you?' },
+              { sender: 'User', message: 'Hi there! I have a question.' },]);
+              }
+              
+
+              setCurrentConversationIndex(0);
+              loadConversationByID(currentConversationIndex);
+              await handleRestoreConversation(0);
+
               await Swal.fire(
                 'Deleted!',
                 'Your conversation has been deleted.',
@@ -362,13 +362,6 @@ const handleDeleteChat = async () => {
     } catch (error) {
       console.error('Error:', error);
     }
-  }
-};
-
-const handleActiveConversation = async () => {
-  if (conversationList2.length > 0) {
-    setCurrentConversationIndex(0); 
-    await handleRestoreConversation(0);
   }
 };
 
@@ -418,10 +411,7 @@ const handleNewChatActive = async () => {
           [conversationList2[index].conversation_id]: formattedMessages,
       }));
       } else {
-        const formattedPrompts2 = [
-        { sender: 'Cube-BOT', message: 'Hello! How can I help you?' }, 
-        { sender: 'User', message: 'Hi there! I have a question.' },];
-        setConversationsHistory(formattedPrompts2);
+        setConversationsHistory([]);
       }
     } else {
       console.error('Error fetching prompts for conversation');
@@ -438,9 +428,14 @@ const handleNewChatActive = async () => {
       </React.Suspense>
       <div className="chat-container">
         <div className="chat-sidebar">
-          <button className="start-new-chat-button" onClick={handleNewChat}>
-            Novi Čet
-          </button>
+          <div className='buttons'>
+            <button className="start-new-chat-button" onClick={handleNewChat}>
+              Novi Čet
+            </button>
+            <button className="delete-all-chat-button">
+              Obiši
+            </button>
+          </div>
           <div className="conversation-restore-points">
           <div className="restore-points-header">Previous Chats</div>
           {conversationList2.map((_, index) => {
@@ -483,7 +478,7 @@ const handleNewChatActive = async () => {
                     disabled={disableInput}
                   />
                   <button className="send-button" type="submit" onClick={handleEmptyChat}>
-                    {conversationsHistory.length ? 'Pošalji' : 'Novi Čet'}
+                    Pošalji
                   </button>
                 </form>
           </div>

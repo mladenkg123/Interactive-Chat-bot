@@ -94,11 +94,11 @@ h2 {
     justify-content: space-between;
     margin-bottom: 100px;
 }
-.Home_about__3GJD3>div a:hover {
+.href:hover {
     background: #6c2dea;
     color: #fff;
 }
-.Home_about__3GJD3>div a {
+.href {
     display: block;
     width: -webkit-max-content;
     width: -moz-max-content;

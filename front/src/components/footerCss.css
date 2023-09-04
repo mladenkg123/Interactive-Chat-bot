@@ -1,4 +1,4 @@
-.Footer_footer__31Uwg {
+.Footer_footer {
     display: -webkit-flex;
     display: flex;
     -webkit-justify-content: space-between;
@@ -12,7 +12,7 @@
     border-image: linear-gradient(45deg,#7ff 20%,#4434f5 46%,#5e00f6 60%,#4434f5 75%,#7ff 93%) 1;
     font-size: 16px;
 }
-.Footer_footer__31Uwg .Footer_lng__23xHo {
+.Footer_footer .Footer_lng__23xHo {
     position: relative;
     display: -webkit-flex;
     display: flex;
@@ -23,14 +23,14 @@
     cursor: pointer;
     font-size: 16px;
 }
-.Footer_footer__31Uwg .Footer_terms__220yV {
+.Footer_footer .Footer_terms__220yV {
     margin: 0 auto 0 40px;
 }
 a {
     color: inherit;
     text-decoration: none;
 }
-.Footer_footer__31Uwg .Footer_copyright__1yOHI {
+.Footer_footer .Footer_copyright__1yOHI {
     text-align: center;
     margin: auto;
 }

@@ -130,7 +130,7 @@ ConversationModel.findById = async function (conversation_id, user_id) {
         if (conversationUserId[0].user_id.toString() !== user_id.toString()) {
             return { status: 403, message: 'Forbidden' };
         }
-        const conversation = await ConversationModel.findOne({ conversation_id: new ObjectId(conversation_id)})
+        const conversation = await ConversationModel.findOne({ _id: new ObjectId(conversation_id)})
         const modifiedData = {
             conversation_id: conversation._id,
             user_id: conversation.user_id,

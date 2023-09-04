@@ -2,9 +2,11 @@ import './heroCss.css';
 import { PricingDetail, PricingSlot, PricingTable } from 'react-pricing-table';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCogs, faRobot, faShieldAlt } from '@fortawesome/free-solid-svg-icons';
-import { useEffect } from 'react';
+import { useEffect , useState} from 'react';
 import AOS from 'aos';
 import 'aos/dist/aos.css'; 
+import Cookies from 'universal-cookie';
+import Swal from 'sweetalert2';
 
 
 
@@ -25,6 +27,31 @@ function Hero({ handleRegisterClick }: HeroProps) {
     });
   }, []);
 
+  const cookies = new Cookies();
+ 
+
+  const preventLogin = () => {
+
+    const jwtExists = cookies.get('jwt');
+    
+    if (jwtExists == undefined) {
+      Swal.fire({
+        title: 'Morate se ulogovati!',
+        text: 'Morate se ulogovati kako bi pristupili ovoj stranici.',
+        icon: 'error',
+        showCancelButton: false,
+        confirmButtonText: 'Zatvori',
+        customClass: {
+          confirmButton: 'swal-button swal-button--error'
+        }
+      }).then(() => {
+        close();
+      });
+    }
+    else {
+      window.location.href = '/ChatBot'; 
+    }
+  }
 
   return (
 
@@ -57,7 +84,7 @@ function Hero({ handleRegisterClick }: HeroProps) {
         <div>
             <h2>Razgovarajte sa sa različitim AI modelima i testirajte njihove mogućnosti!</h2>
             <span>Cube-BOT nudi različite AI modele koji mogu pružiti informativne razgovore o različitim temama, uključujući obrazovanje, karijeru, poslovanje, način života i još mnogo toga. Bez obzira da li vam je potrebna pomoć u učenju jezika, sticanju znanja, poslovnim strategijama ili zdravijem načinu života, naš četbot je tu za vas.</span>
-            <a href="/ChatBot">Četuj sada &gt;</a></div>
+            <button className='href' onClick={preventLogin}>Četuj sada &gt;</button></div>
             <img src="src/assets/2.png" alt="Chat with AI-Powerd Character Asistants"/></div>
     </section>
 

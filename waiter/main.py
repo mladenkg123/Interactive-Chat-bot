@@ -139,9 +139,9 @@ def handle_post():
     prompt_id = save_prompt(data.get("jwt"), data.get("user_id"), data.get("prompt"), data.get("conversation_id")).json().get("data").get("prompt_id")
     answer_response = save_answer(data.get("jwt"), response, prompt_id, data.get("conversation_id")).json()
     update_conversation_time(data.get("jwt"), data.get("conversation_id"))
-    #print(conversation)
+    print(conversation)
     user_propmts = []
-    if (len(conversation) <= 7):
+    if (len(conversation) <= 4):
         for i in range(len(conversation)):
             if (i % 2 == 0):
                 user_propmts.append(conversation[i])

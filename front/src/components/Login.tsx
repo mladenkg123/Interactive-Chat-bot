@@ -31,7 +31,7 @@ const Login = ({ isShowLogin, onCloseLogin, onLoginSuccess } : LoginProps) => {
     fetch('http://localhost:8000/auth/login', requestOptions)
       .then(response => {
         if (!response.ok) {
-          throw new Error('Login failed'); // Throw an error to handle the unsuccessful response
+          throw new Error('Login failed'); 
         }
         return response.json() as Promise<LoginResponse>;
       })
@@ -60,7 +60,6 @@ const Login = ({ isShowLogin, onCloseLogin, onLoginSuccess } : LoginProps) => {
           });
           
         }
-        //setIsLoginSuccessful(true);
       })
       .catch(error => {
         onCloseLogin();

@@ -177,8 +177,24 @@
     
   }
   
+  .buttons {
+    display: flex;
+    flex-direction: row;
+  }
+
   .start-new-chat-button {
     background-color: #3498db;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    margin-top: 20px;
+    margin-right: 20px;
+  }
+  .delete-all-chat-button {
+    background-color: #db5334;
     color: white;
     border: none;
     padding: 10px 20px;

@@ -47,6 +47,28 @@ function Header({handleLoginClick, handleRegisterClick, handleSignOut, isAuthent
       }).then(() => {
       });
   }
+  const preventLogin = () => {
+
+    const jwtExists = cookies.get('jwt');
+    
+    if (jwtExists == undefined) {
+      Swal.fire({
+        title: 'Morate se ulogovati!',
+        text: 'Morate se ulogovati kako bi pristupili ovoj stranici.',
+        icon: 'error',
+        showCancelButton: false,
+        confirmButtonText: 'Zatvori',
+        customClass: {
+          confirmButton: 'swal-button swal-button--error'
+        }
+      }).then(() => {
+        close();
+      });
+    }
+    else {
+      window.location.href = '/ChatBot'; 
+    }
+  }
 
   const svg = () => {
     return (
@@ -172,7 +194,7 @@ function Header({handleLoginClick, handleRegisterClick, handleSignOut, isAuthent
           </ScrollLink>
           </li>
           <li className="nav-item">
-            <a href="/ChatBot">Chat-BOT</a>
+            <a onClick={preventLogin}>Chat-BOT</a>
           </li>
         </ul>
         <div className="auth-buttons">
