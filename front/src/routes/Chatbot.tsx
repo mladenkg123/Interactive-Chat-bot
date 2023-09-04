@@ -10,8 +10,9 @@ import {
   fetchConversations,
   fetchPreviousAnswers,
   fetchPreviousPrompts,
+  fetchUserData,
   sendPromptToPython,
-  startNewConversation
+  startNewConversation,
 } from '../logic/api';
 import { getUserIDFromJWT } from '../logic/utils';
 import './ChatbotCss.css';
@@ -101,6 +102,7 @@ const ChatBot = () => {
   const [disableInput, setDisableInput] = useState(false);
   const [selectedModel, setSelectedModel] = useState({ value: 'Cube-BOT', label: 'Cube-BOT(GPT3.5)' });
   const [promptTexts, setPromptTexts] = useState<string[]>([]);
+  const [promptsLeft, setPromptsLeft] = useState(Number);
   const options=[
     { value: 'Cube-BOT', label: 'Cube-BOT(GPT3.5)' },
     { value: 'Llama', label: 'Llama' },
@@ -167,7 +169,15 @@ const ChatBot = () => {
 
   }, [conversationsHistory]);
   
- 
+  useEffect(()  => {
+      
+     loadRemainingPropmts().catch(error => {
+      console.error('Failed loading remaining prompts', error);
+     });
+
+  }, []);
+  
+
 
   const loadConversationByID = async (index : number) => {
 
@@ -198,6 +208,27 @@ const ChatBot = () => {
 
   }; 
 
+
+  const loadRemainingPropmts = async () => {
+
+    if (jwt && user_id) {
+      try {
+        const userPromptRem = await fetchUserData(jwt, user_id);
+        if (userPromptRem.status === 200) {
+          const userPromptCount = await userPromptRem.json() as ConversationsResponse;
+          const remainingPrompts = userPromptCount.data.remaining_prompts;
+          setPromptsLeft(remainingPrompts);
+
+        } else {
+          console.error('Error fetching remaining propmts');
+        }
+      } catch (error) {
+        console.error('Error:', error);
+      }
+    }
+   
+
+  }; 
 
 
   const handleSubmit = async (event: { preventDefault: () => void }) => {
@@ -248,6 +279,7 @@ const ChatBot = () => {
       }));
 
       await loadConversationByID(currentConversationIndex);
+      setPromptsLeft(promptsLeft-1);
 
     } else {
       setDisableInput(false);
@@ -463,6 +495,7 @@ const handleNewChatActive = async () => {
         </div>
         </div>
         <div className="chat-content">
+          <div className='remaining-prompts'>Ostalo vam je jos : {promptsLeft}  promptova</div>
           <div className="previous-conversations">
             <div className="message-bubbles">
               {conversationsHistory.map((msg, index) => (

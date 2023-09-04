@@ -210,7 +210,7 @@
   
   .chat-content {
     flex: 1;
-    padding: 60px;
+    padding: 10px 60px;
   }
   .conversation-restore-points {
     margin-top: 20px;
@@ -280,4 +280,9 @@ label {
   position: relative;
   margin-top: 15px;
   box-sizing: border-box;
+}
+.remaining-prompts {
+  font-size: 25px;
+  margin-bottom: 25px;
+  font-family: inherit;
 }
