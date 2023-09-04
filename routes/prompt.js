@@ -64,8 +64,8 @@ router.post('/',
                 const decodedToken = jwt.verify(token, 'SECRET'); // Replace 'your-secret-key' with your actual secret key
                 const user_id = decodedToken._id; // Assuming the user_id is stored in the JWT payload
                 if(user_id === req.body.user_id) {
-                const prompt = await PromptService.save(req.body, user_id);
-                res.send(prompt);
+                    const prompt = await PromptService.save(req.body, user_id);
+                    res.send(prompt);
                 }
                 else {
                     res.status(401).send('Unauthorized');

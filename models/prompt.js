@@ -1,5 +1,6 @@
-const mongoose = require('mongoose')
-const ConversationModel = require("./conversation")
+const mongoose = require('mongoose');
+const ConversationModel = require("./conversation");
+const UserModel = require("./user");
 
 const PromptSchema = mongoose.Schema({
     prompt: {type: String, required: true},
@@ -16,7 +17,9 @@ PromptModel.deleteByConversationId = async function (conversation_id) {
     }
 };
 
-PromptModel.savePrompt = function (prompt){
+PromptModel.savePrompt = async function (prompt){
+    const user = await UserModel.findOne({ _id: prompt.user_id }, { remaining_prompts: 1 });
+    if(user.remaining_prompts > 0) {
     const newPrompt = new PromptModel({
         prompt: prompt.prompt,
         conversation_id: prompt.conversation_id
@@ -27,7 +30,12 @@ PromptModel.savePrompt = function (prompt){
         prompt_id: newPrompt._id
     };
     newPrompt.save();
+    await UserModel.reducePrompts(prompt.user_id);
     return { status: 200, data: modifiedData };
+    }
+    else {
+        return { status: 150, message: 'No prompts remaining' };
+    }
 }
 
 PromptModel.findByConversationId = async function (conversation_id, user_id) {

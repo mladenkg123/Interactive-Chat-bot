@@ -35,29 +35,36 @@ export async function deleteConversation(jwt: string, conversation_id: string): 
 export async function fetchConversations(jwt: string): Promise<Response> {
   const requestOptions = generateRequestOptionsGet(jwt);
 
-  const conversationsResponse = await fetch(`${API_BASE_URL}/conversation`, requestOptions);
-  return conversationsResponse;
+  const response = await fetch(`${API_BASE_URL}/conversation`, requestOptions);
+  return response;
 }
 
 export async function fetchConversationById(jwt: string, conversation_id: string): Promise<Response> {
   const requestOptions = generateRequestOptionsGet(jwt);
 
-  const conversationsResponse = await fetch(`${API_BASE_URL}/conversation/${conversation_id}`, requestOptions);
-  return conversationsResponse;
+  const response = await fetch(`${API_BASE_URL}/conversation/${conversation_id}`, requestOptions);
+  return response;
+}
+
+export async function fetchUserData(jwt: string, user_id: string): Promise<Response> {
+  const requestOptions = generateRequestOptionsGet(jwt);
+
+  const response = await fetch(`${API_BASE_URL}/user/${user_id}`, requestOptions);
+  return response;
 }
 
 export async function fetchPreviousPrompts(jwt: string, conversation_id: string): Promise<Response> {
   const requestOptions = generateRequestOptionsGet(jwt);
 
-  const promptResponse = await fetch(`${API_BASE_URL}/prompt/conversation/${conversation_id}`, requestOptions);
-  return promptResponse;
+  const response = await fetch(`${API_BASE_URL}/prompt/conversation/${conversation_id}`, requestOptions);
+  return response;
 }
 
 export async function fetchPreviousAnswers(jwt: string, conversation_id: string): Promise<Response> {
   const requestOptions = generateRequestOptionsGet(jwt);
 
-  const answerResponse = await fetch(`${API_BASE_URL}/answer/conversation/${conversation_id}`, requestOptions);
-  return answerResponse;
+  const response = await fetch(`${API_BASE_URL}/answer/conversation/${conversation_id}`, requestOptions);
+  return response;
 }
 
 export async function sendPromptToPython(jwt: string, prompt: string, conversation_id: string, conversation: Message[], user_id: string, selectedModel: object) : Promise<Response> {

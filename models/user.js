@@ -90,4 +90,35 @@ UserModel.findById = async function (user_id) {
     }
 };
 
+UserModel.reducePrompts = async function (user_id) {
+    try {
+        const ObjectId = mongoose.Types.ObjectId;
+        user_id = new ObjectId(user_id);
+        const user = await UserModel.findOne({ _id: user_id });
+
+        if (!user) {
+            return { status: 404, message: 'User not found' };
+        }
+
+        if (user.remaining_prompts <= 0) {
+            return { status: 400, message: 'No remaining prompts to reduce' };
+        }
+
+        user.remaining_prompts -= 1;
+
+        await user.save();
+
+        const modifiedData = {
+            user_id: user._id,
+            remaining_prompts: user.remaining_prompts
+        };
+
+        return { status: 200, data: modifiedData };
+    } catch (error) {
+        // Handle other errors gracefully
+        console.log(error);
+        return { status: 500, message: 'Internal Server Error' };
+    }
+};
+
 module.exports = UserModel

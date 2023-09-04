@@ -136,20 +136,24 @@ def handle_post():
         response = ''
         for item in response_generator:
             response += item
-    prompt_id = save_prompt(data.get("jwt"), data.get("user_id"), data.get("prompt"), data.get("conversation_id")).json().get("data").get("prompt_id")
-    answer_response = save_answer(data.get("jwt"), response, prompt_id, data.get("conversation_id")).json()
-    update_conversation_time(data.get("jwt"), data.get("conversation_id"))
-    print(conversation)
-    user_propmts = []
-    if (len(conversation) <= 4):
-        for i in range(len(conversation)):
-            if (i % 2 == 0):
-                user_propmts.append(conversation[i])
-    print(user_propmts)
-    chat_description = chat("Generate a very brief title that describes the user prompts and what he wants to talk about", user_propmts)
-    print(chat_description)
-    update_conversation_description(data.get("jwt"), data.get("conversation_id"), chat_description)
-    return response, 200
+    prompt_response = save_prompt(data.get("jwt"), data.get("user_id"), data.get("prompt"), data.get("conversation_id")).json()
+    if(prompt_response.get("status") == 200):
+        prompt_id = prompt_response.get("data").get("prompt_id")
+        answer_response = save_answer(data.get("jwt"), response, prompt_id, data.get("conversation_id")).json()
+        update_conversation_time(data.get("jwt"), data.get("conversation_id"))
+        print(conversation)
+        user_propmts = []
+        if (len(conversation) <= 4):
+            for i in range(len(conversation)):
+                if (i % 2 == 0):
+                    user_propmts.append(conversation[i])
+        print(user_propmts)
+        chat_description = chat("Generate a very brief title that describes the user prompts and what he wants to talk about", user_propmts)
+        print(chat_description)
+        update_conversation_description(data.get("jwt"), data.get("conversation_id"), chat_description)
+        return response, 200
+    elif(prompt_response.get("status") == 150):
+        return prompt_response.get("message"), 150
 
 
 def main():
