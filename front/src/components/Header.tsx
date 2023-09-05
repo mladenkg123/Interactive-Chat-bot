@@ -28,10 +28,10 @@ function Header({handleLoginClick, handleRegisterClick, handleSignOut, isAuthent
 
   const handleSigningOut = async () =>{
       await Swal.fire({
-        title: 'Signing Out',
-        text: 'You have been successfully signed out.',
+        title: 'Odjavljivanje.',
+        text: 'Uspesno ste se odjavili sa naloga.',
         icon: 'success',
-        timer: 2000,            //TEST 
+        timer: 2000,          
         timerProgressBar: true,
         didOpen: () => {
           Swal.showLoading();

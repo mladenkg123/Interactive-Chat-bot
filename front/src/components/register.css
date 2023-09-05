@@ -119,7 +119,8 @@
   .close-button {
     padding: initial;
     position: absolute;
-    margin: 25px 0px 25px 360px;
+    margin-left: 470px;
+    margin-top: 25px;
     width: 30px;
     height: 30px;
     background: #040c1c;

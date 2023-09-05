@@ -1,6 +1,7 @@
 /* Navbar.css */
+
 .navbar {
-  background-color: #0b1937;
+  background-color: #091327;
   color: #fff;
   position: fixed;
   top: 0;
@@ -25,17 +26,18 @@
   text-transform: uppercase;
   letter-spacing: 2px;
   transition: transform 0.3s ease-in-out;
-
 }
+
 .navbar-logo:hover {
   transform: scale(1.1);
 }
 
 .nav-menu {
-  margin-left: 150px;
+  margin: auto;
   list-style: none;
   display: flex;
   padding: 0;
+  justify-content: center; 
 }
 
 .nav-item {
@@ -50,7 +52,7 @@
 }
 
 .nav-item a:hover {
-  color: #e0e0e0; /* Change this to your desired hover color */
+  color: #1ba3fd; 
 }
 
 .auth-buttons {
@@ -71,24 +73,22 @@
   transition: background-color 0.3s ease;
 }
 
-
 .btn-login,
 .btn-logout,
 .btn-signup {
-  background: linear-gradient(0deg,#0055ff,#0055ff,#4736ff 86%);
+  background: linear-gradient(0deg, #0055ff, #0055ff, #4736ff 86%);
   margin: 5px 10px;
-  border-radius:10px
-  
+  border-radius: 10px;
 }
-
 
 .btn-login:hover,
 .btn-logout:hover,
 .btn-signup:hover {
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); 
-  transform: scale(1.05); 
-  background: #4434f5
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transform: scale(1.05);
+  background: #4434f5;
 }
+
 .btn i {
   margin-right: 5px;
 }
@@ -105,10 +105,10 @@
     padding: 8px 15px;
   }
 }
+
 .navbar-logo svg {
   width: 50px;
   height: 35px;
-  
   margin-right: 10px;
 }
 

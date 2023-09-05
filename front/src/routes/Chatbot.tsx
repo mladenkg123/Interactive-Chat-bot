@@ -452,6 +452,7 @@ const handleNewChatActive = async () => {
     }
   }
 };
+console.log(conversationList);
   return (
     <div className="chatbot-container">
       <React.Suspense fallback={<div>Loading...</div>}>
