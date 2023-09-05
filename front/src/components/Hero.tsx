@@ -7,6 +7,8 @@ import AOS from 'aos';
 import 'aos/dist/aos.css'; 
 import Cookies from 'universal-cookie';
 import Swal from 'sweetalert2';
+import { Link as ScrollLink } from 'react-scroll'; 
+
 
 
 
@@ -127,6 +129,31 @@ function Hero({ handleRegisterClick }: HeroProps) {
               </button>
             </PricingSlot>
           </PricingTable>
+        </div>
+      </section>
+
+      <section className='Contact_feature' id="contactContainer" data-aos="fade-up">
+        <div className='Contact1'>
+         <div className='Contact2'>
+          <div className='Contact3'>
+            <h1>Kontaktirajte nas</h1>   
+            <p>Sva pitanja ili nedoumice koje imate mozete poslati u poruci ispod.</p>
+            <p>Trazite premijum plan? <a href="mailto:cvetkovicmladen00@gmail.com" className="dRExZB">Kontaktirajte nas</a> ili pogledajte 
+            <a href="" className="dRExZB">
+              <ScrollLink to="pricingContainer" smooth={true} duration={750} offset={200} spy={true}>
+              cenovnik
+              </ScrollLink></a>.</p>
+            <form className="gZEnfn flex flex-col mt-5" data-cb-wrapper="true">
+              <label htmlFor="email" className="ixUjRF">Email</label>
+              <input type="email" placeholder="Ko nam salje mail?" name="email" className="hewnsr"/>
+                <label htmlFor="message" className="ixUjRF">Message</label>
+                <textarea rows='7' placeholder="Vasa poruka..." name="message" class="hewnsr"></textarea>
+                <div className="jBhLFp">
+                  <input type="submit" className="idYhuh" value="Send Message"/>
+                </div>
+             </form>
+          </div>
+         </div>
         </div>
       </section>
 

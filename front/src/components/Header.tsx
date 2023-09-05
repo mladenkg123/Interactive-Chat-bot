@@ -184,12 +184,17 @@ function Header({handleLoginClick, handleRegisterClick, handleSignOut, isAuthent
             <a href="/">Pocetna</a>
           </li>
           <li className="nav-item">
-          <ScrollLink to="pricingContainer" smooth={true} duration={500} offset={570} spy={true}>
+          <ScrollLink to="pricingContainer" smooth={true} duration={750} offset={470} spy={true}>
               Cenovnik
           </ScrollLink>
           </li>
           <li className="nav-item">
-          <ScrollLink to="aboutContainer" smooth={true} duration={500} offset={280} spy={true}>
+          <ScrollLink to="contactContainer" smooth={true} duration={750} offset={-250} spy={true}>
+              Kontakt
+          </ScrollLink>
+          </li>
+          <li className="nav-item">
+          <ScrollLink to="aboutContainer" smooth={true} duration={750} offset={280} spy={true}>
               O nama
           </ScrollLink>
           </li>

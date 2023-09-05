@@ -238,3 +238,133 @@ h2 {
     text-align: center;
     font-size: 20px;
 }
+.Contact_feature{
+        display: grid;
+        grid-template-columns: auto;
+        padding: 40px 0 var(--block-spacing);
+        width: 100%;
+        max-width: 960px;
+        margin: 0px auto;
+}
+.Contact1{
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+    padding: 0px 20px;
+    overflow: hidden;
+}
+@media (min-width: 758px){
+.Contact1{
+    padding-left: 10px;
+}
+
+}
+.Contact2{
+    display: flex;
+    margin-bottom: 30px;
+    flex-direction: column;
+    align-items: flex-start;
+}
+.Contact3{
+    display: flex;
+    flex-direction: column;
+    -webkit-box-align: stretch;
+    align-items: stretch;
+    -webkit-box-pack: center;
+    justify-content: center;
+    margin: 0px auto 30px;
+    width: 100%;
+    max-width: 660px;
+    text-align: center;
+}
+.Contact3 h1 {
+    margin-bottom: 20px;
+}
+
+.Contact2 h1 {
+    font-weight: 700;
+    font-size: 52px;
+    line-height: 125%;
+    margin-bottom: 40px;
+}
+.Contact3 p {
+    margin: 0px;
+    color: rgb(153, 153, 153);
+    font-weight: normal;
+    font-size: 16px;
+}
+.dRExZB {
+    color: #646cff;
+    text-decoration: none;
+    transition: color 150ms ease-in-out 0s;
+    margin-left: 2px;
+}
+.gZEnfn {
+    text-align: left;
+}
+.flex-col {
+    flex-direction: column;
+}
+.flex {
+    display: flex;
+}
+.mt-5 {
+    margin-top: 1.25rem;
+}
+.ixUjRF {
+    display: flex;
+    margin: 20px 0px 5px;
+    flex-direction: column;
+    color: rgb(153, 153, 153);
+    font-size: 15px;
+}
+.hewnsr {
+    display: flex;
+    padding: 12px 16px;
+    border-radius: 10px;
+    border: 1px solid rgb(23, 25, 28);
+    background: rgb(16, 17, 19);
+    color: rgb(250, 250, 250);
+    transition: border-color 150ms ease-in-out 0s;
+}
+.ixUjRF {
+    display: flex;
+    margin: 20px 0px 5px;
+    flex-direction: column;
+    color: rgb(153, 153, 153);
+    font-size: 15px;
+}
+.jBhLFp {
+    display: flex;
+    min-height: 40px;
+    -webkit-box-align: center;
+    align-items: center;
+    font-weight: 500;
+    gap: 10px;
+    position: relative;
+    background: #646cff;
+    border-radius: 10px;
+    color: rgb(255, 255, 255);
+    font-size: 16px;
+    -webkit-box-pack: center;
+    justify-content: center;
+    width: 100%;
+    margin: 20px 0px;
+    cursor: pointer;
+    border: 0px;
+    outline: 0px;
+    transition: background-color 150ms ease-in-out 0s;
+}
+.idYhuh {
+    display: flex;
+    -webkit-box-pack: center;
+    justify-content: center;
+    cursor: pointer;
+    position: absolute;
+    inset: 0px;
+    background: transparent;
+    font-weight: 500;
+    border: 0 solid #e5e7eb;
+    font-size: 17px;
+    font-family: inherit;
+}
