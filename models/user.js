@@ -13,7 +13,7 @@ const UserSchema = mongoose.Schema({
     role: { type: String, required: true },
     hash: { type: String },
     remaining_prompts: { type: Number, required: true },
-    account_type: { type: String, required: true  },
+    account_type: { type: String, required: true },
     salt: { type: String }
 })
 
@@ -62,6 +62,12 @@ UserModel.register = async function(email, username, password, plan, role)
         }
     }
     else if(role == "ADMIN") {
+        remaining_prompts = Number.MAX_SAFE_INTEGER;
+    }
+    else if(role == "STUDENT") {
+        remaining_prompts = Number.MAX_SAFE_INTEGER;
+    }
+    else if(role == "TEACHER") {
         remaining_prompts = Number.MAX_SAFE_INTEGER;
     }
     const user = new UserModel({

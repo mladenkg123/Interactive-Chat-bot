@@ -22,16 +22,26 @@ const Register = ({ isShowRegister, onCloseRegister} : RegisterProps) => {
       { value: 'business', label: 'Biznis plan', },
     ];
   const options2 =  [
-      { value: 'Student', label: 'Student' },
-      { value: 'Profesor', label: 'Profesor' }
+      { value: 'STUDENT', label: 'Student' },
+      { value: 'TEACHER', label: 'Profesor' }
     ];
   const handleSubmit = (e: { preventDefault: () => void; }) => {
     e.preventDefault();
-    const requestOptions = {
+    let requestOptions = {};
+     if(chatbotRegister) {
+    requestOptions = {
         method: 'POST',
         headers: { 'Content-Type': 'application/json'},
         body: JSON.stringify({ email: email, username: username, password: pass, plan: plan.value, role: "USER" })
     };
+  }
+  else {
+    requestOptions = {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json'},
+      body: JSON.stringify({ email: email, username: username, password: pass, plan: "business", role: sqlAcc.value })
+  };
+  }
     fetch('http://localhost:8000/auth/register', requestOptions)
       .then(response => {
         if (!response.ok) {
