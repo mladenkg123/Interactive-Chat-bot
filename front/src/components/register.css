@@ -142,66 +142,47 @@
   width: 100%;
   border-bottom: 1px solid rgb(51, 51, 51);
   align-items: flex-end;
-  -webkit-box-pack: center;
   justify-content: center;
   margin-bottom: 40px;
   gap: 10px;
 }
-.iAhmAY {
+
+.switch-button {
   display: flex;
-  background: black;
-  padding: 12px 24px;
-  border-width: 1px 1px 0px;
-  border-top-style: solid;
-  border-right-style: solid;
-  border-left-style: solid;
-  border-top-color: rgb(51, 51, 51);
-  border-right-color: rgb(51, 51, 51);
-  border-left-color: rgb(51, 51, 51);
-  border-image: initial;
-  border-bottom-style: initial;
-  border-bottom-color: initial;
-  border-radius: 10px 10px 0px 0px;
-  color: rgb(153, 153, 153);
-  font-weight: 500;
-}
-.iAhmAY > span {
-  display: none;
-  margin-left: 6px;
-}
-.izLjpj {
-  display: flex;
-  background: black;
-  padding: 12px 24px;
-  border-width: 1px 1px 0px;
-  border-top-style: solid;
-  border-right-style: solid;
-  border-left-style: solid;
-  border-top-color: rgb(51, 51, 51);
-  border-right-color: rgb(51, 51, 51);
-  border-left-color: rgb(51, 51, 51);
-  border-image: initial;
-  border-bottom-style: initial;
-  border-bottom-color: initial;
-  border-radius: 10px 10px 0px 0px;
-  color: rgb(153, 153, 153);
-  font-weight: 500;
-}
-@media (min-width: 992px){
-.izLjpj > span {
-    display: flex;
-}
-}
-.izLjpj > span {
-    display: none;
-    margin-left: 6px;
-}
-.iAhmAY.active {
-  color: rgb(255, 255, 255);
-  background: black;
+  align-items: center;
+  justify-content: space-between;
+  width: 220px; /* Increase the width */
+  height: 50px; /* Increase the height */
+  background: #ccc;
+  border-radius: 30px; /* Increase the border radius */
+  position: relative;
+  cursor: pointer;
+  transition: background-color 0.3s;
 }
 
-.izLjpj.active {
-  color: rgb(255, 255, 255);
-  background: black;
+.switch-button.active {
+  background: #2bc6ff; /* Active color */
+}
+
+.switch-label {
+  color: #fff; /* Text color */
+  font-weight: bold;
+  margin: 0 10px;
+  font-size: 18px; /* Increase the font size */
+}
+
+.switch-handle {
+  width: 46px; /* Increase the handle width */
+  height: 46px; /* Increase the handle height */
+  background: #fff;
+  border-radius: 50%;
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  left: 4px; /* Initial position */
+  transition: left 0.3s;
+}
+
+.switch-button.active .switch-handle {
+  left: calc(100% - 48px); /* Active position */
 }

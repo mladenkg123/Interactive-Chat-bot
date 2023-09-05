@@ -81,8 +81,8 @@ const Register = ({ isShowRegister, onCloseRegister} : RegisterProps) => {
           <form onSubmit={handleSubmit}>
             <h1 className="register-text">REGISTRACIJA</h1>
             <div className="dOFkZA">
-              <button type='button' className={`iAhmAY ${chatbotRegister ? 'active' : ''}`} onClick={() => setChatBotRegister(true)}>ChatBot Registracija</button>
-              <button type='button' className={`izLjpj ${!chatbotRegister ? 'active' : ''}`} onClick={() => setChatBotRegister(false)}>SQL Asistent Registracija</button>
+              <button type='button' className={`switch-button ${chatbotRegister ? 'active' : ''}`} onClick={() => setChatBotRegister(true)}>ChatBot Registracija</button>
+              <button type='button' className={`switch-button ${!chatbotRegister ? 'active' : ''}`} onClick={() => setChatBotRegister(false)}>SQL Asistent Registracija</button>
               </div>
             <label style={{color:"white"}}>E-mail</label>
             <br></br>
