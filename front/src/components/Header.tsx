@@ -43,9 +43,10 @@ function Header({handleLoginClick, handleRegisterClick, handleSignOut, isAuthent
       }).then(() => {
       });
   }
+
+  const jwtExists = cookies.get('jwt') as string;
   const preventLogin = async () => {
 
-    const jwtExists = cookies.get('jwt') as string;
     
     if (jwtExists == undefined) {
       await Swal.fire({
@@ -63,6 +64,27 @@ function Header({handleLoginClick, handleRegisterClick, handleSignOut, isAuthent
     }
     else {
       window.location.href = '/ChatBot'; 
+    }
+  }
+
+
+  const preventLogin2 = async () =>{
+    if (jwtExists == undefined) {
+      await Swal.fire({
+        title: 'Morate se ulogovati!',
+        text: 'Morate se ulogovati kako bi pristupili ovoj stranici.',
+        icon: 'error',
+        showCancelButton: false,
+        confirmButtonText: 'Zatvori',
+        customClass: {
+          confirmButton: 'swal-button swal-button--error'
+        }
+      }).then(() => {
+        close();
+      });
+    }
+    else {
+      window.location.href = '/SQLAssistant'; 
     }
   }
 
@@ -196,6 +218,9 @@ function Header({handleLoginClick, handleRegisterClick, handleSignOut, isAuthent
           </li>
           <li className="nav-item">
             <a onClick={preventLogin}>Chat-BOT</a>
+          </li>
+          <li className="nav-item">
+            <a onClick={preventLogin2}>SQLAssistant</a>
           </li>
         </ul>
         <div className="auth-buttons">
