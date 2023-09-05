@@ -9,8 +9,8 @@ const UserSchema = mongoose.Schema({
         required: true,
         unique: true
     },
-    admin: { type: Boolean },
-    hash: { type: String},
+    role: { type: String },
+    hash: { type: String },
     remaining_prompts: { type: Number },
     account_type: { type: String },
     salt: { type: String }
@@ -41,9 +41,7 @@ UserSchema.methods.generateJwt = function()
 
 UserSchema.methods.getRole = function()
 {
-    if (this.admin)
-        return "ADMIN";
-    return "USER";
+    return this.role;
 }
 
 const UserModel = mongoose.model('user', UserSchema);
@@ -52,7 +50,7 @@ UserModel.register = async function(email, name, password)
 {
     const user = new UserModel({
         email:email,
-        admin: false,
+        role: "USER",
         remaining_prompts: 100, 
         account_type: "free"
     })
@@ -71,12 +69,11 @@ UserModel.register = async function(email, name, password)
     
 }
 
-UserModel.findById = async function (user_id) {
+UserModel.findById2 = async function (user_id) {
     const ObjectId = mongoose.Types.ObjectId;
     try {
         user_id = new ObjectId(user_id);
         const user = await UserModel.findOne({ _id: user_id }, { remaining_prompts: 1 }).exec();
-
         const modifiedData = {
             user_id: user._id,
             remaining_prompts: user.remaining_prompts
@@ -89,6 +86,7 @@ UserModel.findById = async function (user_id) {
         return { status: 500, message: 'Internal Server Error' };
     }
 };
+
 
 UserModel.reducePrompts = async function (user_id) {
     try {
