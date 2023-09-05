@@ -5,7 +5,7 @@ const passport = require('./config/config')
 
 
 router.post('/register', async (req,res)=>{
-    const token = await authService.register(req.body.email, req.body.name, req.body.password);
+    const token = await authService.register(req.body.email, req.body.username, req.body.password);
     if (!token)
         res.status(503)
     res.send(token)

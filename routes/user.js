@@ -5,6 +5,8 @@ const passport = require('./config/config')
 const jwt = require('jsonwebtoken')
 
 router.get('/:user_id',
+    passport.authenticate('jwt', {session: false}),
+    passport.authorizeRoles('ADMIN', 'USER'),
     async (req,res)=>{
         const jwtToken = req.headers.authorization;
         if (jwtToken.startsWith('Bearer ')) {

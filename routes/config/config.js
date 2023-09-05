@@ -57,8 +57,8 @@ passport.use(new JwtStrategy(jwtOptions, async function(jwt_payload, done){
 }))
 
 passport.authorizeRoles = (...roles) => (req,res,next) => {
-    req.user
-    const validacija = roles.find(role=> role === req.user.getRole());
+    const user = req.user;
+    const validacija = roles.find(role=> role === user.getRole());
     if (validacija)
         next();
     else
@@ -69,11 +69,8 @@ passport.authorizeRoles = (...roles) => (req,res,next) => {
 }
 
 passport.log = () => (req,res,next) => {
-    console.log("Pristupio je korisnik: "+req.user.name);
+    console.log("Pristupio je korisnik: "+user.name);
     next()
 }
-
-
-
 
 module.exports = passport

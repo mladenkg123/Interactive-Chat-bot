@@ -6,6 +6,7 @@ const jwt = require('jsonwebtoken')
 
 router.get('/',
     passport.authenticate('jwt', {session: false}),
+    passport.authorizeRoles('ADMIN', 'USER'),
     async (req, res) => {
         const jwtToken = req.headers.authorization;
         if (jwtToken.startsWith('Bearer ')) {
@@ -28,6 +29,7 @@ router.get('/',
 
 router.get('/:conversation_id',
     passport.authenticate('jwt', {session: false}),
+    passport.authorizeRoles('ADMIN', 'USER'),
     async (req, res) => {
         const jwtToken = req.headers.authorization;
         if (jwtToken.startsWith('Bearer ')) {
@@ -50,6 +52,7 @@ router.get('/:conversation_id',
 
 router.post('/delete/:conversation_id',
     passport.authenticate('jwt', {session: false}),
+    passport.authorizeRoles('ADMIN', 'USER'),
     async (req, res) => {
         const jwtToken = req.headers.authorization;
         if (jwtToken.startsWith('Bearer ')) {
@@ -72,6 +75,7 @@ router.post('/delete/:conversation_id',
 
 router.post('/delete/user/:user_id',
     passport.authenticate('jwt', {session: false}),
+    passport.authorizeRoles('ADMIN', 'USER'),
     async (req, res) => {
         const jwtToken = req.headers.authorization;
         if (jwtToken.startsWith('Bearer ')) {
@@ -97,6 +101,7 @@ router.post('/delete/user/:user_id',
 
 router.post('/',
     passport.authenticate('jwt', {session: false}),
+    passport.authorizeRoles('ADMIN', 'USER'),
     async (req, res) => {
         const jwtToken = req.headers.authorization;
         if (jwtToken.startsWith('Bearer ')) {
@@ -118,6 +123,7 @@ router.post('/',
 
 router.patch('/:conversation_id',
     passport.authenticate('jwt', {session: false}),
+    passport.authorizeRoles('ADMIN', 'USER'),
     async (req, res) => {
         const jwtToken = req.headers.authorization;
         if (jwtToken.startsWith('Bearer ')) {
@@ -139,6 +145,7 @@ router.patch('/:conversation_id',
 
 router.patch('/description/:conversation_id',
     passport.authenticate('jwt', {session: false}),
+    passport.authorizeRoles('ADMIN', 'USER'),
     async (req, res) => {
         const jwtToken = req.headers.authorization;
         if (jwtToken.startsWith('Bearer ')) {

@@ -6,6 +6,7 @@ const jwt = require('jsonwebtoken')
 
 router.get('/',
     passport.authenticate('jwt', {session: false}),
+    passport.authorizeRoles('ADMIN'),
     async (req, res) => {
         const prompts = await PromptService.find()
         res.send(prompts);
@@ -13,6 +14,7 @@ router.get('/',
 
 router.get('/:id',
     passport.authenticate('jwt', {session: false}),
+    passport.authorizeRoles('ADMIN', 'USER'),
     async (req, res) => {
         const jwtToken = req.headers.authorization;
         if (jwtToken.startsWith('Bearer ')) {
@@ -34,6 +36,7 @@ router.get('/:id',
 
 router.get('/conversation/:conversation_id',
     passport.authenticate('jwt', {session: false}),
+    passport.authorizeRoles('ADMIN', 'USER'),
     async (req, res) => {
         const jwtToken = req.headers.authorization;
         if (jwtToken.startsWith('Bearer ')) {
@@ -55,6 +58,7 @@ router.get('/conversation/:conversation_id',
 
 router.post('/',   
     passport.authenticate('jwt', {session: false}),
+    passport.authorizeRoles('ADMIN', 'USER'),
     async (req, res) => {
         const jwtToken = req.headers.authorization;
         if (jwtToken.startsWith('Bearer ')) {
