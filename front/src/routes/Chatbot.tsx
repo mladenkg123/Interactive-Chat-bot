@@ -62,9 +62,7 @@ const ChatBot = () => {
   const options=[
     { value: 'Cube-BOT', label: 'Cube-BOT(GPT3.5)' },
     { value: 'Llama', label: 'Llama' },
-    { value: 'Bard', label: 'Bard', },
-    { value: 'SQL Prompts', label: 'SQL Propmts', },
-  ];
+    { value: 'Bard', label: 'Bard', },  ];
   const chatContentLastMessage = useRef(null);
   
   

@@ -1,6 +1,6 @@
 /* Navbar.css */
 .navbar {
-  background-color: #040c1c;
+  background-color: #0b1937;
   color: #fff;
   position: fixed;
   top: 0;
@@ -32,9 +32,9 @@
 }
 
 .nav-menu {
+  margin-left: 150px;
   list-style: none;
   display: flex;
-  margin: 0;
   padding: 0;
 }
 
