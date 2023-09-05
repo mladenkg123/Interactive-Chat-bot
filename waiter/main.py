@@ -38,6 +38,9 @@ messages = [{"role": "assistant", "content": "Hello! How may I assist you today?
 
 def generate_bard_response(input_text):
     response = bard.get_answer(input_text)
+    print(input_text)
+    print(response)
+
     if(response['status_code'] == 200):
         return response["content"]
     else:
@@ -155,7 +158,7 @@ def handle_post():
         for item in response_generator:
             response += item
     elif(model == "Bard"):
-        response = generate_bard_response(data.get("conversation")[len(conversation) - 1]) #Only send the last propmt as we are keeping the session, though may have to change this if we go to another convo
+        response = generate_bard_response(data.get("conversation")[len(conversation) - 1].get("message")) #Only send the last propmt as we are keeping the session, though may have to change this if we go to another convo
     prompt_response = save_prompt(data.get("jwt"), data.get("user_id"), data.get("prompt"), data.get("conversation_id")).json()
     if(prompt_response.get("status") == 200):
         prompt_id = prompt_response.get("data").get("prompt_id")

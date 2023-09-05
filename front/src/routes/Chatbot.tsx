@@ -39,7 +39,7 @@ const ChatMessage: React.FC<ChatMessageProps> = React.memo(({ msg }) => (
     prevProps.msg.sender === nextProps.msg.sender;
 });
 
-let conversationList2  : Conversation[] = [];
+let conversationList  : Conversation[] = [];
 
 const Header = React.lazy(() => import('../components/Header'));
 
@@ -62,6 +62,7 @@ const ChatBot = () => {
   const options=[
     { value: 'Cube-BOT', label: 'Cube-BOT(GPT3.5)' },
     { value: 'Llama', label: 'Llama' },
+    { value: 'Bard', label: 'Bard', },
     { value: 'SQL Prompts', label: 'SQL Propmts', },
   ];
   const chatContentLastMessage = useRef(null);
@@ -72,6 +73,7 @@ const ChatBot = () => {
   };
 
   const loadConversations = async () => {
+       console.log(conversationCache);
       try {
         const conversationsListPromise = await fetchConversations(jwt);
         if (conversationsListPromise.status === 200) {
@@ -82,14 +84,14 @@ const ChatBot = () => {
           }));          
           
           loadedConversationsList.sort((a, b) => b.last_accessed.getTime() - a.last_accessed.getTime());
-          conversationList2 =  loadedConversationsList;
+          conversationList =  loadedConversationsList;
           //console.log(conversationsHistory[0]?.sender);
 
-          if(conversationList2.length > 0) {
+          if(conversationList.length > 0) {
             const updatedPromptTexts = [...promptTexts]; 
-            conversationList2.forEach((conversation, index) => {
+            conversationList.forEach((conversation, index) => {
               updatedPromptTexts[index] = conversation.conversation_description
-                ? conversation.conversation_description.substring(0, 15)
+                ? conversation.conversation_description.substring(0, 12)
                 : 'No prompt available';
             });
             setPromptTexts(updatedPromptTexts);
@@ -102,7 +104,7 @@ const ChatBot = () => {
       } catch (error) {
         console.error('Error:', error);
       }
-    //console.log(conversationList2);
+    //console.log(conversationList);
 
   };
   
@@ -139,7 +141,7 @@ const ChatBot = () => {
 
   const loadConversationByID = async (index : number) => {
 
-    const conversation_id = conversationList2[index].conversation_id;
+    const conversation_id = conversationList[index].conversation_id;
     //console.log(conversation_id);
       try {
         const conversationsListPromise = await fetchConversationById(jwt, conversation_id);
@@ -149,7 +151,7 @@ const ChatBot = () => {
           const loadedConversationDescripition = conversationsListResponse.data.conversation_description;
                   
           const updatedPromptTexts = [...promptTexts];
-          updatedPromptTexts[index] = loadedConversationDescripition.substring(0, 15);
+          updatedPromptTexts[index] = loadedConversationDescripition.substring(0, 12);
           setPromptTexts(updatedPromptTexts);
           //console.log(loadedConversationDescripition);
         } else {
@@ -191,7 +193,7 @@ const ChatBot = () => {
 
     const currentContext = [...conversationsHistory];
     currentContext.push({sender: 'User', message: userInput});
-    const conversation_id = conversationList2[currentConversationIndex].conversation_id;
+    const conversation_id = conversationList[currentConversationIndex].conversation_id;
     const pythonResponse = await sendPromptToPython(jwt, userInput, conversation_id, currentContext, user_id, selectedModel);
     if (pythonResponse.status === 200) {
         const pythonData = await pythonResponse.text();
@@ -207,14 +209,14 @@ const ChatBot = () => {
         }
         setConversationsHistory(updatedConversation);
         //console.log(conversationsHistory);
-        const conversationIndex = conversationList2.findIndex(conversation => conversation.conversation_id === conversation_id);
+        const conversationIndex = conversationList.findIndex(conversation => conversation.conversation_id === conversation_id);
         //console.log(conversationIndex);
         if (conversationIndex !== -1) {
-          conversationList2[conversationIndex].last_accessed = new Date();
+          conversationList[conversationIndex].last_accessed = new Date();
         }    
         setConversationCache(prevCache => ({
           ...prevCache,
-          [conversationList2[currentConversationIndex].conversation_id]: updatedConversation,
+          [conversationList[currentConversationIndex].conversation_id]: updatedConversation,
       }));
 
       await loadConversationByID(currentConversationIndex);
@@ -245,13 +247,13 @@ const ChatBot = () => {
 const handleNewChat = async () => {
   //console.log(conversationsHistory[0]?.sender);
       try {
-        if (handleEmptyChat() && conversationList2.length === 0 || handleEmptyChat() && conversationsHistory[2]?.sender ) {
+        if (handleEmptyChat() && conversationList.length === 0 || handleEmptyChat() && conversationsHistory[2]?.sender ) {
           const conversationsListPromise = await startNewConversation(jwt);
           if (conversationsListPromise.status === 200) {
             const conversationsListResponse = await conversationsListPromise.json() as ConversationResponse;
             const conversationsListId = conversationsListResponse.data.conversation_id;
             //console.log(conversationsListId);
-            conversationList2.push({
+            conversationList.push({
               conversation_id : conversationsListId,
               user_id: user_id,
               last_accessed: new Date(),
@@ -274,7 +276,7 @@ const handleNewChat = async () => {
           if (conversationsListPromise.status === 200) {
             const conversationsListResponse = await conversationsListPromise.json() as ConversationResponse;
             const conversationsListId = conversationsListResponse.data.conversation_id;
-            conversationList2.push({
+            conversationList.push({
               conversation_id : conversationsListId,
               user_id: user_id,
               last_accessed: new Date(),
@@ -291,7 +293,7 @@ const handleNewChat = async () => {
 };
 
 const handleDeleteChat = async () => {
-  const conversation_id = conversationList2[currentConversationIndex].conversation_id;
+  const conversation_id = conversationList[currentConversationIndex].conversation_id;
   if (conversation_id) {
     try {
      await Swal.fire({
@@ -307,10 +309,10 @@ const handleDeleteChat = async () => {
           const conversationsListPromise = await deleteConversation(jwt, conversation_id);
           if (conversationsListPromise.status === 200) {
             await conversationsListPromise.json() as ConversationsResponse;
-            const index = conversationList2.findIndex(conversation => conversation.conversation_id === conversation_id);
+            const index = conversationList.findIndex(conversation => conversation.conversation_id === conversation_id);
             if (index !== -1) {
-              conversationList2.splice(index, 1);
-              if (conversationList2.length === 0) {
+              conversationList.splice(index, 1);
+              if (conversationList.length === 0) {
               const updatedCache = { ...conversationCache };
               delete updatedCache[conversation_id];
               setConversationCache(updatedCache);
@@ -357,8 +359,15 @@ const handleDeleteAllChat = async () => {
           if (conversationsListPromise.status === 200) {
             await conversationsListPromise.json() as ConversationsResponse;
              
-              conversationList2 = [];
+            if (conversationList.length >= 0) {
+
+              conversationList = [];
               setConversationCache({});
+              setConversationsHistory([{ 
+                sender: 'Cube-BOT', message: 'Hello! How can I help you?' },
+              { sender: 'User', message: 'Hi there! I have a question.' },]);
+              }
+
 
               await Swal.fire(
                 'Deleted!',
@@ -378,10 +387,10 @@ const handleDeleteAllChat = async () => {
   };
 
 const handleNewChatActive = async () => {
-  const reversedConversationsList = conversationList2.slice().reverse();
+  const reversedConversationsList = conversationList.slice().reverse();
   const lastIndex = reversedConversationsList.findIndex(conversation => conversation.conversation_id);
   if (lastIndex !== -1) { 
-    const lastCreatedIndex = conversationList2.length - lastIndex - 1; 
+    const lastCreatedIndex = conversationList.length - lastIndex - 1; 
     setCurrentConversationIndex(lastCreatedIndex);
     await handleRestoreConversation(lastCreatedIndex);
   }
@@ -389,7 +398,7 @@ const handleNewChatActive = async () => {
 
   const handleRestoreConversation = async (index: number) => {
     setCurrentConversationIndex(index);
-    const conversationId = conversationList2[index].conversation_id;
+    const conversationId = conversationList[index].conversation_id;
     // Check if the conversation data is in the cache
     if (conversationCache[conversationId]) {
       setConversationsHistory(conversationCache[conversationId]);
@@ -419,7 +428,7 @@ const handleNewChatActive = async () => {
         setConversationsHistory(formattedMessages);
         setConversationCache(prevCache => ({
           ...prevCache,
-          [conversationList2[index].conversation_id]: formattedMessages,
+          [conversationList[index].conversation_id]: formattedMessages,
       }));
       } else {
         setConversationsHistory([]);
@@ -449,7 +458,7 @@ const handleNewChatActive = async () => {
           </div>
           <div className="conversation-restore-points">
           <div className="restore-points-header">Previous Chats</div>
-          {conversationList2.map((_, index) => {
+          {conversationList.map((_, index) => {
 
             const promptText = promptTexts[index];
 
