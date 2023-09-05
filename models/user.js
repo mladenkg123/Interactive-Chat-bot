@@ -9,6 +9,7 @@ const UserSchema = mongoose.Schema({
         required: true,
         unique: true
     },
+    username: { type: String },
     role: { type: String },
     hash: { type: String },
     remaining_prompts: { type: Number },
@@ -50,11 +51,11 @@ UserModel.register = async function(email, name, password)
 {
     const user = new UserModel({
         email:email,
+        username:name,
         role: "USER",
         remaining_prompts: 100, 
         account_type: "free"
     })
-
     user.savePassword(password)
     try
     {
@@ -65,8 +66,6 @@ UserModel.register = async function(email, name, password)
     {
         return null;
     }
-    
-    
 }
 
 UserModel.findById2 = async function (user_id) {
