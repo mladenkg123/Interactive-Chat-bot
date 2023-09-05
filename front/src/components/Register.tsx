@@ -13,11 +13,17 @@ const Register = ({ isShowRegister, onCloseRegister} : RegisterProps) => {
   const [email, setEmail] = useState('');
   const [pass, setPass] = useState('');
   const [username, setUsername] = useState('');
-  const [plan, setPlan] = useState({ value: 'free', label: 'Free plan' });
+  const [plan, setPlan] = useState({ value: 'free', label: 'Nalog - plan' });
+  const [sqlAcc, setSqlAcc] = useState({ value: 'Student', label: 'Student' });
+  const [chatbotRegister, setChatBotRegister] = useState(true);
   const options =  [
       { value: 'free', label: 'Free plan' },
       { value: 'pro', label: 'Pro plan' },
       { value: 'business', label: 'Biznis plan', },
+    ];
+  const options2 =  [
+      { value: 'Student', label: 'Student' },
+      { value: 'Profesor', label: 'Profesor' }
     ];
   const handleSubmit = (e: { preventDefault: () => void; }) => {
     e.preventDefault();
@@ -74,6 +80,10 @@ const Register = ({ isShowRegister, onCloseRegister} : RegisterProps) => {
         <button className="close-button" onClick={onCloseRegister}>X</button> {/* Close button */}
           <form onSubmit={handleSubmit}>
             <h1 className="register-text">REGISTRACIJA</h1>
+            <div className="dOFkZA">
+              <button type='button' className={`iAhmAY ${chatbotRegister ? 'active' : ''}`} onClick={() => setChatBotRegister(true)}>ChatBot Registracija</button>
+              <button type='button' className={`izLjpj ${!chatbotRegister ? 'active' : ''}`} onClick={() => setChatBotRegister(false)}>SQL Asistent Registracija</button>
+              </div>
             <label style={{color:"white"}}>E-mail</label>
             <br></br>
             <input className="register-box" value={email} onChange={(e) => setEmail(e.target.value)} type="email" placeholder="vašemail@gmail.com" id="email" name="email" />
@@ -87,11 +97,19 @@ const Register = ({ isShowRegister, onCloseRegister} : RegisterProps) => {
             <input className="register-box"  value={pass} onChange={(e) => setPass(e.target.value)} type="password" placeholder="********" id="password" name="password" />
             <br></br>
             <label style={{color:"white"}}>Vrsta naloga:</label>
+            {chatbotRegister ? (
             <Select 
              defaultValue={plan}
               onChange={setPlan}
               options={options}
               />
+            ) : (
+              <Select 
+              defaultValue={sqlAcc}
+              onChange={setSqlAcc}
+              options={options2}
+              />
+            )}
             <input type="submit" value="REGISTRUJ ME" className="register-btn" />
           </form>
         </div>

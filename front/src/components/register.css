@@ -137,3 +137,71 @@
     background-color: #535bf2ff;
     transform: scale(1.1);
 }
+.dOFkZA {
+  display: flex;
+  width: 100%;
+  border-bottom: 1px solid rgb(51, 51, 51);
+  align-items: flex-end;
+  -webkit-box-pack: center;
+  justify-content: center;
+  margin-bottom: 40px;
+  gap: 10px;
+}
+.iAhmAY {
+  display: flex;
+  background: black;
+  padding: 12px 24px;
+  border-width: 1px 1px 0px;
+  border-top-style: solid;
+  border-right-style: solid;
+  border-left-style: solid;
+  border-top-color: rgb(51, 51, 51);
+  border-right-color: rgb(51, 51, 51);
+  border-left-color: rgb(51, 51, 51);
+  border-image: initial;
+  border-bottom-style: initial;
+  border-bottom-color: initial;
+  border-radius: 10px 10px 0px 0px;
+  color: rgb(153, 153, 153);
+  font-weight: 500;
+}
+.iAhmAY > span {
+  display: none;
+  margin-left: 6px;
+}
+.izLjpj {
+  display: flex;
+  background: black;
+  padding: 12px 24px;
+  border-width: 1px 1px 0px;
+  border-top-style: solid;
+  border-right-style: solid;
+  border-left-style: solid;
+  border-top-color: rgb(51, 51, 51);
+  border-right-color: rgb(51, 51, 51);
+  border-left-color: rgb(51, 51, 51);
+  border-image: initial;
+  border-bottom-style: initial;
+  border-bottom-color: initial;
+  border-radius: 10px 10px 0px 0px;
+  color: rgb(153, 153, 153);
+  font-weight: 500;
+}
+@media (min-width: 992px){
+.izLjpj > span {
+    display: flex;
+}
+}
+.izLjpj > span {
+    display: none;
+    margin-left: 6px;
+}
+.iAhmAY.active {
+  color: rgb(255, 255, 255);
+  background: black;
+}
+
+.izLjpj.active {
+  color: rgb(255, 255, 255);
+  background: black;
+}
