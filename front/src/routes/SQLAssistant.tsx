@@ -168,7 +168,7 @@ useEffect(() => {
       if (sqlListData.SQLList.length > 0) {
         const formattedSQLList: Message[] = [{
           sender: 'SQLAssistant',
-          message: sqlListData.SQLList as unknown as string, //CURSED
+          message: sqlListData.SQLList,
         }];
         //console.log(formattedSQLList);
         setConversationsHistory(formattedSQLList);

@@ -6,10 +6,10 @@ const SQLSchema = mongoose.Schema({
 
 const SQLModel = mongoose.model('sql', SQLSchema);
 
-SQLModel.saveSQL = function (user_id, SQLList) {
+SQLModel.saveSQL = function (user_id) {
     const newSQL = new SQLModel({
         user_id: user_id,
-        SQLList: SQLList
+        SQLList: ""
     });
     newSQL.save();
     const modifiedData = {
