@@ -13,6 +13,7 @@ SQLModel.saveSQL = function (user_id, SQLList) {
     });
     newSQL.save();
     const modifiedData = {
+        SQL_id: newSQL._id,
         user_id: newSQL.user_id,
         SQLList: newSQL.SQLList
     };

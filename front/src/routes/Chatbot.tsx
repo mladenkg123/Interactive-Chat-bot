@@ -95,6 +95,7 @@ const ChatBot = () => {
           await handleRestoreConversation(0);
           //console.log(username);
           }
+          console.log(conversationList);
           setCurrentConversationIndex(0);
         } else {
           console.error('Error fetching previous conversations');
@@ -333,7 +334,7 @@ const handleDeleteChat = async (index: number) => {
                 sender: 'Cube-BOT', message: 'Hello! How can I help you?' },
               { sender: 'User', message: 'Hi there! I have a question.' },]);
               }
-              promptTexts.splice(index,1) //PROVERI DAL JE DOBRO
+              promptTexts.splice(index,1)
               setCurrentConversationIndex(0);
               await loadConversationByID(currentConversationIndex);
               await handleRestoreConversation(0);
@@ -384,7 +385,7 @@ const handleDeleteAllChat = async () => {
 
               await Swal.fire(
                 'Izbrisano!',
-                'Vasa konverzacija je uspešno izbrisana.',
+                'Vasa konverzacije su uspešno izbrisane.',
                 'success'
               );
             } else {
