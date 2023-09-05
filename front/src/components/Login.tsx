@@ -44,8 +44,8 @@ const Login = ({ isShowLogin, onCloseLogin, onLoginSuccess } : LoginProps) => {
           cookies.set('jwt', data.jwt);
          
           Swal.fire({
-            title: 'Signing In',
-            text: 'You have been successfully signed in.',
+            title: 'Prijavljivanje.',
+            text: 'Uspešno ste se prijavili na vas nalog.',
             icon: 'success',
             timer: 2000,
             timerProgressBar: true,
@@ -65,11 +65,11 @@ const Login = ({ isShowLogin, onCloseLogin, onLoginSuccess } : LoginProps) => {
         onCloseLogin();
         console.log(error)
         Swal.fire({
-          title: 'Password Incorrect',
-          text: 'The password you entered is incorrect.',
+          title: 'Šifra nije tacna.',
+          text: 'Šifra koju ste uneli je pogrešna.',
           icon: 'error',
           showCancelButton: false,
-          confirmButtonText: 'Try Again',
+          confirmButtonText: 'Pokušaj ponovo',
           customClass: {
             confirmButton: 'swal-button swal-button--error'
           }

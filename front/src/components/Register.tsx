@@ -40,8 +40,8 @@ const Register = ({ isShowRegister, onCloseRegister} : RegisterProps) => {
           onCloseRegister();
           console.log(data);
           Swal.fire({
-            title: 'Registration Successful',
-            text: 'You have been successfully registered.',
+            title: 'Registracija uspesna.',
+            text: 'Uspesno ste registrovali svoj nalog.',
             icon: 'success',
             timer: 2000,
             timerProgressBar: true,
@@ -55,11 +55,11 @@ const Register = ({ isShowRegister, onCloseRegister} : RegisterProps) => {
         console.log(error); 
         onCloseRegister();
         Swal.fire({
-          title: 'Registration Failed',
-          text: 'There was an error during registration.',
+          title: 'Registracija nije uspela.',
+          text: 'Postoji greska prilikom vase registracije.',
           icon: 'error',
           showCancelButton: false,
-          confirmButtonText: 'Try Again',
+          confirmButtonText: 'Pokušaj ponovo',
           customClass: {
             confirmButton: 'swal-button swal-button--error'
           }

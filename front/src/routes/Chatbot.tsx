@@ -4,6 +4,7 @@ import { faCube, faTrash, faUser } from '@fortawesome/free-solid-svg-icons';
 import Cookies from 'universal-cookie';
 import Swal from 'sweetalert2';
 import Select from 'react-select';
+import ParticleComponent from "../components/Particle";
 import {
   deleteAllConversationsByUserId,
   deleteConversation,
@@ -42,7 +43,6 @@ const ChatMessage: React.FC<ChatMessageProps> = React.memo(({ msg }) => (
 let conversationList  : Conversation[] = [];
 
 const Header = React.lazy(() => import('../components/Header'));
-
 const ChatBot = () => {
 
   const cookies = new Cookies();
@@ -223,15 +223,27 @@ const ChatBot = () => {
       setPromptsLeft(promptsLeft-1);
     }
     else if(pythonResponse.status === 403) {
-      alert("No prompts available");
+     await Swal.fire({
+          icon: 'error',
+          title: 'Nema dostupnih obaveštenja',
+          text: 'Nema dostupnih obaveštenja.',
+        });
       console.error('No prompts available');
     }
     else if(pythonResponse.status === 500) {
-      alert("Unexpected server problem please try again");
+     await Swal.fire({
+        icon: 'error',
+        title: 'Neočekivan problem na serveru',
+        text: 'Došlo je do neočekivanog problema na serveru. Molimo pokušajte ponovo.',
+      });
       console.error('Unexpected server problem please try again');
     }
     else {
-      alert("Unexpected server problem please try again 2");
+    await  Swal.fire({
+        icon: 'error',
+        title: 'Neočekivan problem na serveru',
+        text: 'Došlo je do neočekivanog problema na serveru. Molimo pokušajte ponovo.',
+      });
       console.error('Unexpected server problem please try again 2');
     }
     setDisableInput(false);
@@ -266,8 +278,8 @@ const handleNewChat = async () => {
         else if (handleEmptyChat()) {
           await Swal.fire({
             icon: 'error',
-            title: 'Oops...',
-            text: 'Input some text!',
+            title: 'Greska.',
+            text: 'Napisite neku recenicu!',
           })
         }
         else {
@@ -296,13 +308,13 @@ const handleDeleteChat = async (index: number) => {
   if (conversation_id) {
     try {
      await Swal.fire({
-        title: 'Are you sure?',
-        text: "You won't be able to revert this!",
+        title: 'Da li ste sigurni?',
+        text: "Necete moci da ispravite!",
         icon: 'warning',
         showCancelButton: true,
         confirmButtonColor: '#3085d6',
         cancelButtonColor: '#d33',
-        confirmButtonText: 'Yes, delete it!',
+        confirmButtonText: 'Da, izbriši!',
       }).then(async (result) => {
         if (result.isConfirmed) {
           const conversationsListPromise = await deleteConversation(jwt, conversation_id);
@@ -326,8 +338,8 @@ const handleDeleteChat = async (index: number) => {
               await handleRestoreConversation(0);
 
               await Swal.fire(
-                'Deleted!',
-                'Your conversation has been deleted.',
+                'Izbrisano!',
+                'Vaša konverzacija je uspešno izbrisana!',
                 'success'
               );
             } else {
@@ -346,13 +358,13 @@ const handleDeleteChat = async (index: number) => {
 const handleDeleteAllChat = async () => {
     try {
      await Swal.fire({
-        title: 'Are you sure?',
-        text: "You won't be able to revert this!",
+        title: 'Da li ste sigurni?',
+        text: "Necete moci da ispravite!",
         icon: 'warning',
         showCancelButton: true,
         confirmButtonColor: '#3085d6',
         cancelButtonColor: '#d33',
-        confirmButtonText: 'Yes, delete it!',
+        confirmButtonText: 'Da, izbriši!',
       }).then(async (result) => {
         if (result.isConfirmed) {
           const conversationsListPromise = await deleteAllConversationsByUserId(jwt, user_id);
@@ -370,8 +382,8 @@ const handleDeleteAllChat = async () => {
               setPromptTexts([]);
 
               await Swal.fire(
-                'Deleted!',
-                'Your conversation has been deleted.',
+                'Izbrisano!',
+                'Vasa konverzacija je uspešno izbrisana.',
                 'success'
               );
             } else {
@@ -516,6 +528,7 @@ const handleNewChatActive = async () => {
         </div>
       </div>
     </div>
+   
   );
 };
 

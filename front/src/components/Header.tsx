@@ -205,15 +205,15 @@ function Header({handleLoginClick, handleRegisterClick, handleSignOut, isAuthent
         <div className="auth-buttons">
           {isAuthenticated ? (
             <button className="btn btn-logout" onClick={handleSigningOut}>
-              <i className="fas fa-sign-out-alt"></i> Sign Out
+              <i className="fas fa-sign-out-alt"></i> Odjavi se
             </button>
           ) : (
             <>
               <button className="btn btn-login" onClick={handleClickLog}>
-                <i className="fas fa-sign-in-alt"></i> Login
+                <i className="fas fa-sign-in-alt"></i> Uloguj se
               </button>
               <button className="btn btn-signup" onClick={handleClickReg}>
-                <i className="fas fa-user-plus"></i> Sign Up
+                <i className="fas fa-user-plus"></i> Registruj se
               </button>
             </>
           )}
