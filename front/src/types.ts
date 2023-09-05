@@ -27,6 +27,7 @@ type BaseResponse<T> = {
   type UserData = {
     user_id: string;
     remaining_prompts: number;
+    username: string;
   };
   
   type Message = {

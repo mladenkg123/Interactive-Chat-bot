@@ -4,7 +4,6 @@ import { faCube, faTrash, faUser } from '@fortawesome/free-solid-svg-icons';
 import Cookies from 'universal-cookie';
 import Swal from 'sweetalert2';
 import Select from 'react-select';
-import ParticleComponent from "../components/Particle";
 import {
   deleteAllConversationsByUserId,
   deleteConversation,
@@ -96,7 +95,7 @@ const ChatBot = () => {
             });
             setPromptTexts(updatedPromptTexts);
           await handleRestoreConversation(0);
-          console.log(username);
+          //console.log(username);
           }
           setCurrentConversationIndex(0);
         } else {
