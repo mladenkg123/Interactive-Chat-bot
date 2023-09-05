@@ -2,8 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCube, faUser } from '@fortawesome/free-solid-svg-icons';
 import Cookies from 'universal-cookie';
-import Swal from 'sweetalert2';
-import Select from 'react-select';
+import { getUserIDFromJWT } from '../logic/utils';
 import './ChatbotCss.css';
 
 const Header = React.lazy(() => import('../components/Header'));
@@ -32,10 +31,11 @@ interface ChatMessageProps {
   
 
 const SQLAssistant = () => {
-
+  const cookies = new Cookies();
+  const jwt = cookies.get('jwt') as string;
+  const user_id = getUserIDFromJWT(jwt);
 const [conversationsHistory, setConversationsHistory] = useState<Message[]>([
-        { sender: 'Cube-BOT', message: 'Hello! How can I help you?' },
-        { sender: 'User', message: 'Hi there! I have a question.' },
+        { sender: 'SQLAssistant', message: 'Hello! I am here to help you generate SQL questions. To get strated click the GenerateSQL button.' }
       ]);
 const [userInput, setUserInput] = useState('');
 const [disableInput, setDisableInput] = useState(false);
@@ -53,7 +53,10 @@ useEffect(() => {
 
   }, [conversationsHistory]);
 
-
+  if(!jwt || !user_id) {
+    window.location.href = "/";
+    return;
+  }
 const scrollToBottom = () => {
     if (chatContentLastMessage.current) {
       chatContentLastMessage.current.scrollIntoView({ behavior: 'smooth' });
@@ -102,15 +105,12 @@ const scrollToBottom = () => {
                         disabled={disableInput}
                       />
                       <button className="send-button" type="submit" /*onClick={handleEmptyChat}*/>
-                        Pošalji
+                        Generate SQL Questions
                       </button>
                     </form>
               </div>
             </div>
             <div className='chat-sidebar2'>
-              <div className="model-selection">
-                <label htmlFor="CubeBOT-model">Izaberi Cube-BOT model :</label>
-              </div>
             </div>
           </div>
         </div>

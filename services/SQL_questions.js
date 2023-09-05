@@ -43,6 +43,11 @@ const deleteAllByUserId = async function(user_id)
     }
 }
 
+const modifySQLListById = function(SQLList_id, user_id, SQLList)
+{
+    return SQLModel.modifySQLListById(SQLList_id, user_id, SQLList)
+}
+
 const save = function(SQLList)
 {
     return SQLModel.saveSQL(SQLList);
@@ -54,5 +59,6 @@ module.exports = {
     findByUserId,
     deleteById,
     deleteAllByUserId,
+    modifySQLListById,
     save
 }

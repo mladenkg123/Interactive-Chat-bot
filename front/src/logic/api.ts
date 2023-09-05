@@ -51,6 +51,61 @@ export async function fetchConversationById(jwt: string, conversation_id: string
   return response;
 }
 
+export async function startNewSQLList(jwt: string): Promise<Response> {
+  const requestOptions: RequestInit = {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${jwt}` },
+  };
+
+  const response = await fetch(`${API_BASE_URL}/SQL`, requestOptions);
+  return response;
+}
+
+export async function deleteSQLList(jwt: string, SQLList_id: string): Promise<Response> {
+  const requestOptions: RequestInit = {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${jwt}` },
+  };
+
+  const response = await fetch(`${API_BASE_URL}/SQL/delete/${SQLList_id}`, requestOptions);
+  return response;
+}
+
+export async function deleteAllSQLListsByUserId(jwt: string, user_id: string): Promise<Response> {
+  const requestOptions: RequestInit = {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${jwt}` },
+  };
+
+  const response = await fetch(`${API_BASE_URL}/SQL/delete/user/${user_id}`, requestOptions);
+  return response;
+}
+
+export async function modifySQLListById(jwt: string, SQLList_id: string, SQLList: Array<string>): Promise<Response> {
+  const requestOptions: RequestInit = {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${jwt}` },
+    body: JSON.stringify( {SQLList} ),
+  };
+
+  const response = await fetch(`${API_BASE_URL}/SQL/SQLList_id/${SQLList_id}`, requestOptions);
+  return response;
+}
+
+export async function fetchSQLLists(jwt: string): Promise<Response> {
+  const requestOptions = generateRequestOptionsGet(jwt);
+
+  const response = await fetch(`${API_BASE_URL}/SQL/`, requestOptions);
+  return response;
+}
+
+export async function fetchSQLListById(jwt: string, SQLList_id: string): Promise<Response> {
+  const requestOptions = generateRequestOptionsGet(jwt);
+
+  const response = await fetch(`${API_BASE_URL}/SQL/${SQLList_id}`, requestOptions);
+  return response;
+}
+
 export async function fetchUserData(jwt: string, user_id: string): Promise<Response> {
   const requestOptions = generateRequestOptionsGet(jwt);
 

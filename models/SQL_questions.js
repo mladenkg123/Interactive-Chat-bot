@@ -92,4 +92,34 @@ SQLModel.findById = async function (SQL_id, user_id) {
     }
 };
 
+SQLModel.modifySQLListById = async function (SQLList_id, user_id, SQLList) {
+    const ObjectId = mongoose.Types.ObjectId;
+    try {
+        const SQLUserId = await SQLModel.find({ _id: new ObjectId(SQLList_id) }, { user_id: 1 }).exec();
+        if (SQLUserId.length == 0) {
+            return { status: 404, message: 'SQLList not found' };
+        }
+        user_id = new ObjectId(user_id);
+        // Check if the obtained user_id matches the provided user_id
+        if (SQLUserId[0].user_id.toString() !== user_id.toString()) {
+            return { status: 403, message: 'Forbidden' };
+        }
+
+        const updatedSQLList = await SQLModel.findByIdAndUpdate(
+            SQLList_id,
+            { $set: { SQLList:SQLList.SQLList } },
+            { new: true }
+        ).exec();
+        if (!updatedSQLList) {
+            return { status: 404, message: 'SQLList not found' };
+        }
+
+        return { status: 200 };
+    } catch (error) {
+        console.error("Error modifying SQLList of SQLList:", error);
+        return { status: 500, message: "An error occurred while modifying SQLList of the SQLList" };
+    }
+};
+
+
 module.exports = SQLModel;
