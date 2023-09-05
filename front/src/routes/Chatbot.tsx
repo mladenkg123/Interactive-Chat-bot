@@ -41,6 +41,7 @@ const ChatMessage: React.FC<ChatMessageProps> = React.memo(({ msg }) => (
 });
 
 let conversationList  : Conversation[] = [];
+let username = '';
 
 const Header = React.lazy(() => import('../components/Header'));
 const ChatBot = () => {
@@ -95,6 +96,7 @@ const ChatBot = () => {
             });
             setPromptTexts(updatedPromptTexts);
           await handleRestoreConversation(0);
+          console.log(username);
           }
           setCurrentConversationIndex(0);
         } else {
@@ -167,7 +169,9 @@ const ChatBot = () => {
         if (userPromptRem.status === 200) {
           const userPromptCount = await userPromptRem.json() as UserDataResponse;
           const remainingPrompts = userPromptCount.data.remaining_prompts;
+          const fetchUsername = userPromptCount.data.username;
           setPromptsLeft(remainingPrompts);
+          username = fetchUsername;
         } else {
           console.error('Error fetching remaining propmts');
         }
@@ -191,19 +195,19 @@ const ChatBot = () => {
     }
 
     const currentContext = [...conversationsHistory];
-    currentContext.push({sender: 'User', message: userInput});
+    currentContext.push({sender: username, message: userInput});
     const conversation_id = conversationList[currentConversationIndex].conversation_id;
     const pythonResponse = await sendPromptToPython(jwt, userInput, conversation_id, currentContext, user_id, selectedModel);
     if (pythonResponse.status === 200) {
         const pythonData = await pythonResponse.text();
         let updatedConversation: Message[] = [];
         if(conversationsHistory[0]?.sender == 'Cube-BOT') {
-          updatedConversation.push({ sender: 'User', message: userInput });
+          updatedConversation.push({ sender: username , message: userInput });
           updatedConversation.push({ sender: 'Cube-BOT', message: pythonData });
         }
         else {
           updatedConversation = [...conversationsHistory];
-          updatedConversation.push({ sender: 'User', message: userInput });
+          updatedConversation.push({ sender: username, message: userInput });
           updatedConversation.push({ sender: 'Cube-BOT', message: pythonData });
         }
         setConversationsHistory(updatedConversation);
@@ -424,7 +428,7 @@ const handleNewChatActive = async () => {
       const answersData = responseJson2.data;
       if (Array.isArray(promptsData) && promptsData.length > 0 && Array.isArray(answersData) && answersData.length > 0) {
         const formattedPrompts: Message[] = promptsData.map((promptObj: Prompt) => ({
-          sender: 'User',
+          sender: username,
           message: promptObj.prompt,
         }));
 

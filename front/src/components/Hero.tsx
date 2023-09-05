@@ -115,7 +115,7 @@ function Hero({ handleRegisterClick }: HeroProps) {
             <PricingSlot title="Pro Plan" price="$9.99">
               <PricingDetail>Cena: $9.99</PricingDetail>
               <PricingDetail>Svi sadržaji uključeni</PricingDetail>
-              <PricingDetail>Neograničeno promptova/mesečno</PricingDetail>
+              <PricingDetail>5000 promptova/mesečno</PricingDetail>
               <button className="pricing-button" onClick={handleRegisterClick}>
                 Registruj se
               </button>
