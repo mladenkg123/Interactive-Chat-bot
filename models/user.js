@@ -9,11 +9,11 @@ const UserSchema = mongoose.Schema({
         required: true,
         unique: true
     },
-    username: { type: String },
-    role: { type: String },
+    username: { type: String, required: true, unique: true},
+    role: { type: String, required: true },
     hash: { type: String },
-    remaining_prompts: { type: Number },
-    account_type: { type: String },
+    remaining_prompts: { type: Number, required: true },
+    account_type: { type: String, required: true  },
     salt: { type: String }
 })
 
@@ -47,14 +47,29 @@ UserSchema.methods.getRole = function()
 
 const UserModel = mongoose.model('user', UserSchema);
 
-UserModel.register = async function(email, name, password)
+UserModel.register = async function(email, username, password, plan, role)
 {
+    let remaining_prompts = 0;
+    if(role == "USER") {
+        if(plan == "free") {
+            remaining_prompts = 100;
+        }
+        else if(plan == "pro") {
+            remaining_prompts = 5000;
+        }
+        else if(plan == "business") {
+            remaining_prompts = Number.MAX_SAFE_INTEGER;
+        }
+    }
+    else if(role == "ADMIN") {
+        remaining_prompts = Number.MAX_SAFE_INTEGER;
+    }
     const user = new UserModel({
         email:email,
-        username:name,
-        role: "USER",
-        remaining_prompts: 100, 
-        account_type: "free"
+        username:username,
+        role: role,
+        account_type: plan,
+        remaining_prompts: remaining_prompts
     })
     user.savePassword(password)
     try
@@ -72,10 +87,11 @@ UserModel.findById2 = async function (user_id) {
     const ObjectId = mongoose.Types.ObjectId;
     try {
         user_id = new ObjectId(user_id);
-        const user = await UserModel.findOne({ _id: user_id }, { remaining_prompts: 1 }).exec();
+        const user = await UserModel.findOne({ _id: user_id }, { remaining_prompts: 1, username: 1 }).exec();
         const modifiedData = {
             user_id: user._id,
-            remaining_prompts: user.remaining_prompts
+            remaining_prompts: user.remaining_prompts,
+            username: user.username
         };
 
         return { status: 200, data: modifiedData };

@@ -1,8 +1,8 @@
 const UserModel = require("../models/user")
 
-const register = function(email, username, password)
+const register = function(email, username, password, plan, role)
 {
-    return UserModel.register(email, username, password);
+    return UserModel.register(email, username, password, plan, role);
 }
 
 module.exports = {

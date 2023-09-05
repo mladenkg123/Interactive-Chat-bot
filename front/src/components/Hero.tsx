@@ -2,7 +2,7 @@ import './heroCss.css';
 import { PricingDetail, PricingSlot, PricingTable } from 'react-pricing-table';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCogs, faRobot, faShieldAlt } from '@fortawesome/free-solid-svg-icons';
-import { useEffect , useState} from 'react';
+import { useEffect} from 'react';
 import AOS from 'aos';
 import 'aos/dist/aos.css'; 
 import Cookies from 'universal-cookie';
@@ -32,12 +32,12 @@ function Hero({ handleRegisterClick }: HeroProps) {
   const cookies = new Cookies();
  
 
-  const preventLogin = () => {
+  const preventLogin = async () => {
 
-    const jwtExists = cookies.get('jwt');
+    const jwtExists = cookies.get('jwt') as string;
     
     if (jwtExists == undefined) {
-      Swal.fire({
+      await Swal.fire({
         title: 'Morate se ulogovati!',
         text: 'Morate se ulogovati kako bi pristupili ovoj stranici.',
         icon: 'error',
@@ -147,7 +147,7 @@ function Hero({ handleRegisterClick }: HeroProps) {
               <label htmlFor="email" className="ixUjRF">Email</label>
               <input type="email" placeholder="Ko nam salje mail?" name="email" className="hewnsr"/>
                 <label htmlFor="message" className="ixUjRF">Message</label>
-                <textarea rows='7' placeholder="Vasa poruka..." name="message" class="hewnsr"></textarea>
+                <textarea rows={7} placeholder="Vasa poruka..." name="message" className="hewnsr"></textarea>
                 <div className="jBhLFp">
                   <input type="submit" className="idYhuh" value="Send Message"/>
                 </div>

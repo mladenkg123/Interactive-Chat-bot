@@ -1,7 +1,3 @@
-//import HomePage from '../routes/HomePage';
-//import React   from 'react';
-//import { Link } from 'react-router-dom';
-
 import { Link as ScrollLink } from 'react-scroll'; 
 import Cookies from 'universal-cookie';
 import Swal from 'sweetalert2';
@@ -30,8 +26,8 @@ function Header({handleLoginClick, handleRegisterClick, handleSignOut, isAuthent
   }
 
 
-  const handleSigningOut = () =>{
-      Swal.fire({
+  const handleSigningOut = async () =>{
+      await Swal.fire({
         title: 'Signing Out',
         text: 'You have been successfully signed out.',
         icon: 'success',
@@ -47,12 +43,12 @@ function Header({handleLoginClick, handleRegisterClick, handleSignOut, isAuthent
       }).then(() => {
       });
   }
-  const preventLogin = () => {
+  const preventLogin = async () => {
 
-    const jwtExists = cookies.get('jwt');
+    const jwtExists = cookies.get('jwt') as string;
     
     if (jwtExists == undefined) {
-      Swal.fire({
+      await Swal.fire({
         title: 'Morate se ulogovati!',
         text: 'Morate se ulogovati kako bi pristupili ovoj stranici.',
         icon: 'error',

@@ -20,7 +20,6 @@ const cookies = new Cookies();
 const Login = ({ isShowLogin, onCloseLogin, onLoginSuccess } : LoginProps) => {
   const [email, setEmail] = useState('');
   const [pass, setPass] = useState('');
-  //const [isLoginSuccessful, setIsLoginSuccessful] = useState(false);
   const handleSubmit = (e: { preventDefault: () => void; }) => {
     e.preventDefault();
     const requestOptions = {
@@ -35,7 +34,7 @@ const Login = ({ isShowLogin, onCloseLogin, onLoginSuccess } : LoginProps) => {
         }
         return response.json() as Promise<LoginResponse>;
       })
-      .then(data=> {
+      .then(async data=> {
         onCloseLogin();
         onLoginSuccess();
 
@@ -43,7 +42,7 @@ const Login = ({ isShowLogin, onCloseLogin, onLoginSuccess } : LoginProps) => {
         if (expire !== null) {
           cookies.set('jwt', data.jwt);
          
-          Swal.fire({
+          await Swal.fire({
             title: 'Prijavljivanje.',
             text: 'Uspešno ste se prijavili na vas nalog.',
             icon: 'success',
@@ -61,10 +60,10 @@ const Login = ({ isShowLogin, onCloseLogin, onLoginSuccess } : LoginProps) => {
           
         }
       })
-      .catch(error => {
+      .catch(async error => {
         onCloseLogin();
-        console.log(error)
-        Swal.fire({
+        console.error(error)
+        await Swal.fire({
           title: 'Šifra nije tacna.',
           text: 'Šifra koju ste uneli je pogrešna.',
           icon: 'error',

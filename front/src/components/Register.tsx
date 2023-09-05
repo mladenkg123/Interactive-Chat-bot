@@ -13,20 +13,18 @@ const Register = ({ isShowRegister, onCloseRegister} : RegisterProps) => {
   const [email, setEmail] = useState('');
   const [pass, setPass] = useState('');
   const [username, setUsername] = useState('');
-  const [plan, setPlan] = useState('Free');
+  const [plan, setPlan] = useState({ value: 'free', label: 'Free plan' });
   const options =  [
-      { value: 'Free', label: 'Free plan' },
-      { value: 'Pro', label: 'Pro plan' },
-      { value: 'Biznis', label: 'Biznis plan', },
+      { value: 'free', label: 'Free plan' },
+      { value: 'pro', label: 'Pro plan' },
+      { value: 'business', label: 'Biznis plan', },
     ];
-  
-  //const [isRegisterSuccessful, setIsRegisterSuccessful] = useState(false);
   const handleSubmit = (e: { preventDefault: () => void; }) => {
     e.preventDefault();
     const requestOptions = {
         method: 'POST',
         headers: { 'Content-Type': 'application/json'},
-        body: JSON.stringify({ email: email, password: pass })
+        body: JSON.stringify({ email: email, username: username, password: pass, plan: plan.value, role: "USER" })
     };
     fetch('http://localhost:8000/auth/register', requestOptions)
       .then(response => {
@@ -35,11 +33,9 @@ const Register = ({ isShowRegister, onCloseRegister} : RegisterProps) => {
         }
         return response;
       })
-      .then(data => {
-          //setIsRegisterSuccessful(true);
+      .then(async () => {
           onCloseRegister();
-          console.log(data);
-          Swal.fire({
+          await Swal.fire({
             title: 'Registracija uspesna.',
             text: 'Uspesno ste registrovali svoj nalog.',
             icon: 'success',
@@ -51,10 +47,10 @@ const Register = ({ isShowRegister, onCloseRegister} : RegisterProps) => {
           }).then(() => {
           });
       })
-      .catch(error => {
-        console.log(error); 
+      .catch(async error => {
+        console.error(error);
         onCloseRegister();
-        Swal.fire({
+        await Swal.fire({
           title: 'Registracija nije uspela.',
           text: 'Postoji greska prilikom vase registracije.',
           icon: 'error',
