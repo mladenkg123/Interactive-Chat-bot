@@ -13,7 +13,7 @@ replicate_api = os.environ['REPLICATE_API_TOKEN']
 # Replicate Credentials
 if not (replicate_api.startswith('r8_') and len(replicate_api) == 40):
     exit(1)
-
+'''
 token = os.environ['BARD_API_KEY']
 session = requests.Session()
 session.headers = {
@@ -26,6 +26,7 @@ session.headers = {
         }
 session.cookies.set("__Secure-1PSID", token)
 bard = Bard(token=token, session=session, timeout=30)
+'''
 
 llm = 'replicate/llama70b-v2-chat:2796ee9483c3fd7aa2e171d38f4ca12251a30609463dcfd4cd76703f22e96cdf'
 
@@ -35,7 +36,7 @@ max_length = 512
 
 # Initialize chat history
 messages = [{"role": "assistant", "content": "Hello! How may I assist you today?"}]
-
+'''
 def generate_bard_response(input_text):
     response = bard.get_answer(input_text)
     print(input_text)
@@ -45,7 +46,7 @@ def generate_bard_response(input_text):
         return response["content"]
     else:
         return ""
-
+'''
 def generate_llama2_response(messages):
     string_dialogue = "You are a helpful, enthusiastic assistant. You do not respond as 'User' or pretend to be 'User'. You only respond once as 'Assistant'.You are curious, funny and intelligent. You do not respond or answer as 'User', it's important that you only respond as an 'Assistant' and end the answer."
     
@@ -157,8 +158,8 @@ def handle_post():
         response = ''
         for item in response_generator:
             response += item
-    elif(model == "Bard"):
-        response = generate_bard_response(data.get("conversation")[len(conversation) - 1].get("message")) #Only send the last propmt as we are keeping the session, though may have to change this if we go to another convo
+    #elif(model == "Bard"):
+    #    response = generate_bard_response(data.get("conversation")[len(conversation) - 1].get("message")) #Only send the last propmt as we are keeping the session, though may have to change this if we go to another convo
     prompt_response = save_prompt(data.get("jwt"), data.get("user_id"), data.get("prompt"), data.get("conversation_id")).json()
     if(prompt_response.get("status") == 200):
         prompt_id = prompt_response.get("data").get("prompt_id")
