@@ -292,8 +292,8 @@ const handleNewChat = async () => {
       }
 };
 
-const handleDeleteChat = async () => {
-  const conversation_id = conversationList[currentConversationIndex].conversation_id;
+const handleDeleteChat = async (index: number) => {
+  const conversation_id = conversationList[index].conversation_id;
   if (conversation_id) {
     try {
      await Swal.fire({
@@ -321,6 +321,7 @@ const handleDeleteChat = async () => {
                 sender: 'Cube-BOT', message: 'Hello! How can I help you?' },
               { sender: 'User', message: 'Hi there! I have a question.' },]);
               }
+              promptTexts.splice(index,1) //PROVERI DAL JE DOBRO
               setCurrentConversationIndex(0);
               await loadConversationByID(currentConversationIndex);
               await handleRestoreConversation(0);
@@ -367,7 +368,7 @@ const handleDeleteAllChat = async () => {
                 sender: 'Cube-BOT', message: 'Hello! How can I help you?' },
               { sender: 'User', message: 'Hi there! I have a question.' },]);
               }
-
+              setPromptTexts([]);
 
               await Swal.fire(
                 'Deleted!',
@@ -473,7 +474,7 @@ const handleNewChatActive = async () => {
                 ) : (
                   <span>{promptText}</span>
                 )}
-                <FontAwesomeIcon className="DeleteIcon" icon={faTrash} style={{ paddingLeft: '10px' }} onClick={() => handleDeleteChat()} />
+                <FontAwesomeIcon className="DeleteIcon" icon={faTrash} style={{ paddingLeft: '10px' }} onClick={() => handleDeleteChat(index)} />
               </div>
             );
           })}
