@@ -155,6 +155,51 @@ useEffect(() => {
       console.error('Error:', error);
     }
   };
+
+  const handleDeleteSQL = async (index: number) => {
+    const sql_id = SQLListList[index].SQL_id;
+    if (sql_id) {
+      try {
+       await Swal.fire({
+          title: 'Da li ste sigurni?',
+          text: "Necete moci da ispravite!",
+          icon: 'warning',
+          showCancelButton: true,
+          confirmButtonColor: '#3085d6',
+          cancelButtonColor: '#d33',
+          confirmButtonText: 'Da, izbriši!',
+        }).then(async (result) => {
+          if (result.isConfirmed) {
+            const SQLListPromise = await deleteSQLList(jwt, sql_id);
+            if (SQLListPromise.status === 200) {
+              await SQLListPromise.json() as ConversationsResponse;
+              const index = SQLListList.findIndex(sql => sql.SQL_id === sql_id);
+              if (index !== -1) {
+                SQLListList.splice(index, 1);
+  
+                
+                setCurrentSQLListIndex(0);
+        
+                await handleRestoreConversation(0);
+  
+                await Swal.fire(
+                  'Izbrisano!',
+                  'Vaša konverzacija je uspešno izbrisana!',
+                  'success'
+                );
+              } else {
+                console.error('Error.');
+              }
+            } else {
+              console.error('Error Deleting Conversation');
+            }
+          }
+        });
+      } catch (error) {
+        console.error('Error:', error);
+      }
+    }
+  };
     
 
   const handleRestoreConversation = async (index: number) => {
@@ -253,7 +298,7 @@ console.error('No prompts available');
                 ) : (
                   <span>2</span>
                 )}
-                <FontAwesomeIcon className="DeleteIcon" icon={faTrash} style={{ paddingLeft: '10px' }} />
+                <FontAwesomeIcon className="DeleteIcon" icon={faTrash} style={{ paddingLeft: '10px' }} onClick={() => handleDeleteSQL(index)} />
               </div>
             );
             })}
