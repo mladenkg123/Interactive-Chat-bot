@@ -81,14 +81,14 @@ export async function deleteAllSQLListsByUserId(jwt: string, user_id: string): P
   return response;
 }
 
-export async function modifySQLListById(jwt: string, SQLList_id: string, SQLList: Array<string>): Promise<Response> {
+export async function modifySQLListById(jwt: string, SQLList_id: string, SQLList: string): Promise<Response> {
   const requestOptions: RequestInit = {
     method: 'PATCH',
     headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${jwt}` },
     body: JSON.stringify( {SQLList} ),
   };
 
-  const response = await fetch(`${API_BASE_URL}/SQL/SQLList_id/${SQLList_id}`, requestOptions);
+  const response = await fetch(`${API_BASE_URL}/SQL/SQLList/${SQLList_id}`, requestOptions);
   return response;
 }
 

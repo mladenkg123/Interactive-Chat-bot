@@ -160,25 +160,33 @@ def handle_post():
             response += item
     #elif(model == "Bard"):
     #    response = generate_bard_response(data.get("conversation")[len(conversation) - 1].get("message")) #Only send the last propmt as we are keeping the session, though may have to change this if we go to another convo
-    prompt_response = save_prompt(data.get("jwt"), data.get("user_id"), data.get("prompt"), data.get("conversation_id")).json()
-    if(prompt_response.get("status") == 200):
-        prompt_id = prompt_response.get("data").get("prompt_id")
-        answer_response = save_answer(data.get("jwt"), response, prompt_id, data.get("conversation_id")).json()
-        update_conversation_time(data.get("jwt"), data.get("conversation_id"))
-        #print("Conversation: ", conversation)
-        user_propmts = []
-        if (len(conversation) <= 4):
-            for i in range(len(conversation)):
-                if (i % 2 == 0):
-                    user_propmts.append(conversation[i])
-        #print("User prompts: ",user_propmts)
-        chat_description = chat("Generate a very brief title that describes the user prompts and what he wants to talk about", user_propmts)
-        #print(chat_description)
-        update_conversation_description(data.get("jwt"), data.get("conversation_id"), chat_description)
+    if(model == "Cube-BOT" or model == "Llama" or model == "Bard"):
+        prompt_response = save_prompt(data.get("jwt"), data.get("user_id"), data.get("prompt"), data.get("conversation_id")).json()
+        if(prompt_response.get("status") == 200):
+            prompt_id = prompt_response.get("data").get("prompt_id")
+            answer_response = save_answer(data.get("jwt"), response, prompt_id, data.get("conversation_id")).json()
+            update_conversation_time(data.get("jwt"), data.get("conversation_id"))
+            #print("Conversation: ", conversation)
+            user_propmts = []
+            if (len(conversation) <= 4):
+                for i in range(len(conversation)):
+                    if (i % 2 == 0):
+                        user_propmts.append(conversation[i])
+            #print("User prompts: ",user_propmts)
+            chat_description = chat("Generate a very brief title that describes the user prompts and what he wants to talk about", user_propmts)
+            #print(chat_description)
+            update_conversation_description(data.get("jwt"), data.get("conversation_id"), chat_description)
+            return response, 200
+        elif(prompt_response.get("status") == 403):
+            #print(prompt_response.get("message"))
+            return prompt_response.get("message"), 403
+    elif(model == "SQL"):
+        prompt = data.get("prompt")
+        response = chat("", [prompt])
         return response, 200
-    elif(prompt_response.get("status") == 403):
-        #print(prompt_response.get("message"))
-        return prompt_response.get("message"), 403
+    else:
+        return 'SERVER ERROR', 500
+
 
 
 def main():

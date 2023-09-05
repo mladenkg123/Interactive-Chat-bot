@@ -38,7 +38,7 @@ type BaseResponse<T> = {
   type SQLList = {
     SQL_id: string;
     user_id: string;
-    SQLList: Array<string>;
+    SQLList: string;
   };
 
   type PromptResponse = BaseResponse<Prompt>;

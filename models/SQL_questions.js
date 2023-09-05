@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 const SQLSchema = mongoose.Schema({
     user_id: { type: mongoose.Schema.Types.ObjectId, ref: "user" },
-    SQLList: {type: Array}
+    SQLList: {type: String}
 });
 
 const SQLModel = mongoose.model('sql', SQLSchema);

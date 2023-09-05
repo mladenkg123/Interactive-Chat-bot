@@ -13,8 +13,8 @@ import {
   fetchSQLLists,
   fetchSQLListById,
   fetchUserData,
+  sendPromptToPython,
 } from '../logic/api';
-let SQLListList  : SQLList[] = [];
 const Header = React.lazy(() => import('../components/Header'));
 
 
@@ -109,7 +109,7 @@ useEffect(() => {
               const newSQLListItem = {
                 SQL_id: SQLListId,
                 user_id: user_id,
-                SQLList: [],
+                SQLList: "",
               };
               
               setSQLListList(prevSQLList => [...prevSQLList, newSQLListItem]);
@@ -156,40 +156,45 @@ useEffect(() => {
     }
   };
     
+
+  const handleRestoreConversation = async (index: number) => {
+    setCurrentSQLListIndex(index);
+    const SQLListId = SQLListList[index].SQL_id;
+    const SQLListResponse = await fetchSQLListById(jwt, SQLListId);
+    if (SQLListResponse.status === 200) {
+      const responseJson = await SQLListResponse.json() as SQLListResponse;
+      const sqlListData = responseJson.data;
+      console.log(sqlListData.SQLList);
+      if (sqlListData.SQLList.length > 0) {
+        const formattedSQLList: Message[] = [{
+          sender: 'SQLAssistant',
+          message: sqlListData.SQLList as unknown as string, //CURSED
+        }];
+        //console.log(formattedSQLList);
+        setConversationsHistory(formattedSQLList);
+      } else {
+        setConversationsHistory([]);
+      }
+    } else {
+      console.error('Error fetching prompts for conversation');
+    }
+};
   const handleSubmit = async (event: { preventDefault: () => void }) => {
     setDisableInput(true);
     event.preventDefault();
-    const SQLList_id = SQLListList[currentSQLListIndex].SQLList_id;
-    const pythonResponse = await sendPromptToPython(jwt, userInput, conversation_id, currentContext, user_id, selectedModel);
-    if (pythonResponse.status === 200) {
-        const pythonData = await pythonResponse.text();
-        let updatedConversation: Message[] = [];
-        if(conversationsHistory[0]?.sender == 'Cube-BOT') {
-          updatedConversation.push({ sender: username , message: userInput });
-          updatedConversation.push({ sender: 'Cube-BOT', message: pythonData });
-        }
-        else {
-          updatedConversation = [...conversationsHistory];
-          updatedConversation.push({ sender: username, message: userInput });
-          updatedConversation.push({ sender: 'Cube-BOT', message: pythonData });
-        }
-        setConversationsHistory(updatedConversation);
+    const SQL_id = SQLListList[currentSQLListIndex].SQL_id;
+    const SQLListResponse = await sendPromptToPython(jwt, "Izmisli primere tabela databaze i za njih izmisli 10 SQL pitanja od laksih ka tezim", SQL_id, [], user_id, { value: 'SQL', label: 'SQL(GPT3.5)' });
+    if (SQLListResponse.status === 200) {
+        const SQLListdata = await SQLListResponse.text();
+        setConversationsHistory([{ sender: 'SQL-Assistent', message: SQLListdata }]);
+        const SQLListModifyResponse = await modifySQLListById(jwt, SQL_id, SQLListdata);
+        console.log(SQLListModifyResponse);
         //console.log(conversationsHistory);
-        const conversationIndex = conversationList.findIndex(conversation => conversation.conversation_id === conversation_id);
-        //console.log(conversationIndex);
-        if (conversationIndex !== -1) {
-          conversationList[conversationIndex].last_accessed = new Date();
-        }
-        setConversationCache(prevCache => ({
-          ...prevCache,
-          [conversationList[currentConversationIndex].conversation_id]: updatedConversation,
-      }));
 
-      await loadConversationByID(currentConversationIndex);
+      //await loadConversationByID(currentConversationIndex);
       setUserInput('');
-      setPromptsLeft(promptsLeft-1);
     }
-    else if(pythonResponse.status === 403) {
+    else if(SQLListResponse.status === 403) {
       await Swal.fire({
           icon: 'error',
           title: 'Nema dostupnih obaveštenja',
@@ -197,7 +202,7 @@ useEffect(() => {
         });
 console.error('No prompts available');
     }
-    else if(pythonResponse.status === 500) {
+    else if(SQLListResponse.status === 500) {
       await Swal.fire({
         icon: 'error',
         title: 'Neočekivan problem na serveru',
@@ -215,6 +220,7 @@ console.error('No prompts available');
     }
     setDisableInput(false);
   };
+
   return (
       <div className="chatbot-container">
         <React.Suspense fallback={<div>Loading...</div>}>
@@ -240,6 +246,7 @@ console.error('No prompts available');
               <div
                 key={index}
                 className={`restore-point ${index === currentSQLListIndex ? 'selected' : ''}`}
+                onClick={() => handleRestoreConversation(index)}
               >
                 {index === currentSQLListIndex ? (
                   <strong>1</strong>
