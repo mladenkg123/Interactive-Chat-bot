@@ -35,7 +35,7 @@ type BaseResponse<T> = {
     message: string;
   };
 
-  type SQLLists = {
+  type SQLList = {
     SQL_id: string;
     user_id: string;
     SQLList: Array<string>;
@@ -44,6 +44,7 @@ type BaseResponse<T> = {
   type PromptResponse = BaseResponse<Prompt>;
   type AnswerResponse = BaseResponse<Answer>;
   type ConversationsResponse = BaseResponse<Conversation[]>;
-  type SQLListsResponse = BaseResponse<SQLLists[]>;
+  type SQLListsResponse = BaseResponse<SQLList[]>;
+  type SQLListResponse = BaseResponse<SQLList>;
   type ConversationResponse = BaseResponse<Conversation>;
   type UserDataResponse = BaseResponse<UserData>;
