@@ -6,6 +6,15 @@
   border: 1px solid #ccc;
   border-radius: 8px;
   overflow: hidden;
+  background: linear-gradient(179deg, #18dfff, #100b4f);
+}
+.chat-container2 {
+  display: flex;
+  flex-direction: row;
+  height: 550px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  overflow: hidden;
   background: linear-gradient(161deg, #7ff, #4434f5);
 }
 

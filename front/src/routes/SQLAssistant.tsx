@@ -4,7 +4,7 @@ import { faCube, faUser } from '@fortawesome/free-solid-svg-icons';
 import Cookies from 'universal-cookie';
 import Swal from 'sweetalert2';
 import Select from 'react-select';
-import './SQLAssistant.css';
+import './ChatbotCss.css';
 
 const Header = React.lazy(() => import('../components/Header'));
 
@@ -69,7 +69,7 @@ const scrollToBottom = () => {
               handleRegisterClick={() => { /* Handle register click */ }}
             />
           </React.Suspense>
-          <div className="chat-container">
+          <div className="chat-container2">
             <div className="chat-sidebar">
               <div className='buttons'>
                 <button className="start-new-chat-button" >
