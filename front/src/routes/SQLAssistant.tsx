@@ -315,13 +315,21 @@ console.error('No prompts available');
             </div>
             <div className="user-input">
                   <form onSubmit={handleSubmit}>
+                    { true ? 
                     <input
                       type="text"
                       value={userInput}
                       onChange={handleUserInput}
                       placeholder="Unesite vašu poruku..."
                       disabled={disableInput}
-                    />
+                    /> : <input
+                    type="text"
+                    value={userInput}
+                    style={{visibility:'hidden'}}
+                    onChange={handleUserInput}
+                    placeholder="Unesite vašu poruku..."
+                    disabled={disableInput}
+                  /> }
                     <button className="send-button" type="submit" /*onClick={handleEmptyChat}*/>
                       Generate SQL Questions
                     </button>
