@@ -12,6 +12,7 @@ type RegisterProps = {
 const Register = ({ isShowRegister, onCloseRegister} : RegisterProps) => {
   const [email, setEmail] = useState('');
   const [pass, setPass] = useState('');
+  const [username, setUsername] = useState('');
   const [plan, setPlan] = useState('Free');
   const options =  [
       { value: 'Free', label: 'Free plan' },
@@ -80,6 +81,10 @@ const Register = ({ isShowRegister, onCloseRegister} : RegisterProps) => {
             <label style={{color:"white"}}>E-mail</label>
             <br></br>
             <input className="register-box" value={email} onChange={(e) => setEmail(e.target.value)} type="email" placeholder="vašemail@gmail.com" id="email" name="email" />
+            <br></br>
+            <label style={{color:"white"}}>Username</label>
+            <br></br>
+            <input className="register-box" value={username} onChange={(e) => setUsername(e.target.value)} type="username" placeholder="Vaš username" id="user" name="user" />
             <br></br>
             <label style={{color:"white"}}>Šifra</label>
             <br></br>
