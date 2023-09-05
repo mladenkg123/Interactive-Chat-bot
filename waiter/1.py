@@ -18,9 +18,10 @@ session.cookies.set("__Secure-1PSID", token)
 bard = Bard(token=token, session=session, timeout=30)
 
 # set your input text
-input_text = "Tell me about Node.js"
+input_text = "Tell me about express.js"
 
 # Send an API request and get a response.
 response = bard.get_answer(input_text)
-if(response['status'] == 200):
+#print(response)
+if(response['status_code'] == 200):
     print(response["content"])

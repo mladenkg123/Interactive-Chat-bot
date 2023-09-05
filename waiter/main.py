@@ -38,7 +38,7 @@ messages = [{"role": "assistant", "content": "Hello! How may I assist you today?
 
 def generate_bard_response(input_text):
     response = bard.get_answer(input_text)
-    if(response['status'] == 200):
+    if(response['status_code'] == 200):
         return response["content"]
     else:
         return ""
