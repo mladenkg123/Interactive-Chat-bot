@@ -57,7 +57,7 @@
   }
   
   .register-box{
-    border: 1px solid lightgrey;
+    border: 10px solid lightgrey;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -74,11 +74,12 @@
   
   .register-btn{
     width: 75%;
+    height: 40px;
     justify-content: center;
     align-items: center;
     background-color: #040c1c;
     color: white;
-    margin-top: 5px;
+    margin-top: 55px;
     border-radius: 20px;
     border: none;
     font-size: 15pt;
@@ -116,8 +117,9 @@
     opacity: 0;
   }
   .close-button {
+    padding: initial;
     position: absolute;
-    margin-left: 255px;
+    margin: 25px 0px 25px 360px;
     width: 30px;
     height: 30px;
     background: #040c1c;

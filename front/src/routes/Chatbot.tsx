@@ -73,7 +73,6 @@ const ChatBot = () => {
   };
 
   const loadConversations = async () => {
-       console.log(conversationCache);
       try {
         const conversationsListPromise = await fetchConversations(jwt);
         if (conversationsListPromise.status === 200) {

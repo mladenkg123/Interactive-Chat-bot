@@ -1,17 +1,24 @@
 import './register.css'
 import { useState } from 'react';
 import Swal from 'sweetalert2';
+import Select from 'react-select';
 
 
 type RegisterProps = {
     isShowRegister : boolean;
     onCloseRegister : () => void;
-    isAuthenticated : () => void;
 }
 
-const Register = ({ isShowRegister, onCloseRegister, isAuthenticated} : RegisterProps) => {
+const Register = ({ isShowRegister, onCloseRegister} : RegisterProps) => {
   const [email, setEmail] = useState('');
   const [pass, setPass] = useState('');
+  const [plan, setPlan] = useState('Free');
+  const options =  [
+      { value: 'Free', label: 'Free plan' },
+      { value: 'Pro', label: 'Pro plan' },
+      { value: 'Biznis', label: 'Biznis plan', },
+    ];
+  
   //const [isRegisterSuccessful, setIsRegisterSuccessful] = useState(false);
   const handleSubmit = (e: { preventDefault: () => void; }) => {
     e.preventDefault();
@@ -78,6 +85,12 @@ const Register = ({ isShowRegister, onCloseRegister, isAuthenticated} : Register
             <br></br>
             <input className="register-box"  value={pass} onChange={(e) => setPass(e.target.value)} type="password" placeholder="********" id="password" name="password" />
             <br></br>
+            <label style={{color:"white"}}>Vrsta naloga:</label>
+            <Select 
+             defaultValue={plan}
+              onChange={setPlan}
+              options={options}
+              />
             <input type="submit" value="REGISTRUJ ME" className="register-btn" />
           </form>
         </div>

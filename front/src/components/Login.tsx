@@ -84,7 +84,7 @@ const Login = ({ isShowLogin, onCloseLogin, onLoginSuccess } : LoginProps) => {
     <div className={`${isShowLogin ? "active" : ""} show`}>
       <div className="login-form">
         <div className="form-box solid">
-        <button className="close-button" onClick={onCloseLogin}>X</button>
+        <button className="close-button1" onClick={onCloseLogin}>X</button>
           <form onSubmit={handleSubmit}>
             <h1 className="login-text">LOGIN</h1>
             <label style={{color:"white"}}>E-mail</label>
