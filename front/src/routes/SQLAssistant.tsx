@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCube, faTrash, faUser } from '@fortawesome/free-solid-svg-icons';
+import { faCube, faTrash, faUser, faCircle} from '@fortawesome/free-solid-svg-icons';
 import Cookies from 'universal-cookie';
 import Swal from 'sweetalert2';
 import { getUserIDFromJWT } from '../logic/utils';
@@ -54,6 +54,7 @@ const SQLAssistant = () => {
   const [currentSQLListIndex, setCurrentSQLListIndex] = useState(0);
   const [userInput, setUserInput] = useState('');
   const [hideInput, setHideInput] = useState(false);
+
   const loadSQLLists = async () => {
     try {
       const SQLListPromise = await fetchSQLLists(jwt);
@@ -62,6 +63,7 @@ const SQLAssistant = () => {
         setSQLListList(SQLListResponse.data);
         //await handleRestoreConversation(0);
         setCurrentSQLListIndex(0);
+        console.log(SQLListResponse.data)
       }
        else {
         console.error('Error fetching previous conversations');
@@ -236,6 +238,11 @@ const SQLAssistant = () => {
       if(sqlListData.SQLList.length < 1) {
         button.style.visibility = 'hidden';
       }
+      console.log(sqlListData);
+      if(sqlListData.active === true){
+        const activeCircle = document.querySelector('.activeCircle');
+        activeCircle.style.visibility = 'visible';
+      }
     } else {
       console.error('Error fetching prompts for conversation');
     }
@@ -294,9 +301,11 @@ console.error('No prompts available');
   const handleSetActive = async () => {
     let SQL_id2:string = '';
     const SQLList = SQLListList[currentSQLListIndex];
+    const activeCircle = document.querySelector('.activeCircle');
     SQLListList.forEach(SQLList => {
       if(SQLList.active === true) {
-        SQL_id2 = SQLList.SQL_id;
+        SQL_id2 = SQLList.SQL_id;      
+        activeCircle.style.visibility = 'visible';     
       }
     });
     if(SQL_id2) {
@@ -359,9 +368,11 @@ console.error('No prompts available');
                 onClick={() => handleRestoreConversation(index)}
               >
                 {index === currentSQLListIndex ? (
-                  <strong>Aktivan</strong>
+                  <><FontAwesomeIcon className="activeCircle" icon={faCircle} style={{marginRight:"5px", visibility:'hidden',color:'green' }} onClick={() => handleDeleteSQL(index)} />
+                  <strong>Aktivan</strong></>
                 ) : (
-                  <span>Ostalo</span>
+                  <><FontAwesomeIcon className="activeCircle" icon={faCircle} style={{ marginRight: "5px", visibility: 'hidden', color:'green' }} onClick={() => handleDeleteSQL(index)} />
+                  <span>Ostalo</span></>
                 )}
                 <FontAwesomeIcon className="DeleteIcon" icon={faTrash} style={{ paddingLeft: '10px' }} onClick={() => handleDeleteSQL(index)} />
               </div>
