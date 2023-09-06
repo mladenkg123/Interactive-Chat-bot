@@ -3,6 +3,7 @@ import requests
 import openai
 import replicate
 import os
+import re
 from flask_cors import CORS
 from flask import Flask, request
 from bardapi import Bard
@@ -130,6 +131,22 @@ def chat(system, user_assistant):
   assert status_code == "stop", f"The status code was {status_code}."
   return response["choices"][0]["message"]["content"]
 
+def parse_sql(sql):
+    pattern = r"\|(.+?)\|\n\|(.+?)\|\n(.+?)\n\n"
+    match = re.search(pattern, sql, re.DOTALL)
+    if match:
+        tabela_header = match.group(1).strip()
+        tabela_podaci = match.group(3).strip()
+        print("Tabela: \n")
+        print(tabela_header)
+        print(tabela_podaci)
+
+    # Regex za izdvajanje pitanja za SQL
+    sql_pitanja = re.findall(r"(\d+\..+?)(?=\d+\.|\Z)", sql, re.DOTALL)
+    print("\nPitanja za SQL:")
+    for idx, pitanje in enumerate(sql_pitanja, start=1):
+        print(f"{idx}. {pitanje.strip()}")
+
 app = Flask(__name__)
 CORS(app)
 client = pymongo.MongoClient("localhost", 27017, maxPoolSize=50)
@@ -183,6 +200,7 @@ def handle_post():
     elif(model == "SQL"):
         prompt = data.get("prompt")
         response = chat("", [prompt])
+        parse_sql(response)
         return response, 200
     else:
         return 'SERVER ERROR', 500
