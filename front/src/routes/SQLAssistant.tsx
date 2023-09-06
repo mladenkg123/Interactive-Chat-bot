@@ -55,28 +55,24 @@ const SQLAssistant = () => {
   const [userInput, setUserInput] = useState('');
   const [hideInput, setHideInput] = useState(false);
   const loadSQLLists = async () => {
-    try {
-      const SQLListPromise = await fetchSQLLists(jwt);
-      if (SQLListPromise.status === 200) {
-        const SQLListResponse = await SQLListPromise.json() as SQLListsResponse;
-        setSQLListList(SQLListResponse.data);
-        //await handleRestoreConversation(0);
-        setCurrentSQLListIndex(0);
+    if (userData.role == "TEACHER") {
+      try {
+        const SQLListPromise = await fetchSQLLists(jwt);
+        if (SQLListPromise.status === 200) {
+          const SQLListResponse = await SQLListPromise.json() as SQLListsResponse;
+          setSQLListList(SQLListResponse.data);
+          //await handleRestoreConversation(0);
+          setCurrentSQLListIndex(0);
+        }
+        else {
+          console.error('Error fetching previous conversations');
+        }
       }
-       else {
-        console.error('Error fetching previous conversations');
+      catch (error) {
+        console.error('Error:', error);
       }
-    }
-    catch (error) {
-      console.error('Error:', error);
     }
   };
-
-  useEffect(() => {
-    loadSQLLists().catch(error => {
-      console.error('Unhandled promise error:', error);
-    });
-  }, []);
 
   useEffect(()  => {
         
@@ -84,6 +80,12 @@ const SQLAssistant = () => {
     console.error('Failed loading remaining prompts', error);
     });
 
+  }, []);
+
+  useEffect(() => {
+    loadSQLLists().catch(error => {
+      console.error('Unhandled promise error:', error);
+    });
   }, []);
 
   if(!jwt || !user_id || ["TEACHER", "STUDENT"].indexOf(userData.role) <= -1) {
@@ -296,6 +298,7 @@ console.error('No prompts available');
     const SQLList = SQLListList[currentSQLListIndex];
     SQLListList.forEach(SQLList => {
       if(SQLList.active === true) {
+        SQLList.active = false;
         SQL_id2 = SQLList.SQL_id;
       }
     });
@@ -312,6 +315,7 @@ console.error('No prompts available');
         if (result.isConfirmed) {
             await setActiveById(jwt, SQL_id2, false);
             await setActiveById(jwt, SQLList.SQL_id, true);
+            SQLList.active = true;
             await  Swal.fire({
               icon: 'success',
               title: 'Uspesno',
@@ -322,13 +326,13 @@ console.error('No prompts available');
   }
   else {
     await setActiveById(jwt, SQLList.SQL_id, true);
+    SQLList.active = true;
     await  Swal.fire({
       icon: 'success',
       title: 'Uspesno',
       text: 'Uspesno.',
     });
   }
-  SQLList.active = true;
 }
 
   return (
@@ -342,15 +346,18 @@ console.error('No prompts available');
         <div className="chat-container2">
           <div className="chat-sidebar">
             <div className='buttons'>
-              <button className="start-new-chat-button" onClick={handleNewChat}>
+              {userData.role === "TEACHER" ?
+              <><button className="start-new-chat-button" onClick={handleNewChat}>
                 Novi Čet
-              </button>
-              <button className="delete-all-chat-button" onClick={handleDeleteAllSQL}>
-                Obrisi sve
-              </button>
+              </button><button className="delete-all-chat-button" onClick={handleDeleteAllSQL}>
+                  Obrisi sve
+                </button></> : <></>
+              }
             </div>
             <div className="conversation-restore-points">
-            <div className="restore-points-header">Previous Chats</div>
+            {userData.role === "TEACHER" ?
+              <><div className="restore-points-header">Prethodne liste</div></> : <><div className="restore-points-header">Lista pitanja</div></>
+            }
             {SQLListList.map((_, index) => {
             return (
               <div
