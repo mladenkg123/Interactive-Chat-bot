@@ -54,7 +54,7 @@ const SQLAssistant = () => {
   const [currentSQLListIndex, setCurrentSQLListIndex] = useState(0);
   const [userInput, setUserInput] = useState('');
   const [hideInput, setHideInput] = useState(false);
-
+  
   const loadSQLLists = async () => {
     if (userData.role == "TEACHER") {
       try {
@@ -93,7 +93,6 @@ const SQLAssistant = () => {
     window.location.href = "/";
     return;
   }
-
 
   const loadUserData = async () => {
     try {
@@ -410,9 +409,14 @@ console.error('No prompts available');
                     onChange={handleUserInput}
                     placeholder="Unesite vašu poruku..."
                   /> }
-                    <button className="send-button" type="submit" /*onClick={handleEmptyChat}*/>
+                    {userData.role === "TEACHER" ? <>
+                    <button className="send-button" type="submit">
                       Generisi SQL Pitanja
-                    </button>
+                    </button></> : <>
+                    <button className="send-button" type="submit">
+                      Posalji odgovor
+                    </button> </>
+                    }
                   </form>
                   <button className="send-button1" type="button" style={{visibility: 'hidden', display:'block',marginLeft:'285px'}} onClick={() => handleSetActive()} >
                       Sacuvaj pitanja

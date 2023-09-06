@@ -62,7 +62,7 @@ SQLModel.deleteAllByUserId = async function (user_id) {
 SQLModel.findByUserId = async function (user_id) {
     const ObjectId = mongoose.Types.ObjectId;
 
-    const SQLs = await SQLModel.find({ user_id: new ObjectId(user_id) }, {user_id: 1, SQLList: 1}).exec();
+    const SQLs = await SQLModel.find({ user_id: new ObjectId(user_id) }, {user_id: 1, SQLList: 1, active: 1}).exec();
     const modifiedData = SQLs.map(item => {
         const { _id, ...rest } = item.toObject(); // Use toObject() to convert Mongoose document to plain JavaScript object
         return { SQL_id: _id, ...rest };
