@@ -138,6 +138,13 @@ export async function fetchPreviousAnswers(jwt: string, conversation_id: string)
   return response;
 }
 
+export async function fetchQuestions(jwt: string): Promise<Response> {
+  const requestOptions = generateRequestOptionsGet(jwt);
+
+  const response = await fetch(`${API_BASE_URL}/questions/`, requestOptions);
+  return response;
+}
+
 export async function sendPromptToPython(jwt: string, prompt: string, conversation_id: string, conversation: Message[], user_id: string, selectedModel: object) : Promise<Response> {
   const requestOptions = {
     method: 'POST',

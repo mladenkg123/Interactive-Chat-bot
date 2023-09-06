@@ -199,7 +199,7 @@ def handle_post():
             return prompt_response.get("message"), 403
     elif(model == "SQL"):
         prompt = data.get("prompt")
-        response = chat("", [prompt])
+        response = chat("You are a university teacher in a Software Engineering university. You are teaching a course on databases.", [prompt])
         parse_sql(response)
         return response, 200
     else:

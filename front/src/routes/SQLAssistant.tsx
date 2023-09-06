@@ -8,6 +8,7 @@ import './ChatbotCss.css';
 import {
   deleteAllSQLListsByUserId,
   deleteSQLList,
+  fetchQuestions,
   fetchSQLListById,
   fetchSQLLists,
   fetchUserData,
@@ -55,6 +56,40 @@ const SQLAssistant = () => {
   const [userInput, setUserInput] = useState('');
   const [hideInput, setHideInput] = useState(false);
   
+  useEffect(() => {
+    loadUserData().catch(error => {
+      console.error('Failed loading remaining prompts', error);
+    });
+  }, []);
+  
+
+  if(!jwt || !user_id || ["TEACHER", "STUDENT"].indexOf(userData.role) <= -1) {
+    window.location.href = "/";
+    return;
+  }
+  
+  const loadUserData = async () => {
+    try {
+      const userDataReq = await fetchUserData(jwt, user_id);
+      if (userDataReq.status === 200) {
+        const userDataResp = await userDataReq.json() as UserDataResponse;
+        const userDatax = userDataResp.data;
+        userData = userDatax;
+        setHideInput(userDatax.role !== "TEACHER");
+        if(userDatax.role === "STUDENT") {
+          setConversationsHistory([{ sender: 'SQLAssistant', message: 'Hello i will grade your answers to the SQL questions. Hope you are ready.' }]);
+        }
+      } else {
+        console.error('Error fetching user data');
+      }
+    } catch (error) {
+      console.error('Error:', error);
+    }
+    
+    loadSQLLists().catch(error => {
+      console.error('Unhandled promise error:', error);
+    });
+  };
   const loadSQLLists = async () => {
     if (userData.role == "TEACHER") {
       try {
@@ -66,7 +101,24 @@ const SQLAssistant = () => {
           setCurrentSQLListIndex(0);
         }
         else {
-          console.error('Error fetching previous conversations');
+          console.error('Error fetching SQL lists');
+        }
+      }
+      catch (error) {
+        console.error('Error:', error);
+      }
+    }
+    else if(userData.role == "STUDENT") {
+      try {
+        const questionsPromise = await fetchQuestions(jwt);
+        if (questionsPromise.status === 200) {
+          const questionsResponse = await questionsPromise.json() as Array<object>;
+          setSQLListList(questionsResponse[0].questions);
+          //await handleRestoreConversation(0);
+          setCurrentSQLListIndex(0);
+        }
+        else {
+          console.error('Error fetching questions');
         }
       }
       catch (error) {
@@ -75,45 +127,9 @@ const SQLAssistant = () => {
     }
   };
 
-  useEffect(()  => {
-        
-    loadUserData().catch(error => {
-    console.error('Failed loading remaining prompts', error);
-    });
-
-  }, []);
-
-  useEffect(() => {
-    loadSQLLists().catch(error => {
-      console.error('Unhandled promise error:', error);
-    });
-  }, []);
-
-  if(!jwt || !user_id || ["TEACHER", "STUDENT"].indexOf(userData.role) <= -1) {
-    window.location.href = "/";
-    return;
-  }
-
-  const loadUserData = async () => {
-    try {
-      const userDataReq = await fetchUserData(jwt, user_id);
-      if (userDataReq.status === 200) {
-        const userDataResp = await userDataReq.json() as UserDataResponse;
-        const userDatax = userDataResp.data;
-        userData = userDatax;
-        setHideInput(userDatax.role !== "TEACHER");
-      } else {
-        console.error('Error fetching user data');
-      }
-    } catch (error) {
-      console.error('Error:', error);
-    }
-  }; 
-
   const handleUserInput = (event: { target: { value: React.SetStateAction<string>; }; }) => {
     setUserInput(event.target.value);
   };
-
   const handleNewChat = async () => {
         try {
             const SQLListPromise = await startNewSQLList(jwt);
@@ -215,6 +231,7 @@ const SQLAssistant = () => {
   };
 
   const handleRestoreConversation = async (index: number) => {
+    if (userData.role == "TEACHER") {
     setCurrentSQLListIndex(index);
     const SQLListId = SQLListList[index].SQL_id;
     const SQLListResponse = await fetchSQLListById(jwt, SQLListId);
@@ -238,7 +255,6 @@ const SQLAssistant = () => {
       if(sqlListData.SQLList.length < 1) {
         button.style.visibility = 'hidden';
       }
-      console.log(sqlListData);
       if(sqlListData.active === true){
         const activeCircle = document.querySelector('.activeCircle');
         activeCircle.style.visibility = 'visible';
@@ -246,6 +262,15 @@ const SQLAssistant = () => {
     } else {
       console.error('Error fetching prompts for conversation');
     }
+  }
+  else if(userData.role == "STUDENT") {
+    setCurrentSQLListIndex(index);
+    const formattedquestions: Message[] = [{
+      sender: 'SQLAssistant',
+      message: SQLListList[index],
+    }];
+    setConversationsHistory(formattedquestions);
+  }
 };
 
   const handleSubmit = async (event: { preventDefault: () => void }) => {
@@ -341,7 +366,6 @@ console.error('No prompts available');
     });
   }
 }
-
   return (
       <div className="chatbot-container">
         <React.Suspense fallback={<div>Loading...</div>}>
@@ -418,9 +442,12 @@ console.error('No prompts available');
                     </button> </>
                     }
                   </form>
-                  <button className="send-button1" type="button" style={{visibility: 'hidden', display:'block',marginLeft:'285px'}} onClick={() => handleSetActive()} >
-                      Sacuvaj pitanja
-                  </button>
+                  {userData.role === "TEACHER" ?
+                    <>
+                    <button className="send-button1" type="button" style={{visibility: 'hidden', display:'block',marginLeft:'285px'}} onClick={() => handleSetActive()} >
+                        Sacuvaj pitanja
+                    </button></> : <></>
+                  }
             </div>
           </div>
           <div className='chat-sidebar2'>
