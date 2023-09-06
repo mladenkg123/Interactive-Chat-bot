@@ -275,6 +275,7 @@ const SQLAssistant = () => {
 
   const handleSubmit = async (event: { preventDefault: () => void }) => {
     event.preventDefault();
+    if (userData.role == "TEACHER") {
     const SQL_id = SQLListList[currentSQLListIndex].SQL_id;
     const SQLListResponse = await sendPromptToPython(jwt, "Izmisli primere tabela databaze i za njih izmisli 10 SQL pitanja od laksih ka tezim", SQL_id, [], user_id, { value: 'SQL', label: 'SQL(GPT3.5)' });
     if (SQLListResponse.status === 200) {
@@ -282,17 +283,22 @@ const SQLAssistant = () => {
   
         const sender = 'SQLAssistant';
         const message = SQLListdata;
+        const newArray = [...SQLListList];
+
+        // Modify the element at the specified index
+        newArray[currentSQLListIndex].SQLList = SQLListdata;
+        
+        setSQLListList(newArray);
         setConversationsHistory([ {sender,message,}, ]);
-        const SQLListModifyResponse = await modifySQLListById(jwt, SQL_id, SQLListdata);
-        console.log(SQLListdata);
-        console.log(userData.role);
-       
+        await modifySQLListById(jwt, SQL_id, SQLListdata);
+        await setActiveById(jwt, SQL_id, false);
+        const questionsResp = await fetchQuestions(jwt);
+        const questionsData = await questionsResp.json();
+        await sendPromptToPython(jwt, "", questionsData[0]._id, [] , user_id, { value: 'generate_questions', label: 'SQL(GPT3.5)' });//SCUFFED
           const button = document.querySelector('.send-button1');
           if (button) {
             button.style.visibility = 'visible';
           }
-        
-        //console.log(conversationsHistory);
 
       //await loadConversationByID(currentConversationIndex);
       setUserInput('');
@@ -321,17 +327,18 @@ console.error('No prompts available');
       });
       console.error('Unexpected server problem please try again 2');
     }
-  };
+  }
+};
 
   const handleSetActive = async () => {
     let SQL_id2:string = '';
     const SQLList = SQLListList[currentSQLListIndex];
     const activeCircle = document.querySelector('.activeCircle');
-    SQLListList.forEach(SQLList => {
-      if(SQLList.active === true) {
+    SQLListList.forEach((SQLList, index) => {
+      if(SQLList.active === true && index !== currentSQLListIndex) {
         SQLList.active = false;
         SQL_id2 = SQLList.SQL_id;      
-        activeCircle.style.visibility = 'visible';     
+        activeCircle.style.visibility = 'visible';
       }
     });
     if(SQL_id2) {

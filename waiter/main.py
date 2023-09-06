@@ -152,33 +152,56 @@ def parse_sql(sql):
         tabela_header = match.group(1).strip()
         tabela_podaci = match.group(3).strip()
         return_val.append(tabela_header + tabela_podaci)
-        print("Tabela: \n")
-        print(tabela_header)
-        print(tabela_podaci)
+        #print("Tabela: \n")
+        #print(tabela_header)
+        #print(tabela_podaci)
     if(len(return_val) == 0 or len(return_val[0]) < 10):
         table_info = re.search(r'Tabela "(.*?)":', sql)
+        table_name = ""
         if table_info:
             table_name = table_info.group(1)
-            print(f"Table Name: {table_name}")
+            #print(f"Table Name: {table_name}")
         else:
             print("Table name not found.")
         column_info = re.findall(r'- (.*?) \((.*?)\) - (.*?)$', sql, re.MULTILINE)
+        xd = ""
         if column_info:
             columns = [(name.strip(), data_type.strip(), description.strip()) for name, data_type, description in column_info]
-            print("Table Columns:")
-            xd = ""
+            #print("Table Columns:")
             for column in columns:
-                print(f"- {column[0]} ({column[1]}) - {column[2]}")
+                #print(f"- {column[0]} ({column[1]}) - {column[2]}")
                 xd+=f"- {column[0]} ({column[1]}) - {column[2]}"
         else:
             print("Columns not found.")
-        return_val.append(table_name + xd)
-    # Regex za izdvajanje pitanja za SQL
-    sql_pitanja = re.findall(r"(\d+\..+?)(?=\d+\.|\Z)", sql, re.DOTALL)
-    print("\nPitanja za SQL:")
-    for idx, pitanje in enumerate(sql_pitanja, start=1):
-        return_val.append(pitanje.strip())
-        print(f"{idx}. {pitanje.strip()}")
+        if(len(table_name) == 0 or len(xd) < 5):
+            result = re.search(r'(.+?)\n1\.', sql, re.DOTALL)
+            if result:
+                extracted_text = result.group(1).strip()
+                return_val = [extracted_text]
+            else:
+                print("Pattern not found.")
+        else:
+            return_val.append(table_name + xd)
+    patterns = [
+        r'1\.\s(.*?)\.',
+        r'2\.\s(.*?)\.',
+        r'3\.\s(.*?)\.',
+        r'4\.\s(.*?)\.',
+        r'5\.\s(.*?)\.',
+        r'6\.\s(.*?)\.',
+        r'7\.\s(.*?)\.',
+        r'8\.\s(.*?)\.',
+        r'9\.\s(.*?)\.',
+        r'10\.\s(.*?)\.'
+    ]
+
+    temp = sql.replace(return_val[0], " ")
+    # Extract text based on patterns
+    for pattern in patterns:
+        matches = re.findall(pattern, temp)
+        if matches:
+            print(matches)
+            return_val.append(matches[0].strip())
     return return_val
 
 app = Flask(__name__)
@@ -234,12 +257,12 @@ def handle_post():
     elif(model == "SQL"):
         prompt = data.get("prompt")
         response = chat("You are a university teacher in a Software Engineering university. You are teaching a course on databases.", [prompt])
-        parse_sql(response)
         return response, 200
     elif(model == "generate_questions"):
         prompt = data.get("prompt")
-        response = parse_sql(prompt)
-        print(data.get("jwt"), data.get("conversation_id"), response)
+        response = ""
+        if(prompt):
+            response = parse_sql(prompt)
         update_question(data.get("jwt"), data.get("conversation_id"), response)
         return response, 200
     else:

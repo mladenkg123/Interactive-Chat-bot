@@ -14,7 +14,7 @@ router.get(
   
       if (existingQuestions.length === 0) {
         // If no questions exist, create a default question
-        const defaultQuestion = [];
+        const defaultQuestion = [""];
   
         // Create the default question and add it to the database
         await questionservice.save(defaultQuestion);
