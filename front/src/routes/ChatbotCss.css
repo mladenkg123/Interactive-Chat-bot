@@ -300,3 +300,7 @@ label {
   white-space: pre-line; 
   font-family: monospace; 
 }
+.send-button .save-button{
+  display: block;
+  margin-left: 285px;
+}

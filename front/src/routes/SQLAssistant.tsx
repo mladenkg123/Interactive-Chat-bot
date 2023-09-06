@@ -246,6 +246,13 @@ const SQLAssistant = () => {
         setConversationsHistory([ {sender,message,}, ]);
         const SQLListModifyResponse = await modifySQLListById(jwt, SQL_id, SQLListdata);
         console.log(SQLListdata);
+        console.log(userData.role);
+       
+          const button = document.querySelector('.send-button1');
+          if (button) {
+            button.style.visibility = 'visible';
+          }
+        
         //console.log(conversationsHistory);
 
       //await loadConversationByID(currentConversationIndex);
@@ -340,7 +347,10 @@ console.error('No prompts available');
                     placeholder="Unesite vašu poruku..."
                   /> }
                     <button className="send-button" type="submit" /*onClick={handleEmptyChat}*/>
-                      Generate SQL Questions
+                      Generisi SQL Pitanja
+                    </button>
+                    <button className="send-button1" type="submit" style={{visibility: 'hidden', display:'block',marginLeft:'285px'}} >
+                      Sacuvaj pitanja
                     </button>
                   </form>
             </div>
