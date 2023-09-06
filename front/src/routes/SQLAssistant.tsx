@@ -99,6 +99,14 @@ const SQLAssistant = () => {
           setSQLListList(SQLListResponse.data);
           //await handleRestoreConversation(0);
           setCurrentSQLListIndex(0);
+  
+         
+        const activeSQLList = SQLListResponse.data.find((item) => item.active === true);
+        console.log(activeSQLList.active);
+        if (activeSQLList) {
+          const activeCircle = document.querySelector('.activeCircle');
+          activeCircle.style.visibility = 'visible';
+        }
         }
         else {
           console.error('Error fetching SQL lists');
@@ -259,6 +267,7 @@ const SQLAssistant = () => {
         const activeCircle = document.querySelector('.activeCircle');
         activeCircle.style.visibility = 'visible';
       }
+      console.log(sqlListData.active);
     } else {
       console.error('Error fetching prompts for conversation');
     }
@@ -299,6 +308,11 @@ const SQLAssistant = () => {
           if (button) {
             button.style.visibility = 'visible';
           }
+          const activeCircle = document.querySelector('.activeCircle');
+          activeCircle.style.visibility = 'visible';
+          
+        
+        //console.log(conversationsHistory);
 
       //await loadConversationByID(currentConversationIndex);
       setUserInput('');
@@ -359,6 +373,9 @@ console.error('No prompts available');
             const questionsData = await questionsResp.json();
             await sendPromptToPython(jwt, SQLList.SQLList, questionsData[0]._id, [] , user_id, { value: 'generate_questions', label: 'SQL(GPT3.5)' });
             SQLList.active = true;
+            const activeCircle = document.querySelector('.activeCircle');
+            activeCircle.style.visibility = 'visible';
+ 
             await  Swal.fire({
               icon: 'success',
               title: 'Uspesno',
@@ -374,6 +391,8 @@ console.error('No prompts available');
     await sendPromptToPython(jwt, SQLList.SQLList, questionsData[0]._id, [] , user_id, { value: 'generate_questions', label: 'SQL(GPT3.5)' });
             
     SQLList.active = true;
+    const activeCircle = document.querySelector('.activeCircle');
+    activeCircle.style.visibility = 'visible';
     await  Swal.fire({
       icon: 'success',
       title: 'Uspesno',
