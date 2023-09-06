@@ -116,6 +116,19 @@ def update_conversation_description(jwt, conversation_id, conversation_descripti
     response = requests.patch(url, json=data, headers=headers)
     return response
 
+def update_question(jwt, question_id, questions):
+    headers = {
+    'Content-Type': 'application/json',
+    'Authorization': f'Bearer {jwt}'
+    }
+    data = {
+        'questions': questions
+    }
+    url = f'http://localhost:8000/questions/{question_id}'
+    
+    response = requests.patch(url, json=data, headers=headers)
+    return response
+
 def chat(system, user_assistant):
   assert isinstance(system, str), "`system` should be a string"
   assert isinstance(user_assistant, list), "`user_assistant` should be a list"
@@ -134,18 +147,39 @@ def chat(system, user_assistant):
 def parse_sql(sql):
     pattern = r"\|(.+?)\|\n\|(.+?)\|\n(.+?)\n\n"
     match = re.search(pattern, sql, re.DOTALL)
+    return_val = []
     if match:
         tabela_header = match.group(1).strip()
         tabela_podaci = match.group(3).strip()
+        return_val.append(tabela_header + tabela_podaci)
         print("Tabela: \n")
         print(tabela_header)
         print(tabela_podaci)
-
+    if(len(return_val) == 0 or len(return_val[0]) < 10):
+        table_info = re.search(r'Tabela "(.*?)":', sql)
+        if table_info:
+            table_name = table_info.group(1)
+            print(f"Table Name: {table_name}")
+        else:
+            print("Table name not found.")
+        column_info = re.findall(r'- (.*?) \((.*?)\) - (.*?)$', sql, re.MULTILINE)
+        if column_info:
+            columns = [(name.strip(), data_type.strip(), description.strip()) for name, data_type, description in column_info]
+            print("Table Columns:")
+            xd = ""
+            for column in columns:
+                print(f"- {column[0]} ({column[1]}) - {column[2]}")
+                xd+=f"- {column[0]} ({column[1]}) - {column[2]}"
+        else:
+            print("Columns not found.")
+        return_val.append(table_name + xd)
     # Regex za izdvajanje pitanja za SQL
     sql_pitanja = re.findall(r"(\d+\..+?)(?=\d+\.|\Z)", sql, re.DOTALL)
     print("\nPitanja za SQL:")
     for idx, pitanje in enumerate(sql_pitanja, start=1):
+        return_val.append(pitanje.strip())
         print(f"{idx}. {pitanje.strip()}")
+    return return_val
 
 app = Flask(__name__)
 CORS(app)
@@ -201,6 +235,12 @@ def handle_post():
         prompt = data.get("prompt")
         response = chat("You are a university teacher in a Software Engineering university. You are teaching a course on databases.", [prompt])
         parse_sql(response)
+        return response, 200
+    elif(model == "generate_questions"):
+        prompt = data.get("prompt")
+        response = parse_sql(prompt)
+        print(data.get("jwt"), data.get("conversation_id"), response)
+        update_question(data.get("jwt"), data.get("conversation_id"), response)
         return response, 200
     else:
         return 'SERVER ERROR', 500

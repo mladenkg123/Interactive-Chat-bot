@@ -347,6 +347,10 @@ console.error('No prompts available');
         if (result.isConfirmed) {
             await setActiveById(jwt, SQL_id2, false);
             await setActiveById(jwt, SQLList.SQL_id, true);
+            
+            const questionsResp = await fetchQuestions(jwt);
+            const questionsData = await questionsResp.json();
+            await sendPromptToPython(jwt, SQLList.SQLList, questionsData[0]._id, [] , user_id, { value: 'generate_questions', label: 'SQL(GPT3.5)' });
             SQLList.active = true;
             await  Swal.fire({
               icon: 'success',
@@ -358,6 +362,10 @@ console.error('No prompts available');
   }
   else {
     await setActiveById(jwt, SQLList.SQL_id, true);
+    const questionsResp = await fetchQuestions(jwt);
+    const questionsData = await questionsResp.json();
+    await sendPromptToPython(jwt, SQLList.SQLList, questionsData[0]._id, [] , user_id, { value: 'generate_questions', label: 'SQL(GPT3.5)' });
+            
     SQLList.active = true;
     await  Swal.fire({
       icon: 'success',
