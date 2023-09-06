@@ -265,6 +265,9 @@ def handle_post():
             response = parse_sql(prompt)
         update_question(data.get("jwt"), data.get("conversation_id"), response)
         return response, 200
+    elif(model == "oceni_odgovor"):
+        response = chat("You are a university teacher in a Software Engineering university. You are teaching a course on databases. Grade the ansewr to the SQL question", conversation)
+        return response, 200
     else:
         return 'SERVER ERROR', 500
 

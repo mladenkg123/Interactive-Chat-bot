@@ -342,6 +342,16 @@ console.error('No prompts available');
       console.error('Unexpected server problem please try again 2');
     }
   }
+  else if(userData.role == "STUDENT") {
+    const newArray = [...conversationsHistory];
+    newArray.push({sender: userData.username, message: userInput})
+    const response = await sendPromptToPython(jwt, userInput, "", newArray, user_id, { value: 'oceni_odgovor', label: 'SQL(GPT3.5)' }) // Give him the table aswell
+    if (response.status === 200) {
+      const data = await response.text();
+      newArray.push({sender: 'SQLAssistant', message: data})
+      setConversationsHistory(newArray);
+    }
+  }
 };
 
   const handleSetActive = async () => {
