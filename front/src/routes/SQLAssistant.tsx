@@ -52,7 +52,7 @@ const SQLAssistant = () => {
   const [SQLListList, setSQLListList] = useState<SQLList[]>([]);
   const [currentSQLListIndex, setCurrentSQLListIndex] = useState(0);
   const [userInput, setUserInput] = useState('');
-  const [disableInput, setDisableInput] = useState(false);
+  const [hideInput, setHideInput] = useState(false);
   const loadSQLLists = async () => {
     try {
       const SQLListPromise = await fetchSQLLists(jwt);
