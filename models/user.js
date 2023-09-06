@@ -93,11 +93,12 @@ UserModel.findById2 = async function (user_id) {
     const ObjectId = mongoose.Types.ObjectId;
     try {
         user_id = new ObjectId(user_id);
-        const user = await UserModel.findOne({ _id: user_id }, { remaining_prompts: 1, username: 1 }).exec();
+        const user = await UserModel.findOne({ _id: user_id }, { remaining_prompts: 1, username: 1, role: 1 }).exec();
         const modifiedData = {
             user_id: user._id,
             remaining_prompts: user.remaining_prompts,
-            username: user.username
+            username: user.username,
+            role: user.role
         };
 
         return { status: 200, data: modifiedData };

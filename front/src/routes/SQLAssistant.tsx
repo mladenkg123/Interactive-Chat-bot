@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCube, faTrash, faUser } from '@fortawesome/free-solid-svg-icons';
 import Cookies from 'universal-cookie';
@@ -6,14 +6,14 @@ import Swal from 'sweetalert2';
 import { getUserIDFromJWT } from '../logic/utils';
 import './ChatbotCss.css';
 import {
-  startNewSQLList,
-  deleteSQLList,
   deleteAllSQLListsByUserId,
-  modifySQLListById,
-  fetchSQLLists,
+  deleteSQLList,
   fetchSQLListById,
+  fetchSQLLists,
   fetchUserData,
+  modifySQLListById,
   sendPromptToPython,
+  startNewSQLList,
 } from '../logic/api';
 const Header = React.lazy(() => import('../components/Header'));
 
@@ -41,6 +41,7 @@ const ChatMessage: React.FC<ChatMessageProps> = React.memo(({ msg }) => (
 });
   
 
+let userData: UserData = {user_id: "", role: "TEACHER", remaining_prompts: 0, username: ""};
 const SQLAssistant = () => {
   const cookies = new Cookies();
   const jwt = cookies.get('jwt') as string;
@@ -60,7 +61,6 @@ const SQLAssistant = () => {
         setSQLListList(SQLListResponse.data);
         //await handleRestoreConversation(0);
         setCurrentSQLListIndex(0);
-        console.log(SQLListList);
       }
        else {
         console.error('Error fetching previous conversations');
@@ -69,34 +69,47 @@ const SQLAssistant = () => {
     catch (error) {
       console.error('Error:', error);
     }
-};
-
-useEffect(() => {
-  loadSQLLists().catch(error => {
-    console.error('Unhandled promise error:', error);
-  });
-}, []);
-
-  const handleUserInput = (event: { target: { value: React.SetStateAction<string>; }; }) => {
-          setUserInput(event.target.value);
-        };
-  const chatContentLastMessage = useRef(null);
+  };
 
   useEffect(() => {
+    loadSQLLists().catch(error => {
+      console.error('Unhandled promise error:', error);
+    });
+  }, []);
+
+  useEffect(()  => {
         
-      scrollToBottom();
+    loadUserData().catch(error => {
+    console.error('Failed loading remaining prompts', error);
+    });
 
-    }, [conversationsHistory]);
+  }, []);
 
-    if(!jwt || !user_id) {
-      window.location.href = "/";
-      return;
-    }
-  const scrollToBottom = () => {
-      if (chatContentLastMessage.current) {
-        chatContentLastMessage.current.scrollIntoView({ behavior: 'smooth' });
+  if(!jwt || !user_id || ["TEACHER", "STUDENT"].indexOf(userData.role) <= -1) {
+    window.location.href = "/";
+    return;
+  }
+
+
+  const loadUserData = async () => {
+    try {
+      const userDataReq = await fetchUserData(jwt, user_id);
+      if (userDataReq.status === 200) {
+        const userDataResp = await userDataReq.json() as UserDataResponse;
+        const userDatax = userDataResp.data;
+        userData = userDatax;
+        setHideInput(userDatax.role !== "TEACHER");
+      } else {
+        console.error('Error fetching remaining propmts');
       }
-    };
+    } catch (error) {
+      console.error('Error:', error);
+    }
+  }; 
+
+  const handleUserInput = (event: { target: { value: React.SetStateAction<string>; }; }) => {
+    setUserInput(event.target.value);
+  };
 
   const handleNewChat = async () => {
         try {
@@ -197,7 +210,6 @@ useEffect(() => {
       }
     }
   };
-    
 
   const handleRestoreConversation = async (index: number) => {
     setCurrentSQLListIndex(index);
@@ -206,7 +218,6 @@ useEffect(() => {
     if (SQLListResponse.status === 200) {
       const responseJson = await SQLListResponse.json() as SQLListResponse;
       const sqlListData = responseJson.data;
-      console.log(sqlListData.SQLList);
       if (sqlListData.SQLList.length > 0) {
         const formattedSQLList: Message[] = [{
           sender: 'SQLAssistant',
@@ -224,7 +235,6 @@ useEffect(() => {
 
 
   const handleSubmit = async (event: { preventDefault: () => void }) => {
-    setDisableInput(true);
     event.preventDefault();
     const SQL_id = SQLListList[currentSQLListIndex].SQL_id;
     const SQLListResponse = await sendPromptToPython(jwt, "Izmisli primere tabela databaze i za njih izmisli 10 SQL pitanja od laksih ka tezim", SQL_id, [], user_id, { value: 'SQL', label: 'SQL(GPT3.5)' });
@@ -265,7 +275,6 @@ console.error('No prompts available');
       });
       console.error('Unexpected server problem please try again 2');
     }
-    setDisableInput(false);
   };
 
   return (
@@ -312,25 +321,23 @@ console.error('No prompts available');
                 {conversationsHistory.map((msg, index) => (
                   <ChatMessage key={index} msg={msg} />
                 ))}
-                <div ref={chatContentLastMessage}></div>
+                <div></div>
               </div>
             </div>
             <div className="user-input">
                   <form onSubmit={handleSubmit}>
-                    { true ? 
+                    { hideInput ? 
                     <input
                       type="text"
                       value={userInput}
                       onChange={handleUserInput}
                       placeholder="Unesite vašu poruku..."
-                      disabled={disableInput}
                     /> : <input
                     type="text"
                     value={userInput}
                     style={{visibility:'hidden'}}
                     onChange={handleUserInput}
                     placeholder="Unesite vašu poruku..."
-                    disabled={disableInput}
                   /> }
                     <button className="send-button" type="submit" /*onClick={handleEmptyChat}*/>
                       Generate SQL Questions
