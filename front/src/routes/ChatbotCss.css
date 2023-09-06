@@ -296,3 +296,7 @@ label {
   font-family: inherit;
   color:#000;
 }
+.sql-data {
+  white-space: pre-line; 
+  font-family: monospace; 
+}

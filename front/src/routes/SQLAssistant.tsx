@@ -31,7 +31,7 @@ const ChatMessage: React.FC<ChatMessageProps> = React.memo(({ msg }) => (
         <FontAwesomeIcon icon={faUser} />
       )}
     </div>
-    <div className="message-content">
+    <div className={`message-content ${msg.sender === 'SQLAssistant' ? 'sql-data' : ''}`}>
       <strong>{msg.sender}</strong>: {msg.message}
     </div>
   </div>
@@ -52,8 +52,6 @@ const SQLAssistant = () => {
   const [currentSQLListIndex, setCurrentSQLListIndex] = useState(0);
   const [userInput, setUserInput] = useState('');
   const [disableInput, setDisableInput] = useState(false);
-
-
   const loadSQLLists = async () => {
     try {
       const SQLListPromise = await fetchSQLLists(jwt);
@@ -111,7 +109,6 @@ useEffect(() => {
                 user_id: user_id,
                 SQLList: "",
               };
-              
               setSQLListList(prevSQLList => [...prevSQLList, newSQLListItem]);
             } else {
               console.error('Error fetching previous conversations');
@@ -138,7 +135,7 @@ useEffect(() => {
             await SQLListPromise.json() as SQLListsResponse;
               setSQLListList([]);
               setConversationsHistory([{ sender: 'SQLAssistant', message: 'Hello! I am here to help you generate SQL questions. To get strated click the GenerateSQL button.' }]);
-
+              setNumberConversation(1);
               await Swal.fire(
                 'Izbrisano!',
                 'Vase SQLListe su uspešno izbrisane.',
@@ -224,6 +221,8 @@ useEffect(() => {
       console.error('Error fetching prompts for conversation');
     }
 };
+
+
   const handleSubmit = async (event: { preventDefault: () => void }) => {
     setDisableInput(true);
     event.preventDefault();
@@ -231,9 +230,10 @@ useEffect(() => {
     const SQLListResponse = await sendPromptToPython(jwt, "Izmisli primere tabela databaze i za njih izmisli 10 SQL pitanja od laksih ka tezim", SQL_id, [], user_id, { value: 'SQL', label: 'SQL(GPT3.5)' });
     if (SQLListResponse.status === 200) {
         const SQLListdata = await SQLListResponse.text();
+  
         setConversationsHistory([{ sender: 'SQL-Assistent', message: SQLListdata }]);
         const SQLListModifyResponse = await modifySQLListById(jwt, SQL_id, SQLListdata);
-        console.log(SQLListModifyResponse);
+        console.log(SQLListdata);
         //console.log(conversationsHistory);
 
       //await loadConversationByID(currentConversationIndex);
@@ -294,9 +294,9 @@ console.error('No prompts available');
                 onClick={() => handleRestoreConversation(index)}
               >
                 {index === currentSQLListIndex ? (
-                  <strong>1</strong>
+                  <strong>Aktivan</strong>
                 ) : (
-                  <span>2</span>
+                  <span>Ostalo</span>
                 )}
                 <FontAwesomeIcon className="DeleteIcon" icon={faTrash} style={{ paddingLeft: '10px' }} onClick={() => handleDeleteSQL(index)} />
               </div>
