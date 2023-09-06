@@ -13,7 +13,8 @@ import {
   fetchUserData,
   modifySQLListById,
   sendPromptToPython,
-  startNewSQLList,
+  setActiveById,
+  startNewSQLList
 } from '../logic/api';
 const Header = React.lazy(() => import('../components/Header'));
 
@@ -100,7 +101,7 @@ const SQLAssistant = () => {
         userData = userDatax;
         setHideInput(userDatax.role !== "TEACHER");
       } else {
-        console.error('Error fetching remaining propmts');
+        console.error('Error fetching user data');
       }
     } catch (error) {
       console.error('Error:', error);
@@ -121,6 +122,7 @@ const SQLAssistant = () => {
                 SQL_id: SQLListId,
                 user_id: user_id,
                 SQLList: "",
+                active: false
               };
               setSQLListList(prevSQLList => [...prevSQLList, newSQLListItem]);
             } else {
@@ -148,7 +150,6 @@ const SQLAssistant = () => {
             await SQLListPromise.json() as SQLListsResponse;
               setSQLListList([]);
               setConversationsHistory([{ sender: 'SQLAssistant', message: 'Hello! I am here to help you generate SQL questions. To get strated click the GenerateSQL button.' }]);
-              setNumberConversation(1);
               await Swal.fire(
                 'Izbrisano!',
                 'Vase SQLListe su uspešno izbrisane.',
@@ -228,11 +229,17 @@ const SQLAssistant = () => {
       } else {
         setConversationsHistory([]);
       }
+      const button = document.querySelector('.send-button1');
+      if (button) {
+        button.style.visibility = 'visible';
+      }
+      if(sqlListData.SQLList.length < 1) {
+        button.style.visibility = 'hidden';
+      }
     } else {
       console.error('Error fetching prompts for conversation');
     }
 };
-
 
   const handleSubmit = async (event: { preventDefault: () => void }) => {
     event.preventDefault();
@@ -283,6 +290,46 @@ console.error('No prompts available');
       console.error('Unexpected server problem please try again 2');
     }
   };
+
+  const handleSetActive = async () => {
+    let SQL_id2:string = '';
+    const SQLList = SQLListList[currentSQLListIndex];
+    SQLListList.forEach(SQLList => {
+      if(SQLList.active === true) {
+        SQL_id2 = SQLList.SQL_id;
+      }
+    });
+    if(SQL_id2) {
+      await Swal.fire({
+        title: 'Da li ste sigurni?',
+        text: "Necete moci da ispravite!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Da, izbriši!',
+      }).then(async (result) => {
+        if (result.isConfirmed) {
+            await setActiveById(jwt, SQL_id2, false);
+            await setActiveById(jwt, SQLList.SQL_id, true);
+            await  Swal.fire({
+              icon: 'success',
+              title: 'Uspesno',
+              text: 'Uspesno.',
+            });
+          }
+    });
+  }
+  else {
+    await setActiveById(jwt, SQLList.SQL_id, true);
+    await  Swal.fire({
+      icon: 'success',
+      title: 'Uspesno',
+      text: 'Uspesno.',
+    });
+  }
+  SQLList.active = true;
+}
 
   return (
       <div className="chatbot-container">
@@ -349,10 +396,10 @@ console.error('No prompts available');
                     <button className="send-button" type="submit" /*onClick={handleEmptyChat}*/>
                       Generisi SQL Pitanja
                     </button>
-                    <button className="send-button1" type="submit" style={{visibility: 'hidden', display:'block',marginLeft:'285px'}} >
-                      Sacuvaj pitanja
-                    </button>
                   </form>
+                  <button className="send-button1" type="button" style={{visibility: 'hidden', display:'block',marginLeft:'285px'}} onClick={() => handleSetActive()} >
+                      Sacuvaj pitanja
+                  </button>
             </div>
           </div>
           <div className='chat-sidebar2'>

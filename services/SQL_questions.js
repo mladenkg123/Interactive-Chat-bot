@@ -48,6 +48,11 @@ const modifySQLListById = function(SQLList_id, user_id, SQLList)
     return SQLModel.modifySQLListById(SQLList_id, user_id, SQLList)
 }
 
+const setActiveById = function(SQLList_id, user_id, active)
+{
+    return SQLModel.setActiveById(SQLList_id, user_id, active)
+}
+
 const save = function(SQLList)
 {
     return SQLModel.saveSQL(SQLList);
@@ -60,5 +65,6 @@ module.exports = {
     deleteById,
     deleteAllByUserId,
     modifySQLListById,
+    setActiveById,
     save
 }

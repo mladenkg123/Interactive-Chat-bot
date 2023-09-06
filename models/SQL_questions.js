@@ -1,7 +1,8 @@
 const mongoose = require('mongoose');
 const SQLSchema = mongoose.Schema({
     user_id: { type: mongoose.Schema.Types.ObjectId, ref: "user" },
-    SQLList: {type: String}
+    SQLList: { type: String },
+    active: { type: Boolean }
 });
 
 const SQLModel = mongoose.model('sql', SQLSchema);
@@ -9,13 +10,15 @@ const SQLModel = mongoose.model('sql', SQLSchema);
 SQLModel.saveSQL = function (user_id) {
     const newSQL = new SQLModel({
         user_id: user_id,
-        SQLList: ""
+        SQLList: "",
+        active: false
     });
     newSQL.save();
     const modifiedData = {
         SQL_id: newSQL._id,
         user_id: newSQL.user_id,
-        SQLList: newSQL.SQLList
+        SQLList: newSQL.SQLList,
+        active: newSQL.active
     };
     return { status: 200, data: modifiedData };
 };
@@ -83,7 +86,8 @@ SQLModel.findById = async function (SQL_id, user_id) {
         const modifiedData = {
             SQL_id: SQLList._id,
             user_id: SQLList.user_id,
-            SQLList: SQLList.SQLList
+            SQLList: SQLList.SQLList,
+            active: SQLList.active
         }
         return { status: 200, data: modifiedData };
     }
@@ -122,5 +126,33 @@ SQLModel.modifySQLListById = async function (SQLList_id, user_id, SQLList) {
     }
 };
 
+SQLModel.setActiveById = async function (SQLList_id, user_id, active) {
+    const ObjectId = mongoose.Types.ObjectId;
+    try {
+        const SQLUserId = await SQLModel.find({ _id: new ObjectId(SQLList_id) }, { user_id: 1 }).exec();
+        if (SQLUserId.length == 0) {
+            return { status: 404, message: 'SQLList not found' };
+        }
+        user_id = new ObjectId(user_id);
+        // Check if the obtained user_id matches the provided user_id
+        if (SQLUserId[0].user_id.toString() !== user_id.toString()) {
+            return { status: 403, message: 'Forbidden' };
+        }
+
+        const updatedSQLList = await SQLModel.findByIdAndUpdate(
+            SQLList_id,
+            { $set: { active: active.active } },
+            { new: true }
+        ).exec();
+        if (!updatedSQLList) {
+            return { status: 404, message: 'SQLList not found' };
+        }
+
+        return { status: 200 };
+    } catch (error) {
+        console.error("Error modifying SQLList of SQLList:", error);
+        return { status: 500, message: "An error occurred while modifying SQLList of the SQLList" };
+    }
+};
 
 module.exports = SQLModel;

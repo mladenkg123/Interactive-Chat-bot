@@ -40,6 +40,7 @@ type BaseResponse<T> = {
     SQL_id: string;
     user_id: string;
     SQLList: string;
+    active: boolean;
   };
 
   type PromptResponse = BaseResponse<Prompt>;

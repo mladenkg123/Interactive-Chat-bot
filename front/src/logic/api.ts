@@ -92,6 +92,17 @@ export async function modifySQLListById(jwt: string, SQLList_id: string, SQLList
   return response;
 }
 
+export async function setActiveById(jwt: string, SQLList_id: string, active: boolean): Promise<Response> {
+  const requestOptions: RequestInit = {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${jwt}` },
+    body: JSON.stringify( {active} ),
+  };
+
+  const response = await fetch(`${API_BASE_URL}/SQL/active/${SQLList_id}`, requestOptions);
+  return response;
+}
+
 export async function fetchSQLLists(jwt: string): Promise<Response> {
   const requestOptions = generateRequestOptionsGet(jwt);
 
