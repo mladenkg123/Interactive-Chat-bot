@@ -231,7 +231,9 @@ useEffect(() => {
     if (SQLListResponse.status === 200) {
         const SQLListdata = await SQLListResponse.text();
   
-        setConversationsHistory([{ sender: 'SQL-Assistent', message: SQLListdata }]);
+        const sender = 'SQLAssistant';
+        const message = SQLListdata;
+        setConversationsHistory([ {sender,message,}, ]);
         const SQLListModifyResponse = await modifySQLListById(jwt, SQL_id, SQLListdata);
         console.log(SQLListdata);
         //console.log(conversationsHistory);
