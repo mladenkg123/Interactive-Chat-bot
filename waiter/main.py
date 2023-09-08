@@ -12,6 +12,11 @@ import yagmail
 openai.api_key = os.environ["OPENAI_API_KEY"]
 
 replicate_api = os.environ['REPLICATE_API_TOKEN']
+
+yag_email = os.environ['YAG_EMAIL']
+
+yag_pass = os.environ['YAG_PASS']
+
 # Replicate Credentials
 if not (replicate_api.startswith('r8_') and len(replicate_api) == 40):
     exit(1)
@@ -32,7 +37,7 @@ bard = Bard(token=token, session=session, timeout=30)
 
 '''
 
-yag = yagmail.SMTP('failaip21@gmail.com', 'w[/0cwn2mjJ3$~mLu9]b')
+yag = yagmail.SMTP(yag_email, yag_pass)
 
 llm = 'replicate/llama70b-v2-chat:2796ee9483c3fd7aa2e171d38f4ca12251a30609463dcfd4cd76703f22e96cdf'
 
@@ -276,15 +281,13 @@ def handle_post():
     else:
         return 'SERVER ERROR', 500
 
-@app.route("/email", methods=["POST"]) #Add error handling
+@app.route("/email", methods=["POST"])
 def handle_post_email():
-    # Compose and send an email
     data = request.get_json()
-    print(data.get("email"), data.get("message"))
-    subject = 'New Contact Form Submission'
-    contents = ['Message from the contact form:', data.get("message")]
-    yag.send(data.get("email"), subject, contents)
-    return 200
+    subject = data.get("email")
+    contents = [data.get("message")]
+    yag.send("cvetkovicmladen00@gmail.com", subject, contents)
+    return "OK", 200
 
 def main():
     app.run()
