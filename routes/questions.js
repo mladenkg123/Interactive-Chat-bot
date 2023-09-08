@@ -4,8 +4,7 @@ const router = express.Router()
 const passport = require('./config/config')
 const jwt = require('jsonwebtoken')
 
-router.get(
-    '/',
+router.get('/',
     passport.authenticate('jwt', { session: false }),
     passport.authorizeRoles('TEACHER', 'STUDENT'),
     async (req, res) => {
