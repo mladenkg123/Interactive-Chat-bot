@@ -55,7 +55,9 @@ const SQLAssistant = () => {
   const [currentSQLListIndex, setCurrentSQLListIndex] = useState(0);
   const [userInput, setUserInput] = useState('');
   const [hideInput, setHideInput] = useState(false);
-  
+  const [activeCircles, setActiveCircles] = useState<string[]>([]); 
+
+
   useEffect(() => {
     loadUserData().catch(error => {
       console.error('Failed loading remaining prompts', error);
@@ -91,6 +93,7 @@ const SQLAssistant = () => {
     });
   };
   const loadSQLLists = async () => {
+
     if (userData.role == "TEACHER") {
       try {
         const SQLListPromise = await fetchSQLLists(jwt);
@@ -99,13 +102,12 @@ const SQLAssistant = () => {
           setSQLListList(SQLListResponse.data);
           //await handleRestoreConversation(0);
           setCurrentSQLListIndex(0);
-  
          
         const activeSQLList = SQLListResponse.data.find((item) => item.active === true);
-        console.log(activeSQLList);
-        if (activeSQLList.active = true) {
-          const activeCircle = document.querySelector('.activeCircle');
-          activeCircle.style.visibility = 'visible';
+
+        if (activeSQLList.active === true) {
+          setActiveCircles([activeSQLList.SQL_id]); 
+          console.log(activeCircles);
         }
         }
         else {
@@ -264,11 +266,9 @@ const SQLAssistant = () => {
         button.style.visibility = 'hidden';
       }
       console.log(sqlListData.active);
-      let activeCircle = document.querySelector('.activeCircle');
-      console.log(activeCircle);
+      
       if(sqlListData.active === true){
-
-        activeCircle.style.visibility = 'visible';
+        setActiveCircleVisible(true);
       }     
     } else {
       console.error('Error fetching prompts for conversation');
@@ -310,10 +310,8 @@ const SQLAssistant = () => {
           if (button) {
             button.style.visibility = 'visible';
           }
-          let activeCircle = document.querySelector('.activeCircle');
-          activeCircle.style.visibility = 'visible';
           
-        
+          
         //console.log(conversationsHistory);
 
       //await loadConversationByID(currentConversationIndex);
@@ -435,7 +433,7 @@ console.error('No prompts available');
             {userData.role === "TEACHER" ?
               <><div className="restore-points-header">Prethodne liste</div></> : <><div className="restore-points-header">Lista pitanja</div></>
             }
-            {SQLListList.map((_, index) => {
+            {SQLListList.map((item, index) => {
             return (
               <div
                 key={index}
@@ -443,10 +441,10 @@ console.error('No prompts available');
                 onClick={() => handleRestoreConversation(index)}
               >
                 {index === currentSQLListIndex ? (
-                  <><FontAwesomeIcon className="activeCircle" icon={faCircle} style={{marginRight:"5px", visibility:'hidden',color:'green' }} onClick={() => handleDeleteSQL(index)} />
+                  <><FontAwesomeIcon className="activeCircle" icon={faCircle} style={{marginRight:"5px", visibility: activeCircles.includes(item.SQL_id) ? 'visible' : 'hidden',color:'green' }} onClick={() => handleDeleteSQL(index)} />
                   <strong>Aktivan</strong></>
                 ) : (
-                  <><FontAwesomeIcon className="activeCircle" icon={faCircle} style={{ marginRight: "5px", visibility: 'hidden', color:'green' }} onClick={() => handleDeleteSQL(index)} />
+                  <><FontAwesomeIcon className="activeCircle" icon={faCircle} style={{ marginRight: "5px", visibility: activeCircles.includes(item.SQL_id) ? 'visible' : 'hidden', color:'green' }} onClick={() => handleDeleteSQL(index)} />
                   <span>Ostalo</span></>
                 )}
                 <FontAwesomeIcon className="DeleteIcon" icon={faTrash} style={{ paddingLeft: '10px' }} onClick={() => handleDeleteSQL(index)} />
