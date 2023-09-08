@@ -288,7 +288,15 @@ const SQLAssistant = () => {
     event.preventDefault();
     if (userData.role == "TEACHER") {
     const SQL_id = SQLListList[currentSQLListIndex].SQL_id;
-    const SQLListResponse = await sendPromptToPython(jwt, "Izmisli primere tabela databaze i za njih izmisli 10 SQL pitanja od laksih ka tezim", SQL_id, [], user_id, { value: 'SQL', label: 'SQL(GPT3.5)' });
+    const SQLListResponse = await sendPromptToPython(jwt, String.raw`Izmisli primere tabela databaze(najvise do 3 tabele) i za njih izmisli 10 SQL pitanja od laksih ka tezim. Nemoj da dajes odgovore na pitanja. Prvo izlistaj sve tabele u ovakvom formatu: 
+
+    1. Tabela ime tabele:
+       - kolona 1 (PK)
+       - kolona 2
+       - kolona 3
+       - kolona 4
+       - kolona 5
+    A onda izlistaj pitanja. Nemoj da dodajes ikakv dodatni tekst.`, SQL_id, [], user_id, { value: 'SQL', label: 'SQL(GPT3.5)' });
     if (SQLListResponse.status === 200) {
         const SQLListdata = await SQLListResponse.text();
   

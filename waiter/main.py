@@ -13,9 +13,9 @@ openai.api_key = os.environ["OPENAI_API_KEY"]
 
 replicate_api = os.environ['REPLICATE_API_TOKEN']
 
-yag_email = os.environ['YAG_EMAIL']
+#yag_email = os.environ['YAG_EMAIL']
 
-yag_pass = os.environ['YAG_PASS']
+#yag_pass = os.environ['YAG_PASS']
 
 # Replicate Credentials
 if not (replicate_api.startswith('r8_') and len(replicate_api) == 40):
@@ -37,7 +37,7 @@ bard = Bard(token=token, session=session, timeout=30)
 
 '''
 
-yag = yagmail.SMTP(yag_email, yag_pass)
+#yag = yagmail.SMTP(yag_email, yag_pass)
 
 llm = 'replicate/llama70b-v2-chat:2796ee9483c3fd7aa2e171d38f4ca12251a30609463dcfd4cd76703f22e96cdf'
 
@@ -155,64 +155,44 @@ def chat(system, user_assistant):
   return response["choices"][0]["message"]["content"]
 
 def parse_sql(sql):
-    pattern = r"\|(.+?)\|\n\|(.+?)\|\n(.+?)\n\n"
-    match = re.search(pattern, sql, re.DOTALL)
-    return_val = []
-    if match:
-        tabela_header = match.group(1).strip()
-        tabela_podaci = match.group(3).strip()
-        return_val.append(tabela_header + tabela_podaci)
-        #print("Tabela: \n")
-        #print(tabela_header)
-        #print(tabela_podaci)
-    if(len(return_val) == 0 or len(return_val[0]) < 10):
-        table_info = re.search(r'Tabela "(.*?)":', sql)
-        table_name = ""
-        if table_info:
-            table_name = table_info.group(1)
-            #print(f"Table Name: {table_name}")
-        else:
-            print("Table name not found.")
-        column_info = re.findall(r'- (.*?) \((.*?)\) - (.*?)$', sql, re.MULTILINE)
-        xd = ""
-        if column_info:
-            columns = [(name.strip(), data_type.strip(), description.strip()) for name, data_type, description in column_info]
-            #print("Table Columns:")
-            for column in columns:
-                #print(f"- {column[0]} ({column[1]}) - {column[2]}")
-                xd+=f"- {column[0]} ({column[1]}) - {column[2]}"
-        else:
-            print("Columns not found.")
-        if(len(table_name) == 0 or len(xd) < 5):
-            result = re.search(r'(.+?)\n1\.', sql, re.DOTALL)
-            if result:
-                extracted_text = result.group(1).strip()
-                return_val = [extracted_text]
-            else:
-                print("Pattern not found.")
-        else:
-            return_val.append(table_name + xd)
-    patterns = [
-        r'1\.\s(.*?)\.',
-        r'2\.\s(.*?)\.',
-        r'3\.\s(.*?)\.',
-        r'4\.\s(.*?)\.',
-        r'5\.\s(.*?)\.',
-        r'6\.\s(.*?)\.',
-        r'7\.\s(.*?)\.',
-        r'8\.\s(.*?)\.',
-        r'9\.\s(.*?)\.',
-        r'10\.\s(.*?)\.'
-    ]
+    # Define regular expressions to match tables and questions
+    table_pattern = r'(\d+\.\s*Tabela\s+".+?":\s*\n(?:- .+\n)+)'
+    question_pattern = r'(\d+\.\s*Pitanja:\s*\n(?:\d+\..+?\n)+)'
 
-    temp = sql.replace(return_val[0], " ")
-    # Extract text based on patterns
-    for pattern in patterns:
-        matches = re.findall(pattern, temp)
-        if matches:
-            print(matches)
-            return_val.append(matches[0].strip())
-    return return_val
+    # Extract tables and questions using regular expressions
+    tables = re.findall(table_pattern, sql, re.DOTALL)
+    questions = re.findall(question_pattern, sql, re.DOTALL)
+    print("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")
+    print(tables, questions)
+
+    # Convert tables and questions to arrays
+    tables_array = [table.strip() for table in tables]
+    questions_array = [question.strip() for question in questions]
+    if(len(tables_array) == 0 or len(questions_array) < 5):
+        table_pattern2 = r'\d+\.\s+Tabela:\s+([A-Za-z]+)([\s\S]*?)(?=\d+\.\s+Tabela:|$)'
+        question_pattern2 = r'\d+\.\s+(?!Tabela:)(.+)'
+
+        table_matches = re.finditer(table_pattern2, sql)
+        questions2 = re.findall(question_pattern2, sql)
+        # Extract table information into a list of dictionaries
+        tables_info = []
+
+        for match in table_matches:
+            table_name = match.group(1)
+            table_content = match.group(2)
+            
+            # Extract column names and attributes
+            column_pattern = r'-\s+([A-Za-z_]+)\s+\(([^)]+)\)'
+            columns = re.findall(column_pattern, table_content)
+            
+            table_info = {
+                "table_name": table_name,
+                "columns": [{"name": col[0], "attributes": col[1]} for col in columns]
+            }
+            
+            tables_info.append(table_info)
+        return [tables_info, questions2]
+    return [tables_array, questions_array]
 
 app = Flask(__name__)
 CORS(app)
@@ -270,9 +250,11 @@ def handle_post():
         return response, 200
     elif(model == "generate_questions"):
         prompt = data.get("prompt")
+        print(prompt)
         response = ""
         if(prompt):
             response = parse_sql(prompt)
+        print(response)
         update_question(data.get("jwt"), data.get("conversation_id"), response)
         return response, 200
     elif(model == "oceni_odgovor"):
