@@ -155,3 +155,14 @@ export async function sendPromptToPython(jwt: string, prompt: string, conversati
   const response = await fetch('http://localhost:5000', requestOptions);
   return response;
 }
+
+export async function sendEmail(email:string, message:string) : Promise<Response> {
+  const requestOptions = {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email, message }),
+  };
+
+  const response = await fetch('http://localhost:5000/email', requestOptions);
+  return response;
+}
