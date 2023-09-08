@@ -89,7 +89,7 @@ const ChatBot = () => {
             conversationList.forEach((conversation, index) => {
               updatedPromptTexts[index] = conversation.conversation_description
                 ? conversation.conversation_description.substring(0, 12)
-                : 'No prompt available';
+                : 'Prazna konverzacija';
             });
             setPromptTexts(updatedPromptTexts);
           await handleRestoreConversation(0);
@@ -471,7 +471,7 @@ const handleNewChatActive = async () => {
             </button>
           </div>
           <div className="conversation-restore-points">
-          <div className="restore-points-header">Previous Chats</div>
+          <div className="restore-points-header">Prethodni četovi</div>
           {conversationList.map((_, index) => {
 
             const promptText = promptTexts[index];
@@ -520,7 +520,7 @@ const handleNewChatActive = async () => {
         </div>
         <div className='chat-sidebar2'>
           <div className="model-selection">
-            <label htmlFor="CubeBOT-model">Izaberi Cube-BOT model :</label>
+            <label htmlFor="CubeBOT-model">Izaberi Cube-BOT model:</label>
             <Select
              defaultValue={selectedModel}
               onChange={setSelectedModel}

@@ -280,7 +280,8 @@
 label {
   margin-right: 10px;
   font-weight: bold;
-  color: #333;
+  color: #000000;
+  font-family: 'Quicksand';
 }
 .css-1nmdiq5-menu {
   color:black;

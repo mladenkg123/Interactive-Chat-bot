@@ -102,8 +102,8 @@ const SQLAssistant = () => {
   
          
         const activeSQLList = SQLListResponse.data.find((item) => item.active === true);
-        console.log(activeSQLList.active);
-        if (activeSQLList) {
+        console.log(activeSQLList);
+        if (activeSQLList.active = true) {
           const activeCircle = document.querySelector('.activeCircle');
           activeCircle.style.visibility = 'visible';
         }
@@ -263,11 +263,13 @@ const SQLAssistant = () => {
       if(sqlListData.SQLList.length < 1) {
         button.style.visibility = 'hidden';
       }
-      if(sqlListData.active === true){
-        const activeCircle = document.querySelector('.activeCircle');
-        activeCircle.style.visibility = 'visible';
-      }
       console.log(sqlListData.active);
+      let activeCircle = document.querySelector('.activeCircle');
+      console.log(activeCircle);
+      if(sqlListData.active === true){
+
+        activeCircle.style.visibility = 'visible';
+      }     
     } else {
       console.error('Error fetching prompts for conversation');
     }
@@ -308,7 +310,7 @@ const SQLAssistant = () => {
           if (button) {
             button.style.visibility = 'visible';
           }
-          const activeCircle = document.querySelector('.activeCircle');
+          let activeCircle = document.querySelector('.activeCircle');
           activeCircle.style.visibility = 'visible';
           
         
@@ -383,7 +385,7 @@ console.error('No prompts available');
             const questionsData = await questionsResp.json();
             await sendPromptToPython(jwt, SQLList.SQLList, questionsData[0]._id, [] , user_id, { value: 'generate_questions', label: 'SQL(GPT3.5)' });
             SQLList.active = true;
-            const activeCircle = document.querySelector('.activeCircle');
+            let activeCircle = document.querySelector('.activeCircle');
             activeCircle.style.visibility = 'visible';
  
             await  Swal.fire({
@@ -401,7 +403,7 @@ console.error('No prompts available');
     await sendPromptToPython(jwt, SQLList.SQLList, questionsData[0]._id, [] , user_id, { value: 'generate_questions', label: 'SQL(GPT3.5)' });
             
     SQLList.active = true;
-    const activeCircle = document.querySelector('.activeCircle');
+    let activeCircle = document.querySelector('.activeCircle');
     activeCircle.style.visibility = 'visible';
     await  Swal.fire({
       icon: 'success',
@@ -488,7 +490,7 @@ console.error('No prompts available');
                   </form>
                   {userData.role === "TEACHER" ?
                     <>
-                    <button className="send-button1" type="button" style={{visibility: 'hidden', display:'block',marginLeft:'285px'}} onClick={() => handleSetActive()} >
+                    <button className="send-button1" type="button" style={{visibility: 'hidden', display:'block',marginLeft:'285px', inlineSize:'max-content'}} onClick={() => handleSetActive()} >
                         Sacuvaj pitanja
                     </button></> : <></>
                   }
