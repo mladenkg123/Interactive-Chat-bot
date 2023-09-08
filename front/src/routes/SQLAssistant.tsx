@@ -56,7 +56,7 @@ const SQLAssistant = () => {
   const [userInput, setUserInput] = useState('');
   const [hideInput, setHideInput] = useState(false);
   const [activeCircles, setActiveCircles] = useState<string[]>([]); 
-
+  const [table, setTable] = useState('');
 
   useEffect(() => {
     loadUserData().catch(error => {
@@ -109,6 +109,7 @@ const SQLAssistant = () => {
           setActiveCircles([activeSQLList.SQL_id]); 
           console.log(activeCircles);
         }
+         handleRestoreConversation(0);
         }
         else {
           console.error('Error fetching SQL lists');
@@ -124,8 +125,10 @@ const SQLAssistant = () => {
         if (questionsPromise.status === 200) {
           const questionsResponse = await questionsPromise.json() as Array<object>;
           setSQLListList(questionsResponse[0].questions);
-          //await handleRestoreConversation(0);
           setCurrentSQLListIndex(0);
+
+         // await handleRestoreConversation(0);
+
         }
         else {
           console.error('Error fetching questions');
@@ -266,10 +269,7 @@ const SQLAssistant = () => {
         button.style.visibility = 'hidden';
       }
       console.log(sqlListData.active);
-      
-      if(sqlListData.active === true){
-        setActiveCircleVisible(true);
-      }     
+         
     } else {
       console.error('Error fetching prompts for conversation');
     }
@@ -281,6 +281,7 @@ const SQLAssistant = () => {
       message: SQLListList[index],
     }];
     setConversationsHistory(formattedquestions);
+    setTable(SQLListList[0]);
   }
 };
 
@@ -357,12 +358,10 @@ console.error('No prompts available');
   const handleSetActive = async () => {
     let SQL_id2:string = '';
     const SQLList = SQLListList[currentSQLListIndex];
-    const activeCircle = document.querySelector('.activeCircle');
     SQLListList.forEach((SQLList, index) => {
       if(SQLList.active === true && index !== currentSQLListIndex) {
         SQLList.active = false;
         SQL_id2 = SQLList.SQL_id;      
-        activeCircle.style.visibility = 'visible';
       }
     });
     if(SQL_id2) {
@@ -383,9 +382,7 @@ console.error('No prompts available');
             const questionsData = await questionsResp.json();
             await sendPromptToPython(jwt, SQLList.SQLList, questionsData[0]._id, [] , user_id, { value: 'generate_questions', label: 'SQL(GPT3.5)' });
             SQLList.active = true;
-            let activeCircle = document.querySelector('.activeCircle');
-            activeCircle.style.visibility = 'visible';
- 
+            setActiveCircles(SQLList.SQL_id);
             await  Swal.fire({
               icon: 'success',
               title: 'Uspesno',
@@ -401,8 +398,7 @@ console.error('No prompts available');
     await sendPromptToPython(jwt, SQLList.SQLList, questionsData[0]._id, [] , user_id, { value: 'generate_questions', label: 'SQL(GPT3.5)' });
             
     SQLList.active = true;
-    let activeCircle = document.querySelector('.activeCircle');
-    activeCircle.style.visibility = 'visible';
+    
     await  Swal.fire({
       icon: 'success',
       title: 'Uspesno',
@@ -495,6 +491,9 @@ console.error('No prompts available');
             </div>
           </div>
           <div className='chat-sidebar2'>
+            <div>Tabela za sledeci zadatak je:</div>
+            <div style={{whiteSpace:'pre-line',fontFamily:'math'}}>{table}</div>
+            
           </div>
         </div>
       </div>
