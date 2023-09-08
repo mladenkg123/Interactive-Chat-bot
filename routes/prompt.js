@@ -12,7 +12,7 @@ router.get('/',
         res.send(prompts);
 })
 
-router.get('/:id',
+router.get('/:prompt_id',
     passport.authenticate('jwt', {session: false}),
     passport.authorizeRoles('ADMIN', 'USER'),
     async (req, res) => {
@@ -23,7 +23,7 @@ router.get('/:id',
             try {
                 const decodedToken = jwt.verify(token, 'SECRET'); // Replace 'your-secret-key' with your actual secret key
                 const user_id = decodedToken._id; // Assuming the user_id is stored in the JWT payload
-                const prompt = await PromptService.findById(req.params.id, user_id);
+                const prompt = await PromptService.findById(req.params.prompt_id, user_id);
                 res.send(prompt);
             } catch (error) {
                 console.error('Error decoding JWT:', error);

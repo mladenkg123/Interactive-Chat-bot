@@ -7,6 +7,7 @@ import re
 from flask_cors import CORS
 from flask import Flask, request
 from bardapi import Bard
+import yagmail
 
 openai.api_key = os.environ["OPENAI_API_KEY"]
 
@@ -14,6 +15,7 @@ replicate_api = os.environ['REPLICATE_API_TOKEN']
 # Replicate Credentials
 if not (replicate_api.startswith('r8_') and len(replicate_api) == 40):
     exit(1)
+
 '''
 token = os.environ['BARD_API_KEY']
 session = requests.Session()
@@ -27,7 +29,10 @@ session.headers = {
         }
 session.cookies.set("__Secure-1PSID", token)
 bard = Bard(token=token, session=session, timeout=30)
+
 '''
+
+yag = yagmail.SMTP('failaip21@gmail.com', 'w[/0cwn2mjJ3$~mLu9]b')
 
 llm = 'replicate/llama70b-v2-chat:2796ee9483c3fd7aa2e171d38f4ca12251a30609463dcfd4cd76703f22e96cdf'
 
@@ -271,7 +276,15 @@ def handle_post():
     else:
         return 'SERVER ERROR', 500
 
-
+@app.route("/email", methods=["POST"]) #Add error handling
+def handle_post_email():
+    # Compose and send an email
+    data = request.get_json()
+    print(data.get("email"), data.get("message"))
+    subject = 'New Contact Form Submission'
+    contents = ['Message from the contact form:', data.get("message")]
+    yag.send(data.get("email"), subject, contents)
+    return 200
 
 def main():
     app.run()

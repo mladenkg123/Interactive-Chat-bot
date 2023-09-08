@@ -4,16 +4,6 @@ const router = express.Router()
 const passport = require('./config/config')
 const jwt = require('jsonwebtoken')
 
-/*
-const restrictToAllowedIP = (req, res, next) => {
-    const clientIP = req.ip; // Get the client's IP address
-    if (clientIP === allowedIP) {
-        next(); // Allow request to proceed
-    } else {
-        res.status(403).send('Forbidden'); // Reject request from other IPs
-    }
-};
-*/
 router.get('/',
     passport.authenticate('jwt', {session: false}),
     passport.authorizeRoles('ADMIN'),
