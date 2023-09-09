@@ -4,6 +4,9 @@ import Swal from 'sweetalert2';
 import './Login';
 import './headerCss.css';
 import 'react-toastify/dist/ReactToastify.css';
+import { useEffect , useState } from 'react';
+import { getUserIDFromJWT} from "../logic/utils";
+import { fetchUserData } from '../logic/api';
 
 const cookies = new Cookies();
 
@@ -17,6 +20,9 @@ type HeaderProps = {
 
 
 function Header({handleLoginClick, handleRegisterClick, handleSignOut, isAuthenticated  }: HeaderProps  ){
+
+
+  const [userRole, setUserRole] = useState('');
 
   const handleClickLog = () =>{
     handleLoginClick()
@@ -44,11 +50,35 @@ function Header({handleLoginClick, handleRegisterClick, handleSignOut, isAuthent
       });
   }
 
-  const jwtExists = cookies.get('jwt') as string;
-  const preventLogin = async () => {
+  const jwt = cookies.get('jwt') as string;
+  const user_id = getUserIDFromJWT(jwt);
+  let user_role = '';
+  const userInfo = async () => {
+    try {
+      const userInfo = await fetchUserData(jwt, user_id);
+      if (userInfo.status === 200) {
+        const userInfoResponse = await userInfo.json() as UserDataResponse;
+        setUserRole(userInfoResponse.data.role);
+       
+        
+      } else {
+        console.error('Error fetching remaining propmts');
+      }
+    } catch (error) {
+      console.error('Error:', error);
+    }
+  }; 
+  
+  useEffect(() => {
+    userInfo().catch(error => {
+      console.error('Unhandled promise error:', error);
+    });
+  }, []);
 
-    
-    if (jwtExists == undefined) {
+
+  const preventLogin = async () => {
+  
+    if (jwt == undefined) {
       await Swal.fire({
         title: 'Morate se ulogovati!',
         text: 'Morate se ulogovati kako bi pristupili ovoj stranici.',
@@ -61,15 +91,29 @@ function Header({handleLoginClick, handleRegisterClick, handleSignOut, isAuthent
       }).then(() => {
         close();
       });
-    }
-    else {
-      window.location.href = '/ChatBot'; 
+    } else if (userRole === 'STUDENT' || userRole === 'TEACHER') {
+
+      await Swal.fire({
+        title: 'Nije vam dozvoljen pristup!',
+        text: 'Morate imati drugi nalog!',
+        icon: 'error',
+        showCancelButton: false,
+        confirmButtonText: 'Zatvori',
+        customClass: {
+          confirmButton: 'swal-button swal-button--error'
+        }
+      }).then(() => {
+        close();
+      });
+    } else {
+      
+      window.location.href = '/ChatBot';
     }
   }
 
 
   const preventLogin2 = async () =>{
-    if (jwtExists == undefined) {
+    if (jwt == undefined) {
       await Swal.fire({
         title: 'Morate se ulogovati!',
         text: 'Morate se ulogovati kako bi pristupili ovoj stranici.',

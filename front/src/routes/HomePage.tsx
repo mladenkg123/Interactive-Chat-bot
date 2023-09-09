@@ -7,7 +7,7 @@ import Register from "../components/Register";
 import ParticleComponent from "../components/Particle";
 import "./HomePage.css"; 
 import Cookies from 'universal-cookie';
-
+import { getUserIDFromJWT, fetchUserData } from "../logic/utils";
 
 
 function HomePage(){
