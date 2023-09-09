@@ -13,9 +13,9 @@ openai.api_key = os.environ["OPENAI_API_KEY"]
 
 replicate_api = os.environ['REPLICATE_API_TOKEN']
 
-#yag_email = os.environ['YAG_EMAIL']
+yag_email = os.environ['YAG_EMAIL']
 
-#yag_pass = os.environ['YAG_PASS']
+yag_pass = os.environ['YAG_PASS']
 
 # Replicate Credentials
 if not (replicate_api.startswith('r8_') and len(replicate_api) == 40):
@@ -37,7 +37,7 @@ bard = Bard(token=token, session=session, timeout=30)
 
 '''
 
-#yag = yagmail.SMTP(yag_email, yag_pass)
+yag = yagmail.SMTP(yag_email, yag_pass)
 
 llm = 'replicate/llama70b-v2-chat:2796ee9483c3fd7aa2e171d38f4ca12251a30609463dcfd4cd76703f22e96cdf'
 

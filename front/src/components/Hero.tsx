@@ -8,7 +8,9 @@ import 'aos/dist/aos.css';
 import Cookies from 'universal-cookie';
 import Swal from 'sweetalert2';
 import { Link as ScrollLink } from 'react-scroll'; 
-
+import {
+  sendEmail
+} from '../logic/api';
 
 
 
@@ -53,6 +55,32 @@ function Hero({ handleRegisterClick }: HeroProps) {
     else {
       window.location.href = '/ChatBot'; 
     }
+  }
+
+  const handleEmail = async (event) => {
+      event.preventDefault();
+
+      const emailInput  = document.getElementById('mail');
+      const messageInput = document.getElementById('message');
+      
+      const email = emailInput.value;
+      const message = messageInput.value;
+
+      try{
+        const emailPromise = await sendEmail(email, message)
+        if(emailPromise.status === 200){
+
+          const emailResponse = await emailPromise.json() as emailResponse;
+          console.log(emailResponse);
+        }
+        else {
+          console.error('Error fetching previous conversations');
+        }
+      } 
+      catch (error) {
+        console.error('Error:', error);
+      }
+
   }
 
   return (
@@ -143,11 +171,11 @@ function Hero({ handleRegisterClick }: HeroProps) {
               <ScrollLink to="pricingContainer" smooth={true} duration={750} offset={200} spy={true}>
               cenovnik
               </ScrollLink></a>.</p>
-            <form className="gZEnfn flex flex-col mt-5" data-cb-wrapper="true">
+            <form className="gZEnfn flex flex-col mt-5" data-cb-wrapper="true" onSubmit={handleEmail}>
               <label htmlFor="email" className="ixUjRF">Email</label>
-              <input type="email" placeholder="Ko nam salje mail?" name="email" className="hewnsr"/>
+              <input type="email" placeholder="Ko nam salje mail?" name="email" className="hewnsr" id='mail'/>
                 <label htmlFor="message" className="ixUjRF">Message</label>
-                <textarea rows={7} placeholder="Vasa poruka..." name="message" className="hewnsr"></textarea>
+                <textarea rows={7} placeholder="Vasa poruka..." name="message" className="hewnsr" id='message'></textarea>
                 <div className="jBhLFp">
                   <input type="submit" className="idYhuh" value="Send Message"/>
                 </div>
