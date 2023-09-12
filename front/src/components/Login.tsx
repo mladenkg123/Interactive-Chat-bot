@@ -64,8 +64,8 @@ const Login = ({ isShowLogin, onCloseLogin, onLoginSuccess } : LoginProps) => {
         onCloseLogin();
         console.error(error)
         await Swal.fire({
-          title: 'Šifra nije tacna.',
-          text: 'Šifra koju ste uneli je pogrešna.',
+          title: 'Greška pri prijavljivanju.',
+          text: 'Šifra ili E-mail koji ste unali nisu tačni.',
           icon: 'error',
           showCancelButton: false,
           confirmButtonText: 'Pokušaj ponovo',

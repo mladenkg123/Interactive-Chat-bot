@@ -502,9 +502,10 @@ console.error('No prompts available');
             </div>
           </div>
           <div className='chat-sidebar2'>
-            <div>Tabela za sledeci zadatak je:</div>
-            <div style={{whiteSpace:'pre-line',fontFamily:'math'}}>{table}</div>
-            
+          {userData.role === "STUDENT" ?
+            <><div>Tabela za sledeci zadatak je:</div><div style={{ whiteSpace: 'pre-line', fontFamily: 'math' }}>{table}</div></>
+            : <></>
+          }
           </div>
         </div>
       </div>
