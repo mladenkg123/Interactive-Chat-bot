@@ -13,9 +13,9 @@ openai.api_key = os.environ["OPENAI_API_KEY"]
 
 replicate_api = os.environ['REPLICATE_API_TOKEN']
 
-yag_email = os.environ['YAG_EMAIL']
+#yag_email = os.environ['YAG_EMAIL']
 
-yag_pass = os.environ['YAG_PASS']
+#yag_pass = os.environ['YAG_PASS']
 
 # Replicate Credentials
 if not (replicate_api.startswith('r8_') and len(replicate_api) == 40):
@@ -37,7 +37,7 @@ bard = Bard(token=token, session=session, timeout=30)
 
 '''
 
-yag = yagmail.SMTP(yag_email, yag_pass)
+#yag = yagmail.SMTP(yag_email, yag_pass)
 
 llm = 'replicate/llama70b-v2-chat:2796ee9483c3fd7aa2e171d38f4ca12251a30609463dcfd4cd76703f22e96cdf'
 
@@ -162,13 +162,14 @@ def parse_sql(sql):
     # Extract tables and questions using regular expressions
     tables = re.findall(table_pattern, sql, re.DOTALL)
     questions = re.findall(question_pattern, sql, re.DOTALL)
-    print("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")
-    print(tables, questions)
+    #print("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")
+    #print(tables, questions)
 
     # Convert tables and questions to arrays
     tables_array = [table.strip() for table in tables]
     questions_array = [question.strip() for question in questions]
     if(len(tables_array) == 0 or len(questions_array) < 5):
+        '''
         table_pattern2 = r'\d+\.\s+Tabela:\s+([A-Za-z]+)([\s\S]*?)(?=\d+\.\s+Tabela:|$)'
         question_pattern2 = r'\d+\.\s+(?!Tabela:)(.+)'
 
@@ -191,7 +192,18 @@ def parse_sql(sql):
             }
             
             tables_info.append(table_info)
-        return [tables_info, questions2]
+        '''
+        # The regex pattern to match the tables
+        tables_regex = r"(?P<table_name>.*)\n(?P<table_data>.*)"
+
+        tables = re.findall(tables_regex, sql)
+        table_list = []
+        questions_list = []
+        re = 0
+        for idx, table in enumerate(tables):
+            print(table)
+            table_list.append(table)
+        return [tables, questions]
     return [tables_array, questions_array]
 
 app = Flask(__name__)
@@ -250,11 +262,11 @@ def handle_post():
         return response, 200
     elif(model == "generate_questions"):
         prompt = data.get("prompt")
-        print(prompt)
+        #print(prompt)
         response = ""
         if(prompt):
             response = parse_sql(prompt)
-        print(response)
+        #print(response)
         update_question(data.get("jwt"), data.get("conversation_id"), response)
         return response, 200
     elif(model == "oceni_odgovor"):
