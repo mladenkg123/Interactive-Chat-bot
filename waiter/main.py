@@ -199,11 +199,20 @@ def parse_sql(sql):
         tables = re.findall(tables_regex, sql)
         table_list = []
         questions_list = []
-        re = 0
+        rex = False
         for idx, table in enumerate(tables):
-            print(table)
-            table_list.append(table)
-        return [tables, questions]
+            if(table[1] == "Pitanja:"):
+                rex = True
+            if(not rex):
+                table_list.append(table)
+            else:
+                if(len(table[1]) > 5 and (table[1][1] == "." or table[1][2] == ".")):
+                    questions_list.append(table[1])
+        result = '\n'.join(['\n' if not any(t) else ' '.join(t) for t in table_list])
+        #print(result)
+        #print("------------------------------------------------")
+        #print(questions_list)
+        return [result, questions_list]
     return [tables_array, questions_array]
 
 app = Flask(__name__)
@@ -270,7 +279,8 @@ def handle_post():
         update_question(data.get("jwt"), data.get("conversation_id"), response)
         return response, 200
     elif(model == "oceni_odgovor"):
-        response = chat("You are a university teacher in a Software Engineering university. You are teaching a course on databases. Grade the ansewr to the SQL question", conversation)
+        response = chat("You are a university teacher in a Software Engineering university. You are teaching a course on databases. Given the table, the question and the students answer. Grade the answer to the SQL question from 1 to 10. Do not give the answer to the question just grade it. Send the answer in Serbian language.", conversation)
+        print(conversation)
         return response, 200
     else:
         return 'SERVER ERROR', 500

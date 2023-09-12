@@ -124,7 +124,9 @@ const SQLAssistant = () => {
         const questionsPromise = await fetchQuestions(jwt);
         if (questionsPromise.status === 200) {
           const questionsResponse = await questionsPromise.json() as Array<object>;
-          setSQLListList(questionsResponse[0].questions);
+          console.log(questionsResponse);
+          setSQLListList(questionsResponse[0].questions[1]);
+          setTable(questionsResponse[0].questions[0]);
           setCurrentSQLListIndex(0);
 
          // await handleRestoreConversation(0);
@@ -281,7 +283,6 @@ const SQLAssistant = () => {
       message: SQLListList[index],
     }];
     setConversationsHistory(formattedquestions);
-    setTable(SQLListList[0]);
   }
 };
 
@@ -353,11 +354,13 @@ console.error('No prompts available');
   }
   else if(userData.role == "STUDENT") {
     const newArray = [...conversationsHistory];
+    newArray.unshift({sender: "SQLAssistant", message: table})
     newArray.push({sender: userData.username, message: userInput})
     const response = await sendPromptToPython(jwt, userInput, "", newArray, user_id, { value: 'oceni_odgovor', label: 'SQL(GPT3.5)' }) // Give him the table aswell
     if (response.status === 200) {
       const data = await response.text();
       newArray.push({sender: 'SQLAssistant', message: data})
+      newArray.shift();
       setConversationsHistory(newArray);
     }
   }
