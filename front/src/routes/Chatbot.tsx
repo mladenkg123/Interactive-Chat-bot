@@ -17,6 +17,7 @@ import {
 } from '../logic/api';
 import { getUserIDFromJWT } from '../logic/utils';
 import './ChatbotCss.css';
+import '../components/headerCss.css'
 
 interface ChatMessageProps {
   msg: Message;
@@ -191,7 +192,6 @@ const ChatBot = () => {
       setConversationsHistory([]);
       //console.log(conversationsHistory);
     }
-
     const currentContext = [...conversationsHistory];
     currentContext.push({sender: username, message: userInput});
     const conversation_id = conversationList[currentConversationIndex].conversation_id;

@@ -454,7 +454,12 @@ console.error('No prompts available');
                   <><FontAwesomeIcon className="activeCircle" icon={faCircle} style={{ marginRight: "5px", visibility: activeCircles.includes(item.SQL_id) ? 'visible' : 'hidden', color:'green' }} onClick={() => handleDeleteSQL(index)} />
                   <span>Ostalo</span></>
                 )}
+                { userData.role === 'TEACHER'?
+                <>
                 <FontAwesomeIcon className="DeleteIcon" icon={faTrash} style={{ paddingLeft: '10px' }} onClick={() => handleDeleteSQL(index)} />
+                </> : <></>
+                 }
+
               </div>
             );
             })}

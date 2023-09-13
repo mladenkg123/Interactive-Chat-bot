@@ -305,3 +305,40 @@ label {
   display: block;
   margin-left: 285px;
 }
+@media (max-width: 768px) {
+  .chat-container {
+    flex-direction: column; 
+    height: auto; 
+
+  .previous-conversations {
+    width: 100%; 
+    border-radius: 0;
+    margin-bottom: 20px; 
+  }
+
+  .user-input {
+    width: 100%; 
+    border-radius: 0; 
+    margin-top: 0; 
+  }
+
+  .user-message,
+  .bot-message {
+    border-radius: 0; 
+    max-width: 100%; 
+  }
+}
+
+@media (max-width: 480px) {
+  .previous-conversations {
+    padding: 5px; 
+  }
+
+  .user-input {
+    padding: 5px; 
+  }
+
+  button {
+    font-size: 14px; 
+  }
+}}
