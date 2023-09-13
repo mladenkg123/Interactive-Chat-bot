@@ -139,6 +139,21 @@ def update_question(jwt, question_id, questions):
     response = requests.patch(url, json=data, headers=headers)
     return response
 
+def update_answers_and_grade(jwt, user_id, user_answer, bot_answer, index):
+    headers = {
+    'Content-Type': 'application/json',
+    'Authorization': f'Bearer {jwt}'
+    }
+    data = {
+            "user_answer": user_answer,
+            "bot_answer": bot_answer,
+            "index": index
+    }
+    url = f'http://localhost:8000/user/answers_and_grades/{user_id}'
+    
+    response = requests.patch(url, json=data, headers=headers)
+    return response
+
 def chat(system, user_assistant):
   assert isinstance(system, str), "`system` should be a string"
   assert isinstance(user_assistant, list), "`user_assistant` should be a list"
@@ -280,7 +295,7 @@ def handle_post():
         return response, 200
     elif(model == "oceni_odgovor"):
         response = chat("You are a university teacher in a Software Engineering university. You are teaching a course on databases. Given the table, the question and the students answer. Grade the answer to the SQL question from 1 to 10. Do not give the answer to the question just grade it. Send the answer in Serbian language.", conversation)
-        print(conversation)
+        update_answers_and_grade(data.get("jwt"), data.get("user_id"), data.get("prompt"), response, data.get("conversation_id"))
         return response, 200
     else:
         return 'SERVER ERROR', 500

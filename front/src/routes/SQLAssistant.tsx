@@ -356,7 +356,7 @@ console.error('No prompts available');
     const newArray = [...conversationsHistory];
     newArray.unshift({sender: "SQLAssistant", message: table})
     newArray.push({sender: userData.username, message: userInput})
-    const response = await sendPromptToPython(jwt, userInput, "", newArray, user_id, { value: 'oceni_odgovor', label: 'SQL(GPT3.5)' }) // Give him the table aswell
+    const response = await sendPromptToPython(jwt, userInput, currentSQLListIndex as unknown as string, newArray, user_id, { value: 'oceni_odgovor', label: 'SQL(GPT3.5)' }) // Give him the table aswell
     if (response.status === 200) {
       const data = await response.text();
       newArray.push({sender: 'SQLAssistant', message: data})
