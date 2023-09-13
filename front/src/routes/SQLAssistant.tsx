@@ -282,7 +282,24 @@ const SQLAssistant = () => {
       sender: 'SQLAssistant',
       message: SQLListList[index],
     }];
+
+
+   if(userData.answers_and_grades[index]) {
+
+    const answers = userData.answers_and_grades;
+    const answers2 : Message  = {
+      sender : userData.role,
+      message : answers[index].user_answer,
+    };
+    const answers3 : Message = {
+      sender : 'SQLAssistant',
+      message : answers[index].bot_answer,
+    }
+    formattedquestions.push(answers2,answers3);
+  }
+
     setConversationsHistory(formattedquestions);
+
   }
 };
 
