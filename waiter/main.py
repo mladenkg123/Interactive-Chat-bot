@@ -277,11 +277,14 @@ def handle_post_chat():
 
 @app.route("/SQL", methods=["POST"]) #Add error handling
 def handle_post_SQL():
+    conversation = []
     data = request.get_json() 
     user_id = data.get("user_id")
     if not user_id:
         return {"error": "No user ID provided"}, 400
     model = data.get("selectedModel").get("value")
+    for i in data.get("conversation"):
+        conversation.append(i.get("message"))
     if(model == "SQL"):
         prompt = data.get("prompt")
         response = chat("You are a university teacher in a Software Engineering university. You are teaching a course on databases.", [prompt])
