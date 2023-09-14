@@ -12,7 +12,7 @@ import {
   fetchPreviousAnswers,
   fetchPreviousPrompts,
   fetchUserData,
-  sendPromptToPython,
+  sendPromptToPythonChatBot,
   startNewConversation,
 } from '../logic/api';
 import { getUserIDFromJWT } from '../logic/utils';
@@ -195,7 +195,7 @@ const ChatBot = () => {
     const currentContext = [...conversationsHistory];
     currentContext.push({sender: username, message: userInput});
     const conversation_id = conversationList[currentConversationIndex].conversation_id;
-    const pythonResponse = await sendPromptToPython(jwt, userInput, conversation_id, currentContext, user_id, selectedModel);
+    const pythonResponse = await sendPromptToPythonChatBot(jwt, userInput, conversation_id, currentContext, user_id, selectedModel);
     if (pythonResponse.status === 200) {
         const pythonData = await pythonResponse.text();
         let updatedConversation: Message[] = [];

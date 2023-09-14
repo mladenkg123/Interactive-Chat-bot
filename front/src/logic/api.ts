@@ -145,14 +145,25 @@ export async function fetchQuestions(jwt: string): Promise<Response> {
   return response;
 }
 
-export async function sendPromptToPython(jwt: string, prompt: string, conversation_id: string, conversation: Message[], user_id: string, selectedModel: object) : Promise<Response> {
+export async function sendPromptToPythonChatBot(jwt: string, prompt: string, conversation_id: string, conversation: Message[], user_id: string, selectedModel: object) : Promise<Response> {
   const requestOptions = {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ jwt, prompt, conversation_id, conversation, user_id, selectedModel }),
   };
 
-  const response = await fetch('http://localhost:5000', requestOptions);
+  const response = await fetch('http://localhost:5000/chat', requestOptions);
+  return response;
+}
+
+export async function sendPromptToPythonSQLAssitant(jwt: string, prompt: string, _id: string, conversation: Message[], user_id: string, selectedModel: object) : Promise<Response> {
+  const requestOptions = {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ jwt, prompt, _id, conversation, user_id, selectedModel }),
+  };
+
+  const response = await fetch('http://localhost:5000/SQL', requestOptions);
   return response;
 }
 

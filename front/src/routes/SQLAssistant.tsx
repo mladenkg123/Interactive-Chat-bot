@@ -13,7 +13,7 @@ import {
   fetchSQLLists,
   fetchUserData,
   modifySQLListById,
-  sendPromptToPython,
+  sendPromptToPythonSQLAssitant,
   setActiveById,
   startNewSQLList
 } from '../logic/api';
@@ -307,7 +307,7 @@ const SQLAssistant = () => {
     event.preventDefault();
     if (userData.role == "TEACHER") {
     const SQL_id = SQLListList[currentSQLListIndex].SQL_id;
-    const SQLListResponse = await sendPromptToPython(jwt, String.raw`Izmisli primere tabela databaze(najvise do 3 tabele) i za njih izmisli 10 SQL pitanja od laksih ka tezim. Nemoj da dajes odgovore na pitanja. Prvo izlistaj sve tabele u ovakvom formatu: 
+    const SQLListResponse = await sendPromptToPythonSQLAssitant(jwt, String.raw`Izmisli primere tabela databaze(najvise do 3 tabele) i za njih izmisli 10 SQL pitanja od laksih ka tezim. Nemoj da dajes odgovore na pitanja. Prvo izlistaj sve tabele u ovakvom formatu: 
 
     1. Tabela ime tabele:
        - kolona 1 (PK)
@@ -332,7 +332,7 @@ const SQLAssistant = () => {
         await setActiveById(jwt, SQL_id, false);
         const questionsResp = await fetchQuestions(jwt);
         const questionsData = await questionsResp.json();
-        await sendPromptToPython(jwt, "", questionsData[0]._id, [] , user_id, { value: 'generate_questions', label: 'SQL(GPT3.5)' });//SCUFFED
+        await sendPromptToPythonSQLAssitant(jwt, "", questionsData[0]._id, [] , user_id, { value: 'generate_questions', label: 'SQL(GPT3.5)' });//SCUFFED
           const button = document.querySelector('.send-button1');
           if (button) {
             button.style.visibility = 'visible';
@@ -373,7 +373,7 @@ console.error('No prompts available');
     const newArray = [...conversationsHistory];
     newArray.unshift({sender: "SQLAssistant", message: table})
     newArray.push({sender: userData.username, message: userInput})
-    const response = await sendPromptToPython(jwt, userInput, currentSQLListIndex as unknown as string, newArray, user_id, { value: 'oceni_odgovor', label: 'SQL(GPT3.5)' }) // Give him the table aswell
+    const response = await sendPromptToPythonSQLAssitant(jwt, userInput, currentSQLListIndex as unknown as string, newArray, user_id, { value: 'oceni_odgovor', label: 'SQL(GPT3.5)' }) // Give him the table aswell
     if (response.status === 200) {
       const data = await response.text();
       newArray.push({sender: 'SQLAssistant', message: data})
@@ -408,7 +408,7 @@ console.error('No prompts available');
             
             const questionsResp = await fetchQuestions(jwt);
             const questionsData = await questionsResp.json();
-            await sendPromptToPython(jwt, SQLList.SQLList, questionsData[0]._id, [] , user_id, { value: 'generate_questions', label: 'SQL(GPT3.5)' });
+            await sendPromptToPythonSQLAssitant(jwt, SQLList.SQLList, questionsData[0]._id, [] , user_id, { value: 'generate_questions', label: 'SQL(GPT3.5)' });
             SQLList.active = true;
             setActiveCircles(SQLList.SQL_id);
             await  Swal.fire({
@@ -423,7 +423,7 @@ console.error('No prompts available');
     await setActiveById(jwt, SQLList.SQL_id, true);
     const questionsResp = await fetchQuestions(jwt);
     const questionsData = await questionsResp.json();
-    await sendPromptToPython(jwt, SQLList.SQLList, questionsData[0]._id, [] , user_id, { value: 'generate_questions', label: 'SQL(GPT3.5)' });
+    await sendPromptToPythonSQLAssitant(jwt, SQLList.SQLList, questionsData[0]._id, [] , user_id, { value: 'generate_questions', label: 'SQL(GPT3.5)' });
             
     SQLList.active = true;
     

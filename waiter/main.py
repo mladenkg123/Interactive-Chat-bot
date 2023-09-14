@@ -235,14 +235,15 @@ CORS(app)
 client = pymongo.MongoClient("localhost", 27017, maxPoolSize=50)
 db = client["DiplomskiDB"]
 
-@app.route("/", methods=["POST"]) #Add error handling
-def handle_post():
+@app.route("/chat", methods=["POST"]) #Add error handling
+def handle_post_chat():
     data = request.get_json() 
     user_id = data.get("user_id")
     if not user_id:
         return {"error": "No user ID provided"}, 400
     conversation = []
     messages = []
+    response = ''
     model = data.get("selectedModel").get("value")
     for i in data.get("conversation"):
         if(i.get("sender") == "User"): #Build and send the whole context to Llama
@@ -254,43 +255,42 @@ def handle_post():
         response = chat("", conversation) #Send the whole context to Cube-BOT
     elif(model == "Llama"):
         response_generator = generate_llama2_response(messages)
-        #print("Messages: ", messages)
-        response = ''
         for item in response_generator:
             response += item
     #elif(model == "Bard"):
     #    response = generate_bard_response(data.get("conversation")[len(conversation) - 1].get("message")) #Only send the last propmt as we are keeping the session, though may have to change this if we go to another convo
-    if(model == "Cube-BOT" or model == "Llama" or model == "Bard"):
-        prompt_response = save_prompt(data.get("jwt"), data.get("user_id"), data.get("prompt"), data.get("conversation_id")).json()
-        if(prompt_response.get("status") == 200):
-            prompt_id = prompt_response.get("data").get("prompt_id")
-            answer_response = save_answer(data.get("jwt"), response, prompt_id, data.get("conversation_id")).json()
-            update_conversation_time(data.get("jwt"), data.get("conversation_id"))
-            #print("Conversation: ", conversation)
-            user_propmts = []
-            if (len(conversation) <= 4):
-                for i in range(len(conversation)):
-                    if (i % 2 == 0):
-                        user_propmts.append(conversation[i])
-            #print("User prompts: ",user_propmts)
-            chat_description = chat("Generate a very brief title that describes the user prompts and what he wants to talk about", user_propmts)
-            #print(chat_description)
-            update_conversation_description(data.get("jwt"), data.get("conversation_id"), chat_description)
-            return response, 200
-        elif(prompt_response.get("status") == 403):
-            #print(prompt_response.get("message"))
-            return prompt_response.get("message"), 403
-    elif(model == "SQL"):
+    prompt_response = save_prompt(data.get("jwt"), data.get("user_id"), data.get("prompt"), data.get("conversation_id")).json()
+    if(prompt_response.get("status") == 200):
+        prompt_id = prompt_response.get("data").get("prompt_id")
+        save_answer(data.get("jwt"), response, prompt_id, data.get("conversation_id")).json()
+        update_conversation_time(data.get("jwt"), data.get("conversation_id"))
+        user_propmts = []
+        if (len(conversation) <= 4):
+            for i in range(len(conversation)):
+                if (i % 2 == 0):
+                    user_propmts.append(conversation[i])
+        chat_description = chat("Generate a very brief title that describes the user prompts and what he wants to talk about", user_propmts)
+        update_conversation_description(data.get("jwt"), data.get("conversation_id"), chat_description)
+        return response, 200
+    elif(prompt_response.get("status") == 403):
+        return prompt_response.get("message"), 403
+
+@app.route("/SQL", methods=["POST"]) #Add error handling
+def handle_post_SQL():
+    data = request.get_json() 
+    user_id = data.get("user_id")
+    if not user_id:
+        return {"error": "No user ID provided"}, 400
+    model = data.get("selectedModel").get("value")
+    if(model == "SQL"):
         prompt = data.get("prompt")
         response = chat("You are a university teacher in a Software Engineering university. You are teaching a course on databases.", [prompt])
         return response, 200
     elif(model == "generate_questions"):
         prompt = data.get("prompt")
-        #print(prompt)
         response = ""
         if(prompt):
             response = parse_sql(prompt)
-        #print(response)
         update_question(data.get("jwt"), data.get("conversation_id"), response)
         return response, 200
     elif(model == "oceni_odgovor"):
