@@ -150,7 +150,7 @@ def update_answers_and_grade(jwt, user_id, user_answer, bot_answer, index):
             "index": index
     }
     url = f'http://localhost:8000/user/answers_and_grades/{user_id}'
-    
+    print(index)
     response = requests.patch(url, json=data, headers=headers)
     return response
 
@@ -298,7 +298,7 @@ def handle_post_SQL():
         return response, 200
     elif(model == "oceni_odgovor"):
         response = chat("You are a university teacher in a Software Engineering university. You are teaching a course on databases. Given the table, the question and the students answer. Grade the answer to the SQL question from 1 to 10. Do not give the answer to the question just grade it. Send the answer in Serbian language.", conversation)
-        update_answers_and_grade(data.get("jwt"), data.get("user_id"), data.get("prompt"), response, data.get("conversation_id"))
+        update_answers_and_grade(data.get("jwt"), data.get("user_id"), data.get("prompt"), response, data.get("_id"))
         return response, 200
     else:
         return 'SERVER ERROR', 500
