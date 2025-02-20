@@ -1,0 +1,8 @@
+pymongo
+requests
+openai
+replicate
+flask
+flask-cors
+bardapi
+yagmail 

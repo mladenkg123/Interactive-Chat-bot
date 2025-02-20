@@ -1,6 +1,5 @@
 import pymongo
 import requests
-import openai
 import replicate
 import os
 import re
@@ -8,8 +7,9 @@ from flask_cors import CORS
 from flask import Flask, request
 from bardapi import Bard
 import yagmail
+from openai import OpenAI
 
-openai.api_key = os.environ["OPENAI_API_KEY"]
+ai_client = OpenAI(api_key=os.environ["OPENAI_API_KEY"])
 
 replicate_api = os.environ['REPLICATE_API_TOKEN']
 
@@ -155,19 +155,25 @@ def update_answers_and_grade(jwt, user_id, user_answer, bot_answer, index):
     return response
 
 def chat(system, user_assistant):
-  assert isinstance(system, str), "`system` should be a string"
-  assert isinstance(user_assistant, list), "`user_assistant` should be a list"
-  system_msg = [{"role": "system", "content": system}]
-  user_assistant_msgs = [
-      {"role": "assistant", "content": user_assistant[i]} if i % 2 else {"role": "user", "content": user_assistant[i]}
-      for i in range(len(user_assistant))]
+    assert isinstance(system, str), "`system` should be a string"
+    assert isinstance(user_assistant, list), "`user_assistant` should be a list"
+    
+    messages = []
+    if system:
+        messages.append({"role": "system", "content": system})
+    
+    for i in range(len(user_assistant)):
+        role = "assistant" if i % 2 else "user"
+        messages.append({"role": role, "content": user_assistant[i]})
 
-  msgs = system_msg + user_assistant_msgs
-  response = openai.ChatCompletion.create(model="gpt-3.5-turbo",
-                                          messages=msgs)
-  status_code = response["choices"][0]["finish_reason"]
-  assert status_code == "stop", f"The status code was {status_code}."
-  return response["choices"][0]["message"]["content"]
+    #msgs = system_msg + user_assistant_msgs
+    response = ai_client.chat.completions.create(
+        model="gpt-4o-mini",
+        messages=messages
+    )
+    status_code = response.choices[0].finish_reason
+    assert status_code == "stop", f"The status code was {status_code}."
+    return response.choices[0].message.content
 
 def parse_sql(sql):
     # Define regular expressions to match tables and questions
