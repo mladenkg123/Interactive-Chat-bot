@@ -1,34 +1,55 @@
-import { useCallback } from 'react';
-import type { Engine } from 'tsparticles-engine';
-import Particles from 'react-particles';
-import { loadSlim } from 'tsparticles-slim';
+import { useCallback, useEffect } from 'react';
+import { IShapeDrawData, IShapeDrawer, Particle, tsParticles } from '@tsparticles/engine';
+import Particles from '@tsparticles/react';
+import { loadSlim } from '@tsparticles/slim';
 import './Particle.css';
 
+export class FlowerDrawer implements IShapeDrawer<Particle> {
+  validTypes = ['flower'];
+  draw(data: IShapeDrawData<Particle>): void {
+    const { context, radius } = data;
+
+    context.beginPath();
+    context.arc(0, 0, radius, 0, Math.PI * 2);
+    context.moveTo(0, 0);
+    context.lineTo(radius, 0);
+    context.stroke();
+  }
+}
+
+export class SquareDrawer implements IShapeDrawer<Particle> {
+  validTypes = ['square'];
+  draw(data: IShapeDrawData<Particle>): void {
+    const { context, radius } = data;
+    context.beginPath();
+    context.rect(0, 0, radius * 2, radius * 2);
+    context.stroke();
+  }
+}
+
 const ParticleComponent = () => {
-  const particlesInit = useCallback(async (engine: Engine) => {
-    // Load slim particles configuration
-    await loadSlim(engine);
+  const particlesInit = async () => {
+    await loadSlim(tsParticles);
 
     // Add custom shapes
-    await engine.addShape('flower', (ctx, _, radius) => {
-      ctx.arc(0, 0, radius, 0, Math.PI * 2);
-      ctx.moveTo(0, 0);
-      ctx.lineTo(radius, 0);
-      ctx.stroke();
-    });
-    await engine.addShape('square', (ctx, _, radius) => {
-      ctx.rect(0, 0, radius * 2, radius * 2);
-      ctx.stroke();
-    });
-  }, []);
-
+    tsParticles.addShape(new FlowerDrawer());
+    tsParticles.addShape(new SquareDrawer());
+  };
   const particlesLoaded = useCallback(async () => {}, []);
+  useEffect(() => {
+    particlesInit();
+
+    // Cleanup function to destroy particles when the component unmounts
+    return () => {
+      const containers = tsParticles.dom();
+      containers.forEach((container) => container.destroy());
+    };
+  }, [particlesInit]);
 
   return (
     <Particles
       id="tsparticles"
-      init={particlesInit}
-      loaded={particlesLoaded}
+      particlesLoaded={particlesLoaded}
       options={{
         background: {
           color: {
@@ -46,7 +67,6 @@ const ParticleComponent = () => {
               enable: true,
               mode: 'repulse',
             },
-            resize: true,
           },
           modes: {
             push: {
@@ -82,7 +102,6 @@ const ParticleComponent = () => {
           number: {
             density: {
               enable: true,
-              area: 1000,
             },
             value: 80,
           },
@@ -93,7 +112,7 @@ const ParticleComponent = () => {
             type: ['circle', 'flower', 'square'],
           },
           size: {
-            value: { min: 1, max: 4 }, // Reduced max size
+            value: { min: 1, max: 4 },
           },
         },
         detectRetina: true,

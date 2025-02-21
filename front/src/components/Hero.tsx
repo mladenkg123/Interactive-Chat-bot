@@ -192,11 +192,9 @@ function Hero({ handleRegisterClick }: Readonly<HeroProps>) {
                   Kontaktirajte nas
                 </a>{' '}
                 ili pogledajte
-                <a href="" className="dRExZB">
-                  <ScrollLink to="pricingContainer" smooth={true} duration={750} offset={200} spy={true}>
-                    cenovnik
-                  </ScrollLink>
-                </a>
+                <ScrollLink to="pricingContainer" smooth={true} duration={750} offset={200} spy={true}>
+                  cenovnik
+                </ScrollLink>
                 .
               </p>
               <form className="gZEnfn flex flex-col mt-5" data-cb-wrapper="true" onSubmit={handleEmail}>

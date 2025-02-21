@@ -14,7 +14,7 @@ const Register = ({ isShowRegister, onCloseRegister }: RegisterProps) => {
   const [username, setUsername] = useState('');
   const [plan, setPlan] = useState({ value: 'free', label: 'Nalog - plan' });
   const [sqlAcc, setSqlAcc] = useState({ value: 'Student', label: 'Student' });
-  const [chatbotRegister, setChatBotRegister] = useState(true);
+  const [chatbotRegister, setChatbotRegister] = useState(true);
   const options = [
     { value: 'free', label: 'Free plan' },
     { value: 'pro', label: 'Pro plan' },
@@ -90,27 +90,27 @@ const Register = ({ isShowRegister, onCloseRegister }: RegisterProps) => {
           <form onSubmit={handleSubmit}>
             <h1 className="register-text">REGISTRACIJA</h1>
             <div className="dOFkZA">
-              <button type="button" className={`switch-button ${chatbotRegister ? 'active' : ''}`} onClick={() => setChatBotRegister(true)}>
+              <button type="button" className={`switch-button ${chatbotRegister ? 'active' : ''}`} onClick={() => setChatbotRegister(true)}>
                 ChatBot Registracija
               </button>
-              <button type="button" className={`switch-button ${!chatbotRegister ? 'active' : ''}`} onClick={() => setChatBotRegister(false)}>
+              <button type="button" className={`switch-button ${!chatbotRegister ? 'active' : ''}`} onClick={() => setChatbotRegister(false)}>
                 SQL Asistent Registracija
               </button>
             </div>
-            <label style={{ color: 'white' }}>E-mail</label>
+            <label htmlFor="email" style={{ color: 'white' }}>E-mail</label>
             <br></br>
             <input className="register-box" value={email} onChange={(e) => setEmail(e.target.value)} type="email" placeholder="vašemail@gmail.com" id="email" name="email" />
             <br></br>
-            <label style={{ color: 'white' }}>Username</label>
+            <label htmlFor="user" style={{ color: 'white' }}>Username</label>
             <br></br>
             <input className="register-box" value={username} onChange={(e) => setUsername(e.target.value)} type="username" placeholder="Vaš username" id="user" name="user" />
             <br></br>
-            <label style={{ color: 'white' }}>Šifra</label>
+            <label htmlFor="password" style={{ color: 'white' }}>Šifra</label>
             <br></br>
             <input className="register-box" value={pass} onChange={(e) => setPass(e.target.value)} type="password" placeholder="********" id="password" name="password" />
             <br></br>
-            <label style={{ color: 'white' }}>Vrsta naloga:</label>
-            {chatbotRegister ? <Select defaultValue={plan} onChange={setPlan} options={options} /> : <Select defaultValue={sqlAcc} onChange={setSqlAcc} options={options2} />}
+            <label htmlFor="account-type" style={{ color: 'white' }}>Vrsta naloga:</label>
+            {chatbotRegister ? <Select id="account-type" defaultValue={plan} onChange={setPlan} options={options} /> : <Select id="account-type" defaultValue={sqlAcc} onChange={setSqlAcc} options={options2} />}
             <input type="submit" value="REGISTRUJ ME" className="register-btn" />
           </form>
         </div>
