@@ -1,8 +1,8 @@
-import jwt_decode from 'jwt-decode';
+import { jwtDecode } from 'jwt-decode';
 
 export const getUserIDFromJWT = (jwt: string): string | null => {
   try {
-    const decodedJWT: { _id: string } = jwt_decode(jwt);
+    const decodedJWT: { _id: string } = jwtDecode(jwt);
     return decodedJWT._id;
   } catch (error) {
     console.error('Error decoding JWT:', error);
@@ -12,7 +12,7 @@ export const getUserIDFromJWT = (jwt: string): string | null => {
 
 export const getExpireFromJWT = (jwt: string): number | null => {
   try {
-    const decodedJWT: { expire: number } = jwt_decode(jwt);
+    const decodedJWT: { expire: number } = jwtDecode(jwt);
     return decodedJWT.expire;
   } catch (error) {
     console.error('Error decoding JWT:', error);

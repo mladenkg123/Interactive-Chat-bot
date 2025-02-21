@@ -1,8 +1,8 @@
-import { useCallback } from "react";
-import type { Engine } from "tsparticles-engine";
-import Particles from "react-particles";
-import { loadSlim } from "tsparticles-slim";
-import "./Particle.css";
+import { useCallback } from 'react';
+import type { Engine } from 'tsparticles-engine';
+import Particles from 'react-particles';
+import { loadSlim } from 'tsparticles-slim';
+import './Particle.css';
 
 const ParticleComponent = () => {
   const particlesInit = useCallback(async (engine: Engine) => {
@@ -10,20 +10,19 @@ const ParticleComponent = () => {
     await loadSlim(engine);
 
     // Add custom shapes
-    await engine.addShape("flower", (ctx, _, radius) => {
+    await engine.addShape('flower', (ctx, _, radius) => {
       ctx.arc(0, 0, radius, 0, Math.PI * 2);
       ctx.moveTo(0, 0);
       ctx.lineTo(radius, 0);
       ctx.stroke();
     });
-    await engine.addShape("square", (ctx, _, radius) => {
+    await engine.addShape('square', (ctx, _, radius) => {
       ctx.rect(0, 0, radius * 2, radius * 2);
       ctx.stroke();
     });
   }, []);
 
-  const particlesLoaded = useCallback(async () => {
-  }, []);
+  const particlesLoaded = useCallback(async () => {}, []);
 
   return (
     <Particles
@@ -33,7 +32,7 @@ const ParticleComponent = () => {
       options={{
         background: {
           color: {
-            value: "#040c1c", 
+            value: '#040c1c',
           },
         },
         fpsLimit: 999,
@@ -41,49 +40,49 @@ const ParticleComponent = () => {
           events: {
             onClick: {
               enable: true,
-              mode: "push",
+              mode: 'push',
             },
             onHover: {
               enable: true,
-              mode: "repulse",
+              mode: 'repulse',
             },
             resize: true,
           },
           modes: {
             push: {
-              quantity: 2, 
+              quantity: 2,
             },
             repulse: {
-              distance: 100, 
-              duration: 0.3, 
+              distance: 100,
+              duration: 0.3,
             },
           },
         },
         particles: {
           color: {
-            value: "#ffffff",
+            value: '#ffffff',
           },
           links: {
-            color: "#ffffff",
+            color: '#ffffff',
             distance: 150,
             enable: true,
-            opacity: 0.14, 
+            opacity: 0.14,
             width: 1,
           },
           move: {
-            direction: "none",
+            direction: 'none',
             enable: true,
             outModes: {
-              default: "bounce",
+              default: 'bounce',
             },
             random: false,
-            speed: 1.25, 
+            speed: 1.25,
             straight: false,
           },
           number: {
             density: {
               enable: true,
-              area: 1000, 
+              area: 1000,
             },
             value: 80,
           },
@@ -91,7 +90,7 @@ const ParticleComponent = () => {
             value: 0.15,
           },
           shape: {
-            type: ["circle", "flower", "square"],
+            type: ['circle', 'flower', 'square'],
           },
           size: {
             value: { min: 1, max: 4 }, // Reduced max size

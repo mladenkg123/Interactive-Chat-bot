@@ -37,7 +37,7 @@
   list-style: none;
   display: flex;
   padding: 0;
-  justify-content: center; 
+  justify-content: center;
 }
 
 .nav-item {
@@ -52,7 +52,7 @@
 }
 
 .nav-item a:hover {
-  color: #1ba3fd; 
+  color: #1ba3fd;
 }
 
 .auth-buttons {
@@ -131,7 +131,7 @@
     padding: 10px 0; /* Prilagodite visinu padding-a za manje rezolucije */
     z-index: 999;
   }
-  
+
   .navbar-container {
     display: flex;
     justify-content: space-between;
@@ -140,7 +140,7 @@
     max-width: inherit;
     padding: 0 15px; /* Prilagodite padding za manje rezolucije */
   }
-  
+
   .navbar-logo {
     font-size: 20px; /* Prilagodite veličinu fonta za manje rezolucije */
     font-weight: bold;
@@ -148,11 +148,11 @@
     letter-spacing: 2px;
     transition: transform 0.3s ease-in-out;
   }
-  
+
   .navbar-logo:hover {
     transform: scale(1.1);
   }
-  
+
   .nav-menu {
     margin: auto;
     list-style: none;
@@ -160,38 +160,39 @@
     padding: 0;
     justify-content: center;
   }
-  
+
   .nav-item {
     margin-left: 10px; /* Smanjite margine između stavki za manje rezolucije */
   }
-  
+
   .nav-item a {
     color: inherit;
     text-decoration: none;
     font-size: 14px; /* Prilagodite veličinu fonta za manje rezolucije */
     transition: color 0.3s ease;
   }
-  
+
   .nav-item a:hover {
     color: #1ba3fd;
   }
-  
+
   .auth-buttons {
     display: flex;
     align-items: center;
   }
-  
+
   .btn {
     padding: 8px 15px; /* Prilagodite padding za manje rezolucije */
     margin-left: 10px; /* Smanjite margine između dugmadi za manje rezolucije */
     font-size: 12px; /* Prilagodite veličinu fonta za manje rezolucije */
   }
-  
+
   .btn-login,
   .btn-logout,
   .btn-signup {
     margin: 5px 5px; /* Prilagodite margine za manje rezolucije */
-  }}
+  }
+}
 @media (max-width: 480px) {
   .navbar {
     background-color: #091327;
@@ -203,7 +204,7 @@
     padding: 10px 0; /* Prilagodite visinu padding-a za manje rezolucije */
     z-index: 999;
   }
-  
+
   .navbar-container {
     display: flex;
     justify-content: space-between;
@@ -212,7 +213,7 @@
     max-width: inherit;
     padding: 0 15px; /* Prilagodite padding za manje rezolucije */
   }
-  
+
   .navbar-logo {
     font-size: 20px; /* Prilagodite veličinu fonta za manje rezolucije */
     font-weight: bold;
@@ -220,11 +221,11 @@
     letter-spacing: 2px;
     transition: transform 0.3s ease-in-out;
   }
-  
+
   .navbar-logo:hover {
     transform: scale(1.1);
   }
-  
+
   .nav-menu {
     margin: auto;
     list-style: none;
@@ -232,33 +233,33 @@
     padding: 0;
     justify-content: center;
   }
-  
+
   .nav-item {
     margin-left: 10px; /* Smanjite margine između stavki za manje rezolucije */
   }
-  
+
   .nav-item a {
     color: inherit;
     text-decoration: none;
     font-size: 14px; /* Prilagodite veličinu fonta za manje rezolucije */
     transition: color 0.3s ease;
   }
-  
+
   .nav-item a:hover {
     color: #1ba3fd;
   }
-  
+
   .auth-buttons {
     display: flex;
     align-items: center;
   }
-  
+
   .btn {
     padding: 8px 15px; /* Prilagodite padding za manje rezolucije */
     margin-left: 10px; /* Smanjite margine između dugmadi za manje rezolucije */
     font-size: 12px; /* Prilagodite veličinu fonta za manje rezolucije */
   }
-  
+
   .btn-login,
   .btn-logout,
   .btn-signup {

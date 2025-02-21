@@ -85,7 +85,7 @@ export async function modifySQLListById(jwt: string, SQLList_id: string, SQLList
   const requestOptions: RequestInit = {
     method: 'PATCH',
     headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${jwt}` },
-    body: JSON.stringify( {SQLList} ),
+    body: JSON.stringify({ SQLList }),
   };
 
   const response = await fetch(`${API_BASE_URL}/SQL/SQLList/${SQLList_id}`, requestOptions);
@@ -96,7 +96,7 @@ export async function setActiveById(jwt: string, SQLList_id: string, active: boo
   const requestOptions: RequestInit = {
     method: 'PATCH',
     headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${jwt}` },
-    body: JSON.stringify( {active} ),
+    body: JSON.stringify({ active }),
   };
 
   const response = await fetch(`${API_BASE_URL}/SQL/active/${SQLList_id}`, requestOptions);
@@ -145,7 +145,7 @@ export async function fetchQuestions(jwt: string): Promise<Response> {
   return response;
 }
 
-export async function sendPromptToPythonChatBot(jwt: string, prompt: string, conversation_id: string, conversation: Message[], user_id: string, selectedModel: object) : Promise<Response> {
+export async function sendPromptToPythonChatBot(jwt: string, prompt: string, conversation_id: string, conversation: Message[], user_id: string, selectedModel: object): Promise<Response> {
   const requestOptions = {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -156,7 +156,7 @@ export async function sendPromptToPythonChatBot(jwt: string, prompt: string, con
   return response;
 }
 
-export async function sendPromptToPythonSQLAssitant(jwt: string, prompt: string, _id: string, conversation: Message[], user_id: string, selectedModel: object) : Promise<Response> {
+export async function sendPromptToPythonSQLAssitant(jwt: string, prompt: string, _id: string, conversation: Message[], user_id: string, selectedModel: object): Promise<Response> {
   const requestOptions = {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -167,7 +167,7 @@ export async function sendPromptToPythonSQLAssitant(jwt: string, prompt: string,
   return response;
 }
 
-export async function sendEmail(email:string, message:string) : Promise<Response> {
+export async function sendEmail(email: string, message: string): Promise<Response> {
   const requestOptions = {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },

@@ -1,7 +1,6 @@
 /* HomePage.css */
 .hero-container {
   position: relative;
-  
 }
 
 .ParticleComponent {
@@ -10,7 +9,6 @@
   left: 0;
   width: 100%;
   height: 100%;
-  
 }
 
 .hero-content {

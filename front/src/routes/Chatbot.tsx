@@ -17,35 +17,30 @@ import {
 } from '../logic/api';
 import { getUserIDFromJWT } from '../logic/utils';
 import './ChatbotCss.css';
-import '../components/headerCss.css'
-
+import '../components/headerCss.css';
+import { IconProp } from '@fortawesome/fontawesome-svg-core';
 interface ChatMessageProps {
   msg: Message;
 }
-const ChatMessage: React.FC<ChatMessageProps> = React.memo(({ msg }) => (
-  <div className={msg.sender === 'Cube-BOT' ? 'bot-message' : 'user-message'}>
-    <div className="message-avatar">
-      {msg.sender === 'Cube-BOT' ? (
-        <FontAwesomeIcon icon={faCube} />
-      ) : (
-        <FontAwesomeIcon icon={faUser} />
-      )}
+const ChatMessage: React.FC<ChatMessageProps> = React.memo(
+  ({ msg }) => (
+    <div className={msg?.sender === 'Cube-BOT' ? 'bot-message' : 'user-message'}>
+      <div className="message-avatar">{msg?.sender === 'Cube-BOT' ? <FontAwesomeIcon icon={faCube as IconProp} /> : <FontAwesomeIcon icon={faUser as IconProp} />}</div>
+      <div className="message-content">
+        <strong>{msg?.sender}</strong>: {msg?.message}
+      </div>
     </div>
-    <div className="message-content">
-      <strong>{msg.sender}</strong>: {msg.message}
-    </div>
-  </div>
-), (prevProps, nextProps) => {
-  return prevProps.msg.message === nextProps.msg.message &&
-    prevProps.msg.sender === nextProps.msg.sender;
-});
+  ),
+  (prevProps, nextProps) => {
+    return prevProps.msg.message === nextProps.msg.message && prevProps.msg.sender === nextProps.msg.sender;
+  },
+);
 
-let conversationList  : Conversation[] = [];
+let conversationList: Conversation[] = [];
 let username = '';
 
 const Header = React.lazy(() => import('../components/Header'));
 const ChatBot = () => {
-
   const cookies = new Cookies();
   const jwt = cookies.get('jwt') as string;
   const user_id = getUserIDFromJWT(jwt);
@@ -60,54 +55,51 @@ const ChatBot = () => {
   const [selectedModel, setSelectedModel] = useState({ value: 'Cube-BOT', label: 'Cube-BOT(GPT3.5)' });
   const [promptTexts, setPromptTexts] = useState<string[]>([]);
   const [promptsLeft, setPromptsLeft] = useState(Number);
-  const options=[
+  const options = [
     { value: 'Cube-BOT', label: 'Cube-BOT(GPT3.5)' },
     { value: 'Llama', label: 'Llama' },
-    { value: 'Bard', label: 'Bard', },  ];
+    { value: 'Bard', label: 'Bard' },
+  ];
   const chatContentLastMessage = useRef(null);
-  
-  
-  const handleUserInput = (event: { target: { value: React.SetStateAction<string>; }; }) => {
+
+  const handleUserInput = (event: { target: { value: React.SetStateAction<string> } }) => {
     setUserInput(event.target.value);
   };
 
   const loadConversations = async () => {
-      try {
-        const conversationsListPromise = await fetchConversations(jwt);
-        if (conversationsListPromise.status === 200) {
-          const conversationsListResponse = await conversationsListPromise.json() as ConversationsResponse;
-          const loadedConversationsList = conversationsListResponse.data.map((conversation) => ({
-            ...conversation,
-            last_accessed: new Date(conversation.last_accessed),
-          }));          
-          
-          loadedConversationsList.sort((a, b) => b.last_accessed.getTime() - a.last_accessed.getTime());
-          conversationList =  loadedConversationsList;
-          //console.log(conversationsHistory[0]?.sender);
+    try {
+      const conversationsListPromise = await fetchConversations(jwt);
+      if (conversationsListPromise.status === 200) {
+        const conversationsListResponse = (await conversationsListPromise.json()) as ConversationsResponse;
+        const loadedConversationsList = conversationsListResponse.data.map((conversation) => ({
+          ...conversation,
+          last_accessed: new Date(conversation.last_accessed),
+        }));
 
-          if(conversationList.length > 0) {
-            const updatedPromptTexts = [...promptTexts]; 
-            conversationList.forEach((conversation, index) => {
-              updatedPromptTexts[index] = conversation.conversation_description
-                ? conversation.conversation_description.substring(0, 12)
-                : 'Prazna konverzacija';
-            });
-            setPromptTexts(updatedPromptTexts);
+        loadedConversationsList.sort((a, b) => b.last_accessed.getTime() - a.last_accessed.getTime());
+        conversationList = loadedConversationsList;
+        //console.log(conversationsHistory[0]?.sender);
+
+        if (conversationList.length > 0) {
+          const updatedPromptTexts = [...promptTexts];
+          conversationList.forEach((conversation, index) => {
+            updatedPromptTexts[index] = conversation.conversation_description ? conversation.conversation_description.substring(0, 12) : 'Prazna konverzacija';
+          });
+          setPromptTexts(updatedPromptTexts);
           await handleRestoreConversation(0);
           //console.log(username);
-          }
-          console.log(conversationList);
-          setCurrentConversationIndex(0);
-        } else {
-          console.error('Error fetching previous conversations');
         }
-      } catch (error) {
-        console.error('Error:', error);
+        //console.log(conversationList);
+        setCurrentConversationIndex(0);
+      } else {
+        console.error('Error fetching previous conversations');
       }
+    } catch (error) {
+      console.error('Error:', error);
+    }
     //console.log(conversationList);
-
   };
-  
+
   const scrollToBottom = () => {
     if (chatContentLastMessage.current) {
       chatContentLastMessage.current.scrollIntoView({ behavior: 'smooth' });
@@ -115,69 +107,64 @@ const ChatBot = () => {
   };
 
   useEffect(() => {
-    loadConversations().catch(error => {
+    loadConversations().catch((error) => {
       console.error('Unhandled promise error:', error);
     });
   }, []);
 
   useEffect(() => {
-      
     scrollToBottom();
-
   }, [conversationsHistory]);
-  
-  useEffect(()  => {
-      
-     loadRemainingPropmts().catch(error => {
-      console.error('Failed loading remaining prompts', error);
-     });
 
+  useEffect(() => {
+    loadRemainingPropmts().catch((error) => {
+      console.error('Failed loading remaining prompts', error);
+    });
   }, []);
-  
- if(!jwt || !user_id) {
-    window.location.href = "/";
+
+  if (!jwt || !user_id) {
+    window.location.href = '/';
     return;
   }
 
-  const loadConversationByID = async (index : number) => {
-
+  const loadConversationByID = async (index: number) => {
     const conversation_id = conversationList[index].conversation_id;
     //console.log(conversation_id);
-      try {
-        const conversationsListPromise = await fetchConversationById(jwt, conversation_id);
-        if (conversationsListPromise.status === 200) {
-          const conversationsListResponse = await conversationsListPromise.json() as ConversationResponse;
-          
-          const loadedConversationDescripition = conversationsListResponse.data.conversation_description;
-                  
-          const updatedPromptTexts = [...promptTexts];
-          updatedPromptTexts[index] = loadedConversationDescripition.substring(0, 12);
-          setPromptTexts(updatedPromptTexts);
-          //console.log(loadedConversationDescripition);
-        } else {
-          console.error('Error fetching previous conversations');
-        }
-      } catch (error) {
-        console.error('Error:', error);
+    try {
+      const conversationsListPromise = await fetchConversationById(jwt, conversation_id);
+      if (conversationsListPromise.status === 200) {
+        const conversationsListResponse = (await conversationsListPromise.json()) as ConversationResponse;
+
+        const loadedConversationDescripition = conversationsListResponse.data.conversation_description;
+
+        const updatedPromptTexts = [...promptTexts];
+        updatedPromptTexts[index] = loadedConversationDescripition.substring(0, 12);
+        setPromptTexts(updatedPromptTexts);
+        //console.log(loadedConversationDescripition);
+      } else {
+        console.error('Error fetching previous conversations');
       }
-  }; 
+    } catch (error) {
+      console.error('Error:', error);
+    }
+  };
 
   const loadRemainingPropmts = async () => {
-      try {
-        const userPromptRem = await fetchUserData(jwt, user_id);
-        if (userPromptRem.status === 200) {
-          const userPromptCount = await userPromptRem.json() as UserDataResponse;
-          const remainingPrompts = userPromptCount.data.remaining_prompts;
-          const fetchUsername = userPromptCount.data.username;
-          setPromptsLeft(remainingPrompts);
-          username = fetchUsername;
-        } else {
-          console.error('Error fetching remaining propmts');
-        }
-      } catch (error) {
-        console.error('Error:', error);
+    try {
+      const userPromptRem = await fetchUserData(jwt, user_id);
+      if (userPromptRem.status === 200) {
+        const userPromptCount = (await userPromptRem.json()) as UserDataResponse;
+        const remainingPrompts = userPromptCount.data.remaining_prompts;
+        const fetchUsername = userPromptCount.data.username;
+        setPromptsLeft(remainingPrompts);
+        username = fetchUsername;
+      } else {
+        console.error('Error fetching remaining propmts');
       }
-  }; 
+    } catch (error) {
+      console.error('Error:', error);
+    }
+  };
 
   const handleSubmit = async (event: { preventDefault: () => void }) => {
     setDisableInput(true);
@@ -187,61 +174,57 @@ const ChatBot = () => {
       return;
     }
 
-    if(conversationsHistory[0]?.sender == 'Cube-BOT'){
+    if (conversationsHistory[0]?.sender == 'Cube-BOT') {
       await handleNewChat();
       setConversationsHistory([]);
       //console.log(conversationsHistory);
     }
     const currentContext = [...conversationsHistory];
-    currentContext.push({sender: username, message: userInput});
+    currentContext.push({ sender: username, message: userInput });
     const conversation_id = conversationList[currentConversationIndex].conversation_id;
     const pythonResponse = await sendPromptToPythonChatBot(jwt, userInput, conversation_id, currentContext, user_id, selectedModel);
     if (pythonResponse.status === 200) {
-        const pythonData = await pythonResponse.text();
-        let updatedConversation: Message[] = [];
-        if(conversationsHistory[0]?.sender == 'Cube-BOT') {
-          updatedConversation.push({ sender: username , message: userInput });
-          updatedConversation.push({ sender: 'Cube-BOT', message: pythonData });
-        }
-        else {
-          updatedConversation = [...conversationsHistory];
-          updatedConversation.push({ sender: username, message: userInput });
-          updatedConversation.push({ sender: 'Cube-BOT', message: pythonData });
-        }
-        setConversationsHistory(updatedConversation);
-        //console.log(conversationsHistory);
-        const conversationIndex = conversationList.findIndex(conversation => conversation.conversation_id === conversation_id);
-        //console.log(conversationIndex);
-        if (conversationIndex !== -1) {
-          conversationList[conversationIndex].last_accessed = new Date();
-        }    
-        setConversationCache(prevCache => ({
-          ...prevCache,
-          [conversationList[currentConversationIndex].conversation_id]: updatedConversation,
+      const pythonData = await pythonResponse.text();
+      let updatedConversation: Message[] = [];
+      if (conversationsHistory[0]?.sender == 'Cube-BOT') {
+        updatedConversation.push({ sender: username, message: userInput });
+        updatedConversation.push({ sender: 'Cube-BOT', message: pythonData });
+      } else {
+        updatedConversation = [...conversationsHistory];
+        updatedConversation.push({ sender: username, message: userInput });
+        updatedConversation.push({ sender: 'Cube-BOT', message: pythonData });
+      }
+      setConversationsHistory(updatedConversation);
+      //console.log(conversationsHistory);
+      const conversationIndex = conversationList.findIndex((conversation) => conversation.conversation_id === conversation_id);
+      //console.log(conversationIndex);
+      if (conversationIndex !== -1) {
+        conversationList[conversationIndex].last_accessed = new Date();
+      }
+      setConversationCache((prevCache) => ({
+        ...prevCache,
+        [conversationList[currentConversationIndex].conversation_id]: updatedConversation,
       }));
 
       await loadConversationByID(currentConversationIndex);
       setUserInput('');
-      setPromptsLeft(promptsLeft-1);
-    }
-    else if(pythonResponse.status === 403) {
-     await Swal.fire({
-          icon: 'error',
-          title: 'Nema dostupnih obaveštenja',
-          text: 'Nema dostupnih obaveštenja.',
-        });
+      setPromptsLeft(promptsLeft - 1);
+    } else if (pythonResponse.status === 403) {
+      await Swal.fire({
+        icon: 'error',
+        title: 'Nema dostupnih obaveštenja',
+        text: 'Nema dostupnih obaveštenja.',
+      });
       console.error('No prompts available');
-    }
-    else if(pythonResponse.status === 500) {
-     await Swal.fire({
+    } else if (pythonResponse.status === 500) {
+      await Swal.fire({
         icon: 'error',
         title: 'Neočekivan problem na serveru',
         text: 'Došlo je do neočekivanog problema na serveru. Molimo pokušajte ponovo.',
       });
       console.error('Unexpected server problem please try again');
-    }
-    else {
-    await  Swal.fire({
+    } else {
+      await Swal.fire({
         icon: 'error',
         title: 'Neočekivan problem na serveru',
         text: 'Došlo je do neočekivanog problema na serveru. Molimo pokušajte ponovo.',
@@ -252,116 +235,112 @@ const ChatBot = () => {
   };
 
   const handleEmptyChat = () => {
-    return (
-      conversationsHistory[0]?.sender === undefined
-    )
+    return conversationsHistory[0]?.sender === undefined;
   };
 
-const handleNewChat = async () => {
-  //console.log(conversationsHistory[0]?.sender);
-      try {
-        if (handleEmptyChat() && conversationList.length === 0 || handleEmptyChat() && conversationsHistory[2]?.sender ) {
-          const conversationsListPromise = await startNewConversation(jwt);
-          if (conversationsListPromise.status === 200) {
-            const conversationsListResponse = await conversationsListPromise.json() as ConversationResponse;
-            const conversationsListId = conversationsListResponse.data.conversation_id;
-            //console.log(conversationsListId);
-            conversationList.push({
-              conversation_id : conversationsListId,
-              user_id: user_id,
-              last_accessed: new Date(),
-              conversation_description: ""
-            })             
-          await handleNewChatActive();
-          } else {
-            console.error('Error fetching previous conversations');
-          }
-        }
-        else if (handleEmptyChat()) {
-          await Swal.fire({
-            icon: 'error',
-            title: 'Greska.',
-            text: 'Napisite neku recenicu!',
-          })
-        }
-        else {
-          const conversationsListPromise = await startNewConversation(jwt);
-          if (conversationsListPromise.status === 200) {
-            const conversationsListResponse = await conversationsListPromise.json() as ConversationResponse;
-            const conversationsListId = conversationsListResponse.data.conversation_id;
-            conversationList.push({
-              conversation_id : conversationsListId,
-              user_id: user_id,
-              last_accessed: new Date(),
-              conversation_description: ""
-            })             
-            await handleNewChatActive();
-          } else {
-            console.error('Error fetching previous conversations');
-          }
-        }
-      } catch (error) {
-        console.error('Error:', error);
-      }
-};
-
-const handleDeleteChat = async (index: number) => {
-  const conversation_id = conversationList[index].conversation_id;
-  if (conversation_id) {
+  const handleNewChat = async () => {
+    //console.log(conversationsHistory[0]?.sender);
     try {
-     await Swal.fire({
-        title: 'Da li ste sigurni?',
-        text: "Necete moci da ispravite!",
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: '#3085d6',
-        cancelButtonColor: '#d33',
-        confirmButtonText: 'Da, izbriši!',
-      }).then(async (result) => {
-        if (result.isConfirmed) {
-          const conversationsListPromise = await deleteConversation(jwt, conversation_id);
-          if (conversationsListPromise.status === 200) {
-            await conversationsListPromise.json() as ConversationsResponse;
-            const index = conversationList.findIndex(conversation => conversation.conversation_id === conversation_id);
-            if (index !== -1) {
-              conversationList.splice(index, 1);
-              if (conversationList.length === 0) {
-              const updatedCache = { ...conversationCache };
-              delete updatedCache[conversation_id];
-              setConversationCache(updatedCache);
-              //console.log(conversationsHistory)
-              setConversationsHistory([{ 
-                sender: 'Cube-BOT', message: 'Hello! How can I help you?' },
-              { sender: 'User', message: 'Hi there! I have a question.' },]);
-              }
-              promptTexts.splice(index,1)
-              setCurrentConversationIndex(0);
-              await loadConversationByID(currentConversationIndex);
-              await handleRestoreConversation(0);
-
-              await Swal.fire(
-                'Izbrisano!',
-                'Vaša konverzacija je uspešno izbrisana!',
-                'success'
-              );
-            } else {
-              console.error('Error.');
-            }
-          } else {
-            console.error('Error Deleting Conversation');
-          }
+      if ((handleEmptyChat() && conversationList.length === 0) || (handleEmptyChat() && conversationsHistory[2]?.sender)) {
+        const conversationsListPromise = await startNewConversation(jwt);
+        if (conversationsListPromise.status === 200) {
+          const conversationsListResponse = (await conversationsListPromise.json()) as ConversationResponse;
+          const conversationsListId = conversationsListResponse.data.conversation_id;
+          //console.log(conversationsListId);
+          conversationList.push({
+            conversation_id: conversationsListId,
+            user_id: user_id,
+            last_accessed: new Date(),
+            conversation_description: '',
+          });
+          await handleNewChatActive();
+        } else {
+          console.error('Error fetching previous conversations');
         }
-      });
+      } else if (handleEmptyChat()) {
+        await Swal.fire({
+          icon: 'error',
+          title: 'Greska.',
+          text: 'Napisite neku recenicu!',
+        });
+      } else {
+        const conversationsListPromise = await startNewConversation(jwt);
+        if (conversationsListPromise.status === 200) {
+          const conversationsListResponse = (await conversationsListPromise.json()) as ConversationResponse;
+          const conversationsListId = conversationsListResponse.data.conversation_id;
+          conversationList.push({
+            conversation_id: conversationsListId,
+            user_id: user_id,
+            last_accessed: new Date(),
+            conversation_description: '',
+          });
+          await handleNewChatActive();
+        } else {
+          console.error('Error fetching previous conversations');
+        }
+      }
     } catch (error) {
       console.error('Error:', error);
     }
-  }
-};
-const handleDeleteAllChat = async () => {
+  };
+
+  const handleDeleteChat = async (index: number) => {
+    const conversation_id = conversationList[index].conversation_id;
+    if (conversation_id) {
+      try {
+        await Swal.fire({
+          title: 'Da li ste sigurni?',
+          text: 'Necete moci da ispravite!',
+          icon: 'warning',
+          showCancelButton: true,
+          confirmButtonColor: '#3085d6',
+          cancelButtonColor: '#d33',
+          confirmButtonText: 'Da, izbriši!',
+        }).then(async (result) => {
+          if (result.isConfirmed) {
+            const conversationsListPromise = await deleteConversation(jwt, conversation_id);
+            if (conversationsListPromise.status === 200) {
+              (await conversationsListPromise.json()) as ConversationsResponse;
+              const index = conversationList.findIndex((conversation) => conversation.conversation_id === conversation_id);
+              if (index !== -1) {
+                conversationList.splice(index, 1);
+                if (conversationList.length === 0) {
+                  const updatedCache = { ...conversationCache };
+                  delete updatedCache[conversation_id];
+                  setConversationCache(updatedCache);
+                  //console.log(conversationsHistory)
+                  setConversationsHistory([
+                    {
+                      sender: 'Cube-BOT',
+                      message: 'Hello! How can I help you?',
+                    },
+                    { sender: 'User', message: 'Hi there! I have a question.' },
+                  ]);
+                }
+                promptTexts.splice(index, 1);
+                setCurrentConversationIndex(0);
+                await loadConversationByID(currentConversationIndex);
+                await handleRestoreConversation(0);
+
+                await Swal.fire('Izbrisano!', 'Vaša konverzacija je uspešno izbrisana!', 'success');
+              } else {
+                console.error('Error.');
+              }
+            } else {
+              console.error('Error Deleting Conversation');
+            }
+          }
+        });
+      } catch (error) {
+        console.error('Error:', error);
+      }
+    }
+  };
+  const handleDeleteAllChat = async () => {
     try {
-     await Swal.fire({
+      await Swal.fire({
         title: 'Da li ste sigurni?',
-        text: "Necete moci da ispravite!",
+        text: 'Necete moci da ispravite!',
         icon: 'warning',
         showCancelButton: true,
         confirmButtonColor: '#3085d6',
@@ -371,44 +350,43 @@ const handleDeleteAllChat = async () => {
         if (result.isConfirmed) {
           const conversationsListPromise = await deleteAllConversationsByUserId(jwt, user_id);
           if (conversationsListPromise.status === 200) {
-            await conversationsListPromise.json() as ConversationsResponse;
-             
-            if (conversationList.length >= 0) {
+            (await conversationsListPromise.json()) as ConversationsResponse;
 
+            if (conversationList.length >= 0) {
               conversationList = [];
               setConversationCache({});
-              setConversationsHistory([{ 
-                sender: 'Cube-BOT', message: 'Hello! How can I help you?' },
-              { sender: 'User', message: 'Hi there! I have a question.' },]);
-              }
-              setPromptTexts([]);
-
-              await Swal.fire(
-                'Izbrisano!',
-                'Vasa konverzacije su uspešno izbrisane.',
-                'success'
-              );
-            } else {
-              console.error('Error.');
+              setConversationsHistory([
+                {
+                  sender: 'Cube-BOT',
+                  message: 'Hello! How can I help you?',
+                },
+                { sender: 'User', message: 'Hi there! I have a question.' },
+              ]);
             }
+            setPromptTexts([]);
+
+            await Swal.fire('Izbrisano!', 'Vasa konverzacije su uspešno izbrisane.', 'success');
           } else {
-            console.error('Error Deleting Conversation');
+            console.error('Error.');
           }
-        });
+        } else {
+          console.error('Error Deleting Conversation');
+        }
+      });
     } catch (error) {
       console.error('Error:', error);
     }
   };
 
-const handleNewChatActive = async () => {
-  const reversedConversationsList = conversationList.slice().reverse();
-  const lastIndex = reversedConversationsList.findIndex(conversation => conversation.conversation_id);
-  if (lastIndex !== -1) { 
-    const lastCreatedIndex = conversationList.length - lastIndex - 1; 
-    setCurrentConversationIndex(lastCreatedIndex);
-    await handleRestoreConversation(lastCreatedIndex);
-  }
-};
+  const handleNewChatActive = async () => {
+    const reversedConversationsList = conversationList.slice().reverse();
+    const lastIndex = reversedConversationsList.findIndex((conversation) => conversation.conversation_id);
+    if (lastIndex !== -1) {
+      const lastCreatedIndex = conversationList.length - lastIndex - 1;
+      setCurrentConversationIndex(lastCreatedIndex);
+      await handleRestoreConversation(lastCreatedIndex);
+    }
+  };
 
   const handleRestoreConversation = async (index: number) => {
     setCurrentConversationIndex(index);
@@ -417,52 +395,56 @@ const handleNewChatActive = async () => {
     if (conversationCache[conversationId]) {
       setConversationsHistory(conversationCache[conversationId]);
     } else {
-    const promptsResponse = await fetchPreviousPrompts(jwt, conversationId);
-    const answersResponse = await fetchPreviousAnswers(jwt, conversationId);
-    if (promptsResponse.status === 200 && answersResponse.status === 200) {
-      const responseJson = await promptsResponse.json() as PromptResponse;
-      const promptsData = responseJson.data;
-      const responseJson2 = await answersResponse.json() as AnswerResponse;
-      const answersData = responseJson2.data;
-      if (Array.isArray(promptsData) && promptsData.length > 0 && Array.isArray(answersData) && answersData.length > 0) {
-        const formattedPrompts: Message[] = promptsData.map((promptObj: Prompt) => ({
-          sender: username,
-          message: promptObj.prompt,
-        }));
+      const promptsResponse = await fetchPreviousPrompts(jwt, conversationId);
+      const answersResponse = await fetchPreviousAnswers(jwt, conversationId);
+      if (promptsResponse.status === 200 && answersResponse.status === 200) {
+        const responseJson = (await promptsResponse.json()) as PromptResponse;
+        const promptsData = responseJson.data;
+        const responseJson2 = (await answersResponse.json()) as AnswerResponse;
+        const answersData = responseJson2.data;
+        if (Array.isArray(promptsData) && promptsData.length > 0 && Array.isArray(answersData) && answersData.length > 0) {
+          const formattedPrompts: Message[] = promptsData.map((promptObj: Prompt) => ({
+            sender: username,
+            message: promptObj.prompt,
+          }));
 
-        const formattedAnswers: Message[] = answersData.map((answerObj: Answer) => ({
-          sender: 'Cube-BOT',
-          message: answerObj.answer,
-        }));
-        const formattedMessages: Message[] = [];
-        for (let i = 0; i < promptsData.length; i++) {
-          formattedMessages[i * 2] = formattedPrompts[i];
-          formattedMessages[i * 2 + 1] = formattedAnswers[i];
+          const formattedAnswers: Message[] = answersData.map((answerObj: Answer) => ({
+            sender: 'Cube-BOT',
+            message: answerObj.answer,
+          }));
+          const formattedMessages: Message[] = [];
+          for (let i = 0; i < promptsData.length; i++) {
+            formattedMessages[i * 2] = formattedPrompts[i];
+            formattedMessages[i * 2 + 1] = formattedAnswers[i];
+          }
+          setConversationsHistory(formattedMessages);
+          setConversationCache((prevCache) => ({
+            ...prevCache,
+            [conversationList[index].conversation_id]: formattedMessages,
+          }));
+        } else {
+          setConversationsHistory([]);
         }
-        setConversationsHistory(formattedMessages);
-        setConversationCache(prevCache => ({
-          ...prevCache,
-          [conversationList[index].conversation_id]: formattedMessages,
-      }));
       } else {
-        setConversationsHistory([]);
+        console.error('Error fetching prompts for conversation');
       }
-    } else {
-      console.error('Error fetching prompts for conversation');
     }
-  }
-};
+  };
   return (
     <div className="chatbot-container">
       <React.Suspense fallback={<div>Loading...</div>}>
         <Header
-          handleLoginClick={() => { /* Handle login click */ }}
-          handleRegisterClick={() => { /* Handle register click */ }}
+          handleLoginClick={() => {
+            /* Handle login click */
+          }}
+          handleRegisterClick={() => {
+            /* Handle register click */
+          }}
         />
       </React.Suspense>
       <div className="chat-container">
         <div className="chat-sidebar">
-          <div className='buttons'>
+          <div className="buttons">
             <button className="start-new-chat-button" onClick={handleNewChat}>
               Novi Čet
             </button>
@@ -471,30 +453,21 @@ const handleNewChatActive = async () => {
             </button>
           </div>
           <div className="conversation-restore-points">
-          <div className="restore-points-header">Prethodni četovi</div>
-          {conversationList.map((_, index) => {
+            <div className="restore-points-header">Prethodni četovi</div>
+            {conversationList.map((_, index) => {
+              const promptText = promptTexts[index];
 
-            const promptText = promptTexts[index];
-
-            return (
-              <div
-                key={index}
-                className={`restore-point ${index === currentConversationIndex ? 'selected' : ''}`}
-                onClick={() => handleRestoreConversation(index)}
-              >
-                {index === currentConversationIndex ? (
-                  <strong>{promptText}</strong>
-                ) : (
-                  <span>{promptText}</span>
-                )}
-                <FontAwesomeIcon className="DeleteIcon" icon={faTrash} style={{ paddingLeft: '10px' }} onClick={() => handleDeleteChat(index)} />
-              </div>
-            );
-          })}
-        </div>
+              return (
+                <div key={index} className={`restore-point ${index === currentConversationIndex ? 'selected' : ''}`} onClick={() => handleRestoreConversation(index)}>
+                  {index === currentConversationIndex ? <strong>{promptText}</strong> : <span>{promptText}</span>}
+                  <FontAwesomeIcon className="DeleteIcon" icon={faTrash as IconProp} style={{ paddingLeft: '10px' }} onClick={() => handleDeleteChat(index)} />
+                </div>
+              );
+            })}
+          </div>
         </div>
         <div className="chat-content">
-          <div className='remaining-prompts'>Ostalo vam je jos : {promptsLeft}  promptova</div>
+          <div className="remaining-prompts">Ostalo vam je jos : {promptsLeft} promptova</div>
           <div className="previous-conversations">
             <div className="message-bubbles">
               {conversationsHistory.map((msg, index) => (
@@ -504,33 +477,22 @@ const handleNewChatActive = async () => {
             </div>
           </div>
           <div className="user-input">
-                <form onSubmit={handleSubmit}>
-                  <input
-                    type="text"
-                    value={userInput}
-                    onChange={handleUserInput}
-                    placeholder="Unesite vašu poruku..."
-                    disabled={disableInput}
-                  />
-                  <button className="send-button" type="submit" onClick={handleEmptyChat}>
-                    Pošalji
-                  </button>
-                </form>
+            <form onSubmit={handleSubmit}>
+              <input type="text" value={userInput} onChange={handleUserInput} placeholder="Unesite vašu poruku..." disabled={disableInput} />
+              <button className="send-button" type="submit" onClick={handleEmptyChat}>
+                Pošalji
+              </button>
+            </form>
           </div>
         </div>
-        <div className='chat-sidebar2'>
+        <div className="chat-sidebar2">
           <div className="model-selection">
             <label htmlFor="CubeBOT-model">Izaberi Cube-BOT model:</label>
-            <Select
-             defaultValue={selectedModel}
-              onChange={setSelectedModel}
-              options={options}
-              />
+            <Select defaultValue={selectedModel} onChange={setSelectedModel} options={options} />
           </div>
         </div>
       </div>
     </div>
-   
   );
 };
 

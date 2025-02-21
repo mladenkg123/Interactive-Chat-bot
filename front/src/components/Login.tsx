@@ -1,47 +1,45 @@
-import './login.css'
+import './login.css';
 import { useState } from 'react';
 import { getExpireFromJWT } from '../logic/utils';
 import Cookies from 'universal-cookie';
 import Swal from 'sweetalert2';
 
 type LoginProps = {
-    isShowLogin : boolean;
-    onCloseLogin : () => void;
-    onLoginSuccess : () => void;
-}
+  isShowLogin: boolean;
+  onCloseLogin: () => void;
+  onLoginSuccess: () => void;
+};
 interface LoginResponse {
   jwt: string;
 }
 
 const cookies = new Cookies();
 
-
-
-const Login = ({ isShowLogin, onCloseLogin, onLoginSuccess } : LoginProps) => {
+const Login = ({ isShowLogin, onCloseLogin, onLoginSuccess }: LoginProps) => {
   const [email, setEmail] = useState('');
   const [pass, setPass] = useState('');
-  const handleSubmit = (e: { preventDefault: () => void; }) => {
+  const handleSubmit = (e: { preventDefault: () => void }) => {
     e.preventDefault();
     const requestOptions = {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email: email, password: pass })
+      body: JSON.stringify({ email: email, password: pass }),
     };
     fetch('http://localhost:8000/auth/login', requestOptions)
-      .then(response => {
+      .then((response) => {
         if (!response.ok) {
-          throw new Error('Login failed'); 
+          throw new Error('Login failed');
         }
         return response.json() as Promise<LoginResponse>;
       })
-      .then(async data=> {
+      .then(async (data) => {
         onCloseLogin();
         onLoginSuccess();
 
         const expire = getExpireFromJWT(data.jwt);
         if (expire !== null) {
           cookies.set('jwt', data.jwt);
-         
+
           await Swal.fire({
             title: 'Prijavljivanje.',
             text: 'Uspešno ste se prijavili na vas nalog.',
@@ -57,12 +55,11 @@ const Login = ({ isShowLogin, onCloseLogin, onLoginSuccess } : LoginProps) => {
           }).then(() => {
             onLoginSuccess();
           });
-          
         }
       })
-      .catch(async error => {
+      .catch(async (error) => {
         onCloseLogin();
-        console.error(error)
+        console.error(error);
         await Swal.fire({
           title: 'Greška pri prijavljivanju.',
           text: 'Šifra ili E-mail koji ste unali nisu tačni.',
@@ -70,8 +67,8 @@ const Login = ({ isShowLogin, onCloseLogin, onLoginSuccess } : LoginProps) => {
           showCancelButton: false,
           confirmButtonText: 'Pokušaj ponovo',
           customClass: {
-            confirmButton: 'swal-button swal-button--error'
-          }
+            confirmButton: 'swal-button swal-button--error',
+          },
         }).then((result) => {
           if (result.isConfirmed) {
             onCloseLogin();
@@ -80,17 +77,19 @@ const Login = ({ isShowLogin, onCloseLogin, onLoginSuccess } : LoginProps) => {
       });
   };
   return (
-    <div className={`${isShowLogin ? "active" : ""} show`}>
+    <div className={`${isShowLogin ? 'active' : ''} show`}>
       <div className="login-form">
         <div className="form-box solid">
-        <button className="close-button1" onClick={onCloseLogin}>X</button>
+          <button className="close-button1" onClick={onCloseLogin}>
+            X
+          </button>
           <form onSubmit={handleSubmit}>
             <h1 className="login-text">PRIJAVLJIVANJE</h1>
-            <label style={{color:"white"}}>E-mail</label>
+            <label style={{ color: 'white' }}>E-mail</label>
             <br></br>
             <input className="login-box" value={email} onChange={(e) => setEmail(e.target.value)} type="email" placeholder="vašemail@gmail.com" id="email" name="email" />
             <br></br>
-            <label style={{color:"white"}}>Šifra</label>
+            <label style={{ color: 'white' }}>Šifra</label>
             <br></br>
             <input className="login-box" value={pass} onChange={(e) => setPass(e.target.value)} type="password" placeholder="********" id="password" name="password" />
             <br></br>
