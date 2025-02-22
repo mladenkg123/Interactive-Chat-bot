@@ -29,6 +29,11 @@ type UserData = {
   remaining_prompts: number;
   username: string;
   role: string;
+  answers_and_grades: {
+    user_answer: string;
+    bot_answer: string;
+    grade: number;
+  }[];
 };
 
 type Message = {
@@ -43,6 +48,11 @@ type SQLList = {
   active: boolean;
 };
 
+type Question = {
+  questions: string[];
+};
+
+type QuestionsResponse = BaseResponse<Question>;
 type PromptResponse = BaseResponse<Prompt>;
 type AnswerResponse = BaseResponse<Answer>;
 type ConversationsResponse = BaseResponse<Conversation[]>;

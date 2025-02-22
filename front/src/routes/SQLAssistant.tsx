@@ -72,10 +72,9 @@ const SQLAssistant = () => {
       try {
         const questionsPromise = await fetchQuestions(jwt);
         if (questionsPromise.status === 200) {
-          const questionsResponse = (await questionsPromise.json()) as Array<object>;
-          console.log(questionsResponse);
-          setSQLListList(questionsResponse[0].questions[1]);
-          setTable(questionsResponse[0].questions[0]);
+          const questionsResponse = (await questionsPromise.json()) as QuestionsResponse;
+          setTable(questionsResponse.data.questions[0]);
+          //setSQLListList(questionsResponse.data.questions[1]);
           setCurrentSQLListIndex(0);
 
           // await handleRestoreConversation(0);
@@ -114,6 +113,9 @@ const SQLAssistant = () => {
   };
 
   const handleNewChat = async () => {
+    if (!userData || !user_id) {
+      return;
+    }
     try {
       const SQLListPromise = await startNewSQLList(jwt);
       if (SQLListPromise.status === 200) {
@@ -135,6 +137,9 @@ const SQLAssistant = () => {
   };
 
   const handleDeleteAllSQL = async () => {
+    if (!userData || !user_id) {
+      return;
+    }
     try {
       await Swal.fire({
         title: 'Da li ste sigurni?',
@@ -246,7 +251,7 @@ const SQLAssistant = () => {
       const formattedquestions: Message[] = [
         {
           sender: 'SQLAssistant',
-          message: SQLListList[index],
+          message: SQLListList[index].SQLList,
         },
       ];
 
@@ -391,7 +396,7 @@ const SQLAssistant = () => {
           console.log("questionsData: ", questionsData);
           await sendPromptToPythonSQLAssitant(jwt, SQLList.SQLList, questionsData[0]._id, [], user_id, { value: 'generate_questions', label: 'SQL(GPT3.5)' });
           SQLList.active = true;
-          setActiveCircles(SQLList.SQL_id);
+          setActiveCircles([SQLList.SQL_id]);
           await Swal.fire({
             icon: 'success',
             title: 'Uspesno',
