@@ -1,6 +1,9 @@
 import { jwtDecode } from 'jwt-decode';
 
 export const getUserIDFromJWT = (jwt: string): string | null => {
+  if (!jwt) {
+    return null;
+  }
   try {
     const decodedJWT: { _id: string } = jwtDecode(jwt);
     return decodedJWT._id;

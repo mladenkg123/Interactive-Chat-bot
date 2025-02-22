@@ -60,7 +60,7 @@ const ChatBot = () => {
     { value: 'Llama', label: 'Llama' },
     { value: 'Bard', label: 'Bard' },
   ];
-  const chatContentLastMessage = useRef(null);
+  const chatContentLastMessage = useRef<HTMLDivElement>(null);
 
   const handleUserInput = (event: { target: { value: React.SetStateAction<string> } }) => {
     setUserInput(event.target.value);
@@ -440,6 +440,10 @@ const ChatBot = () => {
           handleRegisterClick={() => {
             /* Handle register click */
           }}
+          handleSignOut={() => {
+            /* Handle sign out */
+          }}
+          isAuthenticated={true}
         />
       </React.Suspense>
       <div className="chat-container">

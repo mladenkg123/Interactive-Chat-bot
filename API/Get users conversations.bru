@@ -1,0 +1,15 @@
+meta {
+  name: Get users conversations
+  type: http
+  seq: 4
+}
+
+get {
+  url: 127.0.0.1:8000/conversation
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NGU5MTE4ODM5MThmZmFmNzQ3MTBjNzQiLCJleHBpcmUiOjE2OTM3NTQ5NDAsImlhdCI6MTY5MzE1MDE0MH0.PplBmvTN3wRcH4_NesPmUM3JDxITZgeWdxscQ7SyMK8
+}

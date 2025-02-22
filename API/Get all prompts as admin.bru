@@ -1,0 +1,15 @@
+meta {
+  name: Get all prompts as admin
+  type: http
+  seq: 7
+}
+
+get {
+  url: 127.0.0.1:8000/prompt
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NGU5MTE4ODM5MThmZmFmNzQ3MTBjNzQiLCJleHBpcmUiOjE2OTM3NTk0NjQsImlhdCI6MTY5MzE1NDY2NH0.G9xdQIiKWMZiVRJzRheavvRklBqU7GS1rm4mjH7AJ4M
+}

@@ -1,0 +1,15 @@
+meta {
+  name: Get prompt by conversation ID
+  type: http
+  seq: 9
+}
+
+get {
+  url: 127.0.0.1:8000/prompt/conversation/64e911933918ffaf74710c78
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NGU5MTE4ODM5MThmZmFmNzQ3MTBjNzQiLCJleHBpcmUiOjE2OTM3NjM0MDAsImlhdCI6MTY5MzE1ODYwMH0.zmXFH2nnPZpQd_zASxb7f8JqZk7VOo85_txFpkDaVls
+}

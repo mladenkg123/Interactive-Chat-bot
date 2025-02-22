@@ -1,0 +1,18 @@
+meta {
+  name: Login
+  type: http
+  seq: 12
+}
+
+post {
+  url: 127.0.0.1:8000/auth/login
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+      "email":"2@2.2",
+      "password":"1234"
+  }
+}

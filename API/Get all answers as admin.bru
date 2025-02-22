@@ -1,0 +1,15 @@
+meta {
+  name: Get all answers as admin
+  type: http
+  seq: 1
+}
+
+get {
+  url: 127.0.0.1:8000/answer
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NDY0ZmY3YTI0MDEzNzE2NzRlOTQ2MWUiLCJleHBpcmUiOjE2ODUwMjYwNTYsImlhdCI6MTY4NDQyMTI1Nn0.YB8H_FoKClPgUnqB1L40p-d1BLuKvSTECWxTxIljOCY
+}

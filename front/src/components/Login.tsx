@@ -85,11 +85,15 @@ const Login = ({ isShowLogin, onCloseLogin, onLoginSuccess }: LoginProps) => {
           </button>
           <form onSubmit={handleSubmit}>
             <h1 className="login-text">PRIJAVLJIVANJE</h1>
-            <label htmlFor="email" style={{ color: 'white' }}>E-mail</label>
+            <label htmlFor="email" style={{ color: 'white' }}>
+              E-mail
+            </label>
             <br></br>
             <input className="login-box" value={email} onChange={(e) => setEmail(e.target.value)} type="email" placeholder="vašemail@gmail.com" id="email" name="email" />
             <br></br>
-            <label htmlFor="password" style={{ color: 'white' }}>Šifra</label>
+            <label htmlFor="password" style={{ color: 'white' }}>
+              Šifra
+            </label>
             <br></br>
             <input className="login-box" value={pass} onChange={(e) => setPass(e.target.value)} type="password" placeholder="********" id="password" name="password" />
             <br></br>

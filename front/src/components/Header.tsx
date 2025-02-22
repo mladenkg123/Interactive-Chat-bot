@@ -50,7 +50,7 @@ function Header({ handleLoginClick, handleRegisterClick, handleSignOut, isAuthen
   const userInfo = async () => {
     try {
       if (!user_id) {
-        console.error('User ID is missing');
+        //console.error('User ID is missing');
         return;
       }
       const userInfo = await fetchUserData(jwt, user_id);
