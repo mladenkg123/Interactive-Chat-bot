@@ -239,48 +239,37 @@ const ChatBot = () => {
   };
 
   const handleNewChat = async () => {
-    //console.log(conversationsHistory[0]?.sender);
     try {
-      if ((handleEmptyChat() && conversationList.length === 0) || (handleEmptyChat() && conversationsHistory[2]?.sender)) {
-        const conversationsListPromise = await startNewConversation(jwt);
-        if (conversationsListPromise.status === 200) {
-          const conversationsListResponse = (await conversationsListPromise.json()) as ConversationResponse;
-          const conversationsListId = conversationsListResponse.data.conversation_id;
-          //console.log(conversationsListId);
-          conversationList.push({
-            conversation_id: conversationsListId,
-            user_id: user_id,
-            last_accessed: new Date(),
-            conversation_description: '',
-          });
-          await handleNewChatActive();
-        } else {
-          console.error('Error fetching previous conversations');
-        }
+      if (handleEmptyChat() && (conversationList.length === 0 || conversationsHistory[2]?.sender)) {
+        await createNewConversation();
       } else if (handleEmptyChat()) {
         await Swal.fire({
           icon: 'error',
-          title: 'Greska.',
-          text: 'Napisite neku recenicu!',
+          title: 'Greška.',
+          text: 'Napišite neku rečenicu!',
         });
       } else {
-        const conversationsListPromise = await startNewConversation(jwt);
-        if (conversationsListPromise.status === 200) {
-          const conversationsListResponse = (await conversationsListPromise.json()) as ConversationResponse;
-          const conversationsListId = conversationsListResponse.data.conversation_id;
-          conversationList.push({
-            conversation_id: conversationsListId,
-            user_id: user_id,
-            last_accessed: new Date(),
-            conversation_description: '',
-          });
-          await handleNewChatActive();
-        } else {
-          console.error('Error fetching previous conversations');
-        }
+        await createNewConversation();
       }
     } catch (error) {
       console.error('Error:', error);
+    }
+  };
+
+  const createNewConversation = async () => {
+    const conversationsListPromise = await startNewConversation(jwt);
+    if (conversationsListPromise.status === 200) {
+      const conversationsListResponse = (await conversationsListPromise.json()) as ConversationResponse;
+      const conversationsListId = conversationsListResponse.data.conversation_id;
+      conversationList.push({
+        conversation_id: conversationsListId,
+        user_id: user_id,
+        last_accessed: new Date(),
+        conversation_description: '',
+      });
+      await handleNewChatActive();
+    } else {
+      console.error('Error fetching previous conversations');
     }
   };
 
@@ -352,7 +341,7 @@ const ChatBot = () => {
           if (conversationsListPromise.status === 200) {
             (await conversationsListPromise.json()) as ConversationsResponse;
 
-            if (conversationList.length >= 0) {
+            if (conversationList.length > 0) {
               conversationList = [];
               setConversationCache({});
               setConversationsHistory([
@@ -458,14 +447,28 @@ const ChatBot = () => {
           </div>
           <div className="conversation-restore-points">
             <div className="restore-points-header">Prethodni četovi</div>
-            {conversationList.map((_, index) => {
+            {conversationList.map((conversation, index) => {
               const promptText = promptTexts[index];
 
               return (
-                <div key={index} className={`restore-point ${index === currentConversationIndex ? 'selected' : ''}`} onClick={() => handleRestoreConversation(index)}>
+                <button
+                  key={conversation.conversation_id}
+                  className={`restore-point ${index === currentConversationIndex ? 'selected' : ''}`}
+                  onClick={() => handleRestoreConversation(index)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') handleRestoreConversation(index);
+                  }}>
                   {index === currentConversationIndex ? <strong>{promptText}</strong> : <span>{promptText}</span>}
-                  <FontAwesomeIcon className="DeleteIcon" icon={faTrash as IconProp} style={{ paddingLeft: '10px' }} onClick={() => handleDeleteChat(index)} />
-                </div>
+                  <FontAwesomeIcon
+                    className="DeleteIcon"
+                    icon={faTrash as IconProp}
+                    style={{ paddingLeft: '10px' }}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleDeleteChat(index);
+                    }}
+                  />
+                </button>
               );
             })}
           </div>
@@ -474,8 +477,8 @@ const ChatBot = () => {
           <div className="remaining-prompts">Ostalo vam je jos : {promptsLeft} promptova</div>
           <div className="previous-conversations">
             <div className="message-bubbles">
-              {conversationsHistory.map((msg, index) => (
-                <ChatMessage key={index} msg={msg} />
+              {conversationsHistory.map((msg) => (
+                <ChatMessage key={`${msg.sender}-${msg.message.substring(0, 20)}`} msg={msg} />
               ))}
               <div ref={chatContentLastMessage}></div>
             </div>

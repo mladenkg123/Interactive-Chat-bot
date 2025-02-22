@@ -61,8 +61,8 @@ function Hero({ handleRegisterClick }: Readonly<HeroProps>) {
     try {
       const emailPromise = await sendEmail(email, message);
       if (emailPromise.status === 200) {
-        const emailResponse = await emailPromise.json();
-        console.log(emailResponse);
+        await emailPromise.json();
+        //console.log(emailResponse);
       } else {
         console.error('Error fetching previous conversations');
       }

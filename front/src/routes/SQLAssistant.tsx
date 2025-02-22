@@ -39,7 +39,6 @@ const ChatMessage: React.FC<ChatMessageProps> = React.memo(
 );
 
 const SQLAssistant = () => {
-
   const loadSQLLists = async () => {
     if (!userData) {
       console.error('User data not loaded yet');
@@ -107,7 +106,7 @@ const SQLAssistant = () => {
       console.error('Error:', error);
     }
   };
-  
+
   const handleUserInput = (event: { target: { value: React.SetStateAction<string> } }) => {
     setUserInput(event.target.value);
   };
@@ -242,7 +241,7 @@ const SQLAssistant = () => {
         if (sqlListData.SQLList.length < 1) {
           button.style.visibility = 'hidden';
         }
-        console.log(sqlListData.active);
+        //console.log(sqlListData.active);
       } else {
         console.error('Error fetching prompts for conversation');
       }
@@ -279,7 +278,7 @@ const SQLAssistant = () => {
     }
     if (userData.role == 'TEACHER') {
       const SQL_id = SQLListList[currentSQLListIndex]?.SQL_id;
-      console.log("SQL_id: ", SQL_id);
+      //console.log('SQL_id: ', SQL_id);
       const SQLListResponse = await sendPromptToPythonSQLAssitant(
         jwt,
         String.raw`Izmisli primere tabela databaze(najvise do 3 tabele) i za njih izmisli 10 SQL pitanja od laksih ka tezim. Nemoj da dajes odgovore na pitanja. Prvo izlistaj sve tabele u ovakvom formatu: 
@@ -371,7 +370,7 @@ const SQLAssistant = () => {
     }
     let SQL_id2: string = '';
     const SQLList = SQLListList[currentSQLListIndex];
-    console.log("currentSQLListIndex: ", currentSQLListIndex);
+    //console.log('currentSQLListIndex: ', currentSQLListIndex);
     SQLListList?.forEach((SQLList, index) => {
       if (SQLList.active === true && index !== currentSQLListIndex) {
         SQLList.active = false;
@@ -393,7 +392,7 @@ const SQLAssistant = () => {
           await setActiveById(jwt, SQLList.SQL_id, true);
           const questionsResp = await fetchQuestions(jwt);
           const questionsData = await questionsResp.json();
-          console.log("questionsData: ", questionsData);
+          //console.log('questionsData: ', questionsData);
           await sendPromptToPythonSQLAssitant(jwt, SQLList.SQLList, questionsData[0]._id, [], user_id, { value: 'generate_questions', label: 'SQL(GPT3.5)' });
           SQLList.active = true;
           setActiveCircles([SQLList.SQL_id]);
@@ -408,7 +407,7 @@ const SQLAssistant = () => {
       await setActiveById(jwt, SQLList.SQL_id, true);
       const questionsResp = await fetchQuestions(jwt);
       const questionsData = await questionsResp.json();
-      console.log(questionsData);
+      //console.log(questionsData);
       await sendPromptToPythonSQLAssitant(jwt, SQLList.SQLList, questionsData[0]._id, [], user_id, { value: 'generate_questions', label: 'SQL(GPT3.5)' });
       SQLList.active = true;
 
@@ -448,8 +447,8 @@ const SQLAssistant = () => {
   const cookies = new Cookies();
   const jwt = cookies.get('jwt') as string;
   const user_id = getUserIDFromJWT(jwt);
-  
-  if (!user_id) {
+
+  if (!jwt || !user_id) {
     window.location.href = '/';
     return null;
   }
@@ -458,7 +457,7 @@ const SQLAssistant = () => {
     return null;
   }
 
-  if (['TEACHER', 'STUDENT'].indexOf(userData.role) <= -1) {
+  if (!['TEACHER', 'STUDENT'].includes(userData.role)) {
     window.location.href = '/';
     return null;
   }
@@ -499,14 +498,19 @@ const SQLAssistant = () => {
             {userData.role === 'TEACHER' ? <div className="restore-points-header">Prethodne liste</div> : <div className="restore-points-header">Lista pitanja</div>}
             {SQLListList?.map((item, index) => {
               return (
-                <div key={index} className={`restore-point ${index === currentSQLListIndex ? 'selected' : ''}`} onClick={() => handleRestoreConversation(index)}>
+                <button
+                  key={item.SQL_id}
+                  className={`restore-point ${index === currentSQLListIndex ? 'selected' : ''}`}
+                  onClick={() => handleRestoreConversation(index)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') handleRestoreConversation(index);
+                  }}>
                   {index === currentSQLListIndex ? (
                     <>
                       <FontAwesomeIcon
                         className="activeCircle"
                         icon={faCircle as IconProp}
                         style={{ marginRight: '5px', visibility: activeCircles.includes(item.SQL_id) ? 'visible' : 'hidden', color: 'green' }}
-                        onClick={() => handleDeleteSQL(index)}
                       />
                       <strong>Aktivan</strong>
                     </>
@@ -516,13 +520,24 @@ const SQLAssistant = () => {
                         className="activeCircle"
                         icon={faCircle as IconProp}
                         style={{ marginRight: '5px', visibility: activeCircles.includes(item.SQL_id) ? 'visible' : 'hidden', color: 'green' }}
-                        onClick={() => handleDeleteSQL(index)}
                       />
                       <span>Ostalo</span>
                     </>
                   )}
-                  {userData.role === 'TEACHER' ? <FontAwesomeIcon className="DeleteIcon" icon={faTrash as IconProp} style={{ paddingLeft: '10px' }} onClick={() => handleDeleteSQL(index)} /> : <></>}
-                </div>
+                  {userData.role === 'TEACHER' ? (
+                    <FontAwesomeIcon
+                      className="DeleteIcon"
+                      icon={faTrash as IconProp}
+                      style={{ paddingLeft: '10px' }}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleDeleteSQL(index);
+                      }}
+                    />
+                  ) : (
+                    <></>
+                  )}
+                </button>
               );
             })}
           </div>
@@ -530,8 +545,8 @@ const SQLAssistant = () => {
         <div className="chat-content">
           <div className="previous-conversations">
             <div className="message-bubbles">
-              {conversationsHistory.map((msg, index) => (
-                <ChatMessage key={index} msg={msg} />
+              {conversationsHistory.map((msg) => (
+                <ChatMessage key={`${msg.sender}-${msg.message.substring(0, 20)}`} msg={msg} />
               ))}
               <div></div>
             </div>
