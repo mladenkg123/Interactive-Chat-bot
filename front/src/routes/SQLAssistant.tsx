@@ -59,7 +59,7 @@ const SQLAssistant = () => {
 
           if (activeSQLList?.active === true) {
             setActiveCircles([activeSQLList.SQL_id]);
-            console.log(activeCircles);
+            //console.log(activeCircles);
           }
           handleRestoreConversation(0);
         } else {
@@ -89,6 +89,9 @@ const SQLAssistant = () => {
   };
 
   const loadUserData = async () => {
+    if (!user_id) {
+      return;
+    }
     try {
       const userDataReq = await fetchUserData(jwt, user_id);
       if (userDataReq.status === 200) {
@@ -105,50 +108,7 @@ const SQLAssistant = () => {
       console.error('Error:', error);
     }
   };
-
-  const [conversationsHistory, setConversationsHistory] = useState<Message[]>([
-    { sender: 'SQLAssistant', message: 'Hello! I am here to help you generate SQL questions. To get strated click the GenerateSQL button.' },
-  ]);
-  const [SQLListList, setSQLListList] = useState<SQLList[]>([]);
-  const [currentSQLListIndex, setCurrentSQLListIndex] = useState(0);
-  const [userInput, setUserInput] = useState('');
-  const [hideInput, setHideInput] = useState(false);
-  const [activeCircles, setActiveCircles] = useState<string[]>([]);
-  const [table, setTable] = useState('');
-  const [userData, setUserData] = useState<UserData>();
-
-  useEffect(() => {
-    loadUserData().catch((error) => {
-      console.error('Failed loading userdata', error);
-    });
-  }, []);
-
-  useEffect(() => {
-    if (userData) {
-      loadSQLLists().catch((error) => {
-        console.error('Unhandled promise error:', error);
-      });
-    }
-  }, [userData]);
-
-  const cookies = new Cookies();
-  const jwt = cookies.get('jwt') as string;
-  const user_id = getUserIDFromJWT(jwt);
   
-  if (!user_id) {
-    window.location.href = '/';
-    return null;
-  }
-
-  if (!userData) {
-    return null;
-  }
-
-  if (['TEACHER', 'STUDENT'].indexOf(userData.role) <= -1) {
-    window.location.href = '/';
-    return null;
-  }
-
   const handleUserInput = (event: { target: { value: React.SetStateAction<string> } }) => {
     setUserInput(event.target.value);
   };
@@ -245,6 +205,9 @@ const SQLAssistant = () => {
   };
 
   const handleRestoreConversation = async (index: number) => {
+    if (!userData) {
+      return;
+    }
     if (userData.role == 'TEACHER') {
       setCurrentSQLListIndex(index);
       const SQLListId = SQLListList[index]?.SQL_id;
@@ -306,8 +269,12 @@ const SQLAssistant = () => {
 
   const handleSubmit = async (event: { preventDefault: () => void }) => {
     event.preventDefault();
+    if (!userData || !user_id) {
+      return;
+    }
     if (userData.role == 'TEACHER') {
       const SQL_id = SQLListList[currentSQLListIndex]?.SQL_id;
+      console.log("SQL_id: ", SQL_id);
       const SQLListResponse = await sendPromptToPythonSQLAssitant(
         jwt,
         String.raw`Izmisli primere tabela databaze(najvise do 3 tabele) i za njih izmisli 10 SQL pitanja od laksih ka tezim. Nemoj da dajes odgovore na pitanja. Prvo izlistaj sve tabele u ovakvom formatu: 
@@ -394,8 +361,12 @@ const SQLAssistant = () => {
   };
 
   const handleSetActive = async () => {
+    if (!userData || !user_id) {
+      return;
+    }
     let SQL_id2: string = '';
     const SQLList = SQLListList[currentSQLListIndex];
+    console.log("currentSQLListIndex: ", currentSQLListIndex);
     SQLListList?.forEach((SQLList, index) => {
       if (SQLList.active === true && index !== currentSQLListIndex) {
         SQLList.active = false;
@@ -415,9 +386,9 @@ const SQLAssistant = () => {
         if (result.isConfirmed) {
           await setActiveById(jwt, SQL_id2, false);
           await setActiveById(jwt, SQLList.SQL_id, true);
-
           const questionsResp = await fetchQuestions(jwt);
           const questionsData = await questionsResp.json();
+          console.log("questionsData: ", questionsData);
           await sendPromptToPythonSQLAssitant(jwt, SQLList.SQLList, questionsData[0]._id, [], user_id, { value: 'generate_questions', label: 'SQL(GPT3.5)' });
           SQLList.active = true;
           setActiveCircles(SQLList.SQL_id);
@@ -443,6 +414,50 @@ const SQLAssistant = () => {
       });
     }
   };
+
+  const [conversationsHistory, setConversationsHistory] = useState<Message[]>([
+    { sender: 'SQLAssistant', message: 'Hello! I am here to help you generate SQL questions. To get strated click the GenerateSQL button.' },
+  ]);
+  const [SQLListList, setSQLListList] = useState<SQLList[]>([]);
+  const [currentSQLListIndex, setCurrentSQLListIndex] = useState(0);
+  const [userInput, setUserInput] = useState('');
+  const [hideInput, setHideInput] = useState(false);
+  const [activeCircles, setActiveCircles] = useState<string[]>([]);
+  const [table, setTable] = useState('');
+  const [userData, setUserData] = useState<UserData>();
+
+  useEffect(() => {
+    loadUserData().catch((error) => {
+      console.error('Failed loading userdata', error);
+    });
+  }, []);
+
+  useEffect(() => {
+    if (userData) {
+      loadSQLLists().catch((error) => {
+        console.error('Unhandled promise error:', error);
+      });
+    }
+  }, [userData]);
+
+  const cookies = new Cookies();
+  const jwt = cookies.get('jwt') as string;
+  const user_id = getUserIDFromJWT(jwt);
+  
+  if (!user_id) {
+    window.location.href = '/';
+    return null;
+  }
+
+  if (!userData) {
+    return null;
+  }
+
+  if (['TEACHER', 'STUDENT'].indexOf(userData.role) <= -1) {
+    window.location.href = '/';
+    return null;
+  }
+
   return (
     <div className="chatbot-container">
       <React.Suspense fallback={<div>Loading...</div>}>
@@ -454,9 +469,9 @@ const SQLAssistant = () => {
             /* Handle register click */
           }}
           handleSignOut={function (): void {
-            throw new Error('Function not implemented.');
+            /* Handle sign out */
           }}
-          isAuthenticated={false}
+          isAuthenticated={true}
         />
       </React.Suspense>
       <div className="chat-container2">

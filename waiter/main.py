@@ -300,7 +300,7 @@ def handle_post_SQL():
         response = ""
         if(prompt):
             response = parse_sql(prompt)
-        update_question(data.get("jwt"), data.get("conversation_id"), response)
+        update_question(data.get("jwt"), data.get("_id"), response)
         return response, 200
     elif(model == "oceni_odgovor"):
         response = chat("You are a university teacher in a Software Engineering university. You are teaching a course on databases. Given the table, the question and the students answer. Grade the answer to the SQL question from 1 to 10. Do not give the answer to the question just grade it. Send the answer in Serbian language.", conversation)

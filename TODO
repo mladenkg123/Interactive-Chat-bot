@@ -1,0 +1,6 @@
+Clean up the code
+Fix the handling of Generisi SQL pitanja when there is no active chat
+Fix the handling of the SQL assistant when there is no active chat
+Fix the handling of Generisi SQL pitanja when there is a active chat
+Fix saving the questions to the database
+show Sacuvaj pitanja samo kad ima smisla
